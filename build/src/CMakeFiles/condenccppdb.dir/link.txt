@@ -1,2 +1,0 @@
-/usr/bin/ar qc libcondenccppdb.a CMakeFiles/condenccppdb.dir/db.pb.cc.o CMakeFiles/condenccppdb.dir/PK_crypto.cpp.o CMakeFiles/condenccppdb.dir/CryptoSymWrapperFunctions.cpp.o CMakeFiles/condenccppdb.dir/PaillierWrapperFunctions.cpp.o CMakeFiles/condenccppdb.dir/ConditionalEncryptionEditDistOne.cpp.o CMakeFiles/condenccppdb.dir/ConditionalEncryptionHamDistTwo.cpp.o CMakeFiles/condenccppdb.dir/ConditionalEncryptionCAPSLOCK.cpp.o CMakeFiles/condenccppdb.dir/ConditionalEncryptionOR.cpp.o CMakeFiles/condenccppdb.dir/__/paillier/pailliercpp.cpp.o
-/usr/bin/ranlib libcondenccppdb.a

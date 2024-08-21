@@ -1,1 +1,0 @@
-/usr/bin/c++ -Wall -std=c++17 "CMakeFiles/tests.dir/test-main.cpp.o" CMakeFiles/tests.dir/testCondEncEvaluation.cpp.o -o tests  /home/hassan/CLionProjects/CondEncCCS24/argon2/phcargon2/libargon2.a /home/hassan/CLionProjects/CondEncCCS24/3rdparty/zxcvbn21/libzxcvbn.a /usr/lib/x86_64-linux-gnu/libprotobuf.a ../src/libcondenccppdb.a -lcurl /usr/local/lib/libcryptopp.a 

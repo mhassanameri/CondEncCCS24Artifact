@@ -1,1 +1,0 @@
-/usr/bin/c++ -fPIC -Wall -std=c++17 -fPIC -shared -Wl,-soname,libpam_typtop.so -o libpam_typtop.so CMakeFiles/pam_typtop.dir/pam_typtop.cpp.o CMakeFiles/pam_typtop.dir/__/__/paillier/pailliercpp.cpp.o  /usr/lib/x86_64-linux-gnu/libpam.so /usr/lib/x86_64-linux-gnu/libgmp.a 
