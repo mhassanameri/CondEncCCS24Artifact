@@ -1,0 +1,19 @@
+Start testing: Jul 22 18:30 EDT
+----------------------------------------------------------
+Unable to find executable: test_exec-NOTFOUND
+1/1 Testing: test
+1/1 Test: test
+Command: "" "-d" "yes"
+Directory: /home/hassan/CLionProjects/CondEncCCS24/build/test
+"test" start time: 
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"test" end time: Jul 22 18:30 EDT
+"test" time elapsed: 00:00:00
+----------------------------------------------------------
+
+End testing: Jul 22 18:30 EDT
