@@ -2,6 +2,8 @@
 <project version="4">
   <component name="VcsDirectoryMappings">
     <mapping directory="" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/3rdparty/plog110" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/3rdparty/zxcvbn21" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/cryptopp-cmake" vcs="Git" />
   </component>
 </project>

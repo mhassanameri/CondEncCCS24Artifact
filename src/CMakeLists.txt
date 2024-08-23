@@ -86,7 +86,7 @@ add_executable(condenccpp main.cpp
 include_directories( ${GMP_INCLUDE_DIRS})
 
 SET (CRYPTOPP_INCLUDE_DIRS "cryptopp-cmake/cryptopp" )
-message(STATUS ">>> INCLUDE_DIRS: (${CRYPTOPP_INCLUDE_DIRS}, ${CMAKE_CURRENT_BINARY_DIR}, ${ZXCVBN_INCLUDE_DIRS}, ${PLOG_INCLUDE_DIRS})")
+message(STATUS ">>> INCLUDE_DIRS: (${CMAKE_PROJECT_DIR} ${CRYPTOPP_INCLUDE_DIRS}, ${CMAKE_CURRENT_BINARY_DIR}, ${ZXCVBN_INCLUDE_DIRS}, ${PLOG_INCLUDE_DIRS})")
 target_include_directories(condenccppdb PRIVATE ${GMP_INCLUDE_DIRS} ${CMAKE_CURRENT_BINARY_DIR} "../paillier/pailliercpp.cpp" "../paillier/pailliercpp.h" ${ZXCVBN_INCLUDE_DIRS} ${PLOG_INCLUDE_DIRS})
 target_include_directories(condenccpp PUBLIC ${GMP_INCLUDE_DIR}  ${CMAKE_CURRENT_BINARY_DIR} "../paillier/pailliercpp.cpp" "../paillier/pailliercpp.h" ${ZXCVBN_INCLUDE_DIRS} ${PLOG_INCLUDE_DIRS})
 #target_include_directories(condenccppdb PRIVATE ${CMAKE_CURRENT_BINARY_DIR}  "../paillier"  ${ZXCVBN_INCLUDE_DIRS} ${PLOG_INCLUDE_DIRS})

@@ -101,22 +101,46 @@ inline int main_test(string argv[] )
 {
 
 
-    if(argv[0] == "HamDist")
+    if(argv[0] == "PlotFig1a")
     {
-        testCondEncHamDist(1024, 1000, 16, 16, 24, 28);
+
+        auto r16_1 = testCondEncHamDist(1024, 300, 16, 15, 24, 28);
+        auto r16_2 = testCondEncHamDist(1024, 300, 16, 14, 24, 28);
+        auto r16_3 = testCondEncHamDist(1024, 100, 16, 13, 24, 28);
+        auto r16_4 =testCondEncHamDist(1024, 50, 16, 12, 24, 28);
+
+        auto r32_1 = testCondEncHamDist(1024, 300, 32, 31, 24, 28);
+        auto r32_2 = testCondEncHamDist(1024, 300, 32, 30, 24, 28);
+        auto r32_3 = testCondEncHamDist(1024, 100, 32, 29, 24, 28);
+        auto r32_4 =testCondEncHamDist(1024, 50, 32, 28, 24, 28);
+
+        auto r64_1 = testCondEncHamDist(2048, 100, 64, 63, 24, 28);
+        auto r64_2 = testCondEncHamDist(2048, 100, 64, 62, 24, 28);
+        auto r64_3 = testCondEncHamDist(2048, 25, 64, 61, 24, 28);
+        auto r64_4 = testCondEncHamDist(2048, 5, 64, 60, 24, 28);
+
+        auto r128_1 = testCondEncHamDist(3072, 3, 128, 127, 24, 28);
+        auto r128_2 = testCondEncHamDist(3072, 1, 128, 126, 24, 28);
+        auto r128_3 = testCondEncHamDist(3072, 1, 128, 125, 24, 28);
+        auto r128_4 = testCondEncHamDist(3072, 10, 128, 124, 24, 28);
+
     }
 
 
     return 1;
 }
 
-TEST_CASE("CommandLin")
+TEST_CASE("CommandLine")
 {
     std::string input[6];
 
-    std::cout << "Please enter your input [HamDist, ORPredi, CAPSLOCK, EDOne]: ";
+    std::cout << "Please enter your input [PlotFig1a, PlotFig1b]: ";
     std::cin >> input[0];
-
+    // std::cout << "Please enter n_lambda which indicates the public key size [1024, 2048, 3072]: ";
+    // std::cin >> input[1];
+    // std::cout << "Please enter Num_tests (for full text the value is 1000): ";
+    // std::cin >> input[2];
+    // std::cout << "Please enter maximum length of secret message (_len) [8, 16, 32, 64, 128]";
     auto r = main_test(input);
 
 }

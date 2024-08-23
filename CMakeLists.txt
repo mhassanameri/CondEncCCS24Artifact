@@ -75,7 +75,7 @@ configure_file (
 add_subdirectory(src)
 add_subdirectory(cryptopp-cmake)
 # build pam module
-add_subdirectory(src/pam_modules)
+#add_subdirectory(src/pam_modules)
 
 
 
@@ -85,6 +85,13 @@ include(CTest)
 ENABLE_TESTING()
 
 add_subdirectory(test) #//TODO: we need to add the test directory
+
+file(COPY PWDvsTyposDataSet DESTINATION test )
+#file(COPY TestScript.py DESTINATION test )
+file(COPY TestScript.sh DESTINATION test  FILE_PERMISSIONS OWNER_EXECUTE OWNER_WRITE OWNER_READ)
+
+#set(SCRIPT_PATH "${CMAKE_BINARY_DIR}/test/TestScript.sh")
+
 
 if(APPLE)
     SET(CMAKE_SHARED_LIBRARY_SUFFIX ".so")
