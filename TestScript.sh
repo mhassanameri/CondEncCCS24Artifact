@@ -4,7 +4,10 @@
 BINARY_PATH="./tests"
 
 # Arguments to pass to the binary
-ARGUMENTS="DataPlotFig1a"
+ARGUMENTS="CommandLine"
+
+
+echo  -e "PlotFig1a" > input.txt
 
 # Run the binary with the arguments
 $BINARY_PATH $ARGUMENTS

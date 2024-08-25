@@ -32,10 +32,10 @@
         strSources[i]->PumpAll();
 
     bool fail = false;
-//        string subsRcvr= recovered.substr(28, 31);
+     // string subsRcvr= recovered.substr(0, 1);
 
-    // fail = ("0000" == recovered);//for Optimized solutin, TODO: make the non optimum without cancelling it
-    fail = ("0" == recovered);//for Optimized solutin, TODO: make the non optimum without cancelling it
+    // fail = ("0000" == recovered);//for Optimized solution, TODO: make the non optimum without cancelling it
+    fail = ("0" == recovered.substr(0,1));//for Optimized soulution, TODO: make the non optimum without cancelling it
 
 //    fail  = true;
     return fail;
@@ -1085,10 +1085,10 @@ int HamDistTwo::CondDec_2dif(paillier_pubkey_t* ppk,
      v = HamDistTwo::GnereateVectorOfIntegeres(_len);
 
 
-     for (int i = 1; i<_len; i=+2)
+     for (int i = 1; i<_len; i += 2)
      {
          vector<int> selected;
-         for (int j = 0; j< _len; i++)
+         for (int j = 0; j< _len; j++)
          {
              if(j != i && j != i-1)
              {

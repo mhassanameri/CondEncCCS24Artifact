@@ -621,8 +621,10 @@ int testCondEncOR(int n_lambda, int Num_tests, size_t _len, int MaxHam)
     {
 
         int control = 1;
-        msg= "Test";
-        typo = "Test";
+        // msg= "Test";
+        // typo = "0est";
+        msg = data[T].first;
+        typo = data[T].second;
         payload = CryptoSymWrapperFunctions::Wrapper_pad(typo, _len);
         assert(payload.size()==_len);
 
@@ -632,8 +634,7 @@ int testCondEncOR(int n_lambda, int Num_tests, size_t _len, int MaxHam)
         size_t CondEncCPSLKCtxSize = 3 * sizeof(size_t) + (sizeof(char) * AE_CtxtSize) +  PailCtxtSize;
 
         size_t CondEncOR_CtxSize = CondEncCPSLKCtxSize + CondEncEDOneCtxSize + CondEncHDTwoCtxSize;
-        // msg = data[1].first;
-        // typo = data[1].second;
+
 
 
 
@@ -672,7 +673,9 @@ int testCondEncOR(int n_lambda, int Num_tests, size_t _len, int MaxHam)
         // CondDecOut = Class_OrPredicate->CondDec_Optimized_for_HD2(pkobj._ppk, OrPred_ctx_typo_Bytes, pkobj._psk, Threshold, recovered_hd2Bytes, _len, SizeShare);
         // CondDecOut = Class_OrPredicate->CondDec_Optimized_for_HD2(pkobj._ppk, OrPred_ctx_typo_Bytes, pkobj._psk, Threshold, recovered_hd2Bytes, _len, SizeShare);
         // CondDecOut = OrPredicate::CondDec(pkobj._ppk, &ctx_final[0], pkobj._psk, 30, recovered_hd2Bytes, 32, 28);
-        CondDecOut = OrPredicate::CondDec(pkobj._ppk, OrPred_ctx_typo_Bytes, pkobj._psk, _len-2, recovered_hd2Bytes, _len);
+        // CondDecOut = OrPredicate::CondDec(pkobj._ppk, OrPred_ctx_typo_Bytes, pkobj._psk, _len-2, recovered_hd2Bytes, _len);
+        CondDecOut = OrPredicate::CondDec_Optimized_for_HD2(pkobj._ppk, OrPred_ctx_typo_Bytes, pkobj._psk, _len-2, recovered_hd2Bytes, _len);
+
 
 
         auto stop_CondDec_HD2 = high_resolution_clock::now();
