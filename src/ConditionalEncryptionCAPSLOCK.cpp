@@ -231,8 +231,6 @@ string CAPLOCKpredicate::CondEnc(paillier_pubkey_t *ppk,
                               char RlPwd_ctx_pull[],
                               string& msg,
                               string& payload,
-                              size_t _len,
-                              int threshold,
                               char ctx_final[])
 {
     vector<paillier_ciphertext_t *> Ctxt_z(1);
@@ -400,10 +398,7 @@ string CAPLOCKpredicate::CondEnc(paillier_pubkey_t *ppk,
  int CAPLOCKpredicate::CondDec( paillier_pubkey_t* ppk,
                          char typo_ctx[],
                          paillier_prvkey_t* psk,
-                         int threshold,
-                         string &recovered,
-                         size_t _len,
-                         size_t ShareSize)
+                         string &recovered)
 {
     int ret = -1;
     vector<paillier_ciphertext_t*> V_ctx_typo(1);
@@ -490,44 +485,6 @@ int CAPLOCKpredicate:: RegDec(paillier_pubkey_t* ppk,
     }
     return 1;
 }
-
-
-
-// int CAPLOCKpredicate::Pail_Parse_Ctx_size_AECtx_CPSALOcK(const paillier_pubkey_t* ppk,
-//                                                          const char* ctx, string& CtxtAEStr,
-//                                                          vector<paillier_ciphertext_t*> &Vect_Ctx)
-// {
-//     int ret = 0;
-//     size_t size;
-//     memcpy(&size, ctx , sizeof(size_t));
-//     size_t AE_Ctx_size;
-//     memcpy(&AE_Ctx_size, ctx  + sizeof(size_t), sizeof(size_t));
-//     size_t Ctxt_Elemnt_Size;
-//     memcpy(&Ctxt_Elemnt_Size, ctx + 2 * sizeof(size_t), sizeof(size_t));
-//
-//
-//     string* CtxtAEStrPre = (string*)malloc(AE_Ctx_size * sizeof(char));
-//     // auto* CtxtAEStrPre = malloc(AE_Ctx_size * sizeof(char));
-//     memcpy(&CtxtAEStrPre[0], ctx + 3 * sizeof(size_t), AE_Ctx_size * sizeof(char)); //Correct
-// //    CtxtAEStr = CtxtAEStrPre[0];
-//     CryptoPP::StringSink ss(CtxtAEStr);
-//     ss.Put((const CryptoPP::byte*)CtxtAEStrPre[0].data(),  CtxtAEStrPre[0].size(), false);
-//
-//     free(CtxtAEStrPre);
-//
-//
-//     char* byteCtxt1 =(char*)malloc(PAILLIER_BITS_TO_BYTES(ppk->bits) * 2);
-//
-//     for(int i = 0; i< size; i++ )
-//     {
-//         memcpy(byteCtxt1,  ctx + 3 * sizeof(size_t) + AE_Ctx_size + i * Ctxt_Elemnt_Size, Ctxt_Elemnt_Size);
-//         Vect_Ctx[i] = paillier_ciphertext_from_bytes((void*)byteCtxt1, PAILLIER_BITS_TO_BYTES(ppk->bits)*2);
-//     }
-//
-//     free(byteCtxt1);
-//     ret = 1;
-//     return ret;
-// }
 
 
 int CAPLOCKpredicate::Pail_Parse_Ctx_size_AECtx_CPSALOcK(const paillier_pubkey_t* ppk,

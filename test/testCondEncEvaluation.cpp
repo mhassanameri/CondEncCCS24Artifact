@@ -63,6 +63,7 @@ std::vector<std::pair<std::string, std::string>> LoadPWDvsTypoForTEST(const std:
 
 
 
+
 string HamDisMakeTypo(string &msg, int NumOfErrs)
 {
     char err1, err2, err3, err4, err5;
@@ -183,7 +184,7 @@ string ORMakeTypo(string &msg)
     return typo;
 }
 
-int testCondEncEDist(int n_lambda,  int Num_tests, size_t _len,  int Threshold,  size_t AE_CtxtSize, int NumOfErrs)
+int testCondEncEDist(int n_lambda,  int Num_tests, size_t _len)
 {
     size_t ell = _len - 31;
     std::string filename = "PWDvsTyposDataSet/PWDvsTypoDataSetLessThan"+to_string(_len)+".txt";
@@ -198,12 +199,11 @@ int testCondEncEDist(int n_lambda,  int Num_tests, size_t _len,  int Threshold, 
     size_t PailCtxtSize =  PAILLIER_BITS_TO_BYTES(pkobj._ppk->bits)*2;
 
 
-    size_t TradCtxSize = 2 * sizeof(size_t) + ( _len+1) * PailCtxtSize;
-    size_t CondCtxSize = 3 * sizeof(size_t) + AE_CtxtSize + (_len + _len +1) * PailCtxtSize;
-
     double duration_CondEnc_ED1_Sum = 0;
     double duration_Enc_ED1_Sum = 0;
     double duration_CondDec_ED1_Sum = 0;
+    double TradCtxSize_Sum = 0;
+    double CondCtxSize_Sum = 0;
 
 
     string msg;
@@ -224,6 +224,12 @@ int testCondEncEDist(int n_lambda,  int Num_tests, size_t _len,  int Threshold, 
         typo = data[T].second;
         payload = typo;
 
+        size_t AECtxSize = 2 * KEYSIZE_BYTES + payload.size();
+        size_t TradCtxSize = 2 * sizeof(size_t) + ( _len+1) * PailCtxtSize;
+        size_t CondCtxSize = 3 * sizeof(size_t) + AECtxSize + (_len + _len +1) * PailCtxtSize;
+
+        TradCtxSize_Sum =  TradCtxSize_Sum + TradCtxSize;
+        CondCtxSize_Sum =  CondCtxSize + CondCtxSize;
         char ED1_Char_ORigCTx[TradCtxSize];
         char ED1_ctx_typo_Bytes[CondCtxSize];
         // msg = SelectRandPwd();
@@ -243,7 +249,7 @@ int testCondEncEDist(int n_lambda,  int Num_tests, size_t _len,  int Threshold, 
 
         auto start_CondEnc_HD2 = high_resolution_clock::now();
 //        int ED1CondEncRstl =0;
-        auto ctx_final = EditDistOne::CondEnc(pkobj._ppk, ED1_Char_ORigCTx, pad_typo, payload, _len, Threshold,
+        auto ctx_final = EditDistOne::CondEnc(pkobj._ppk, ED1_Char_ORigCTx, pad_typo, payload, _len,
                                               ED1_ctx_typo_Bytes);
         auto stop_CondEnc_HD2 = high_resolution_clock::now();
         auto duration_CondEnc_HD2 = duration_cast<milliseconds>(stop_CondEnc_HD2 - start_CondEnc_HD2);
@@ -252,8 +258,8 @@ int testCondEncEDist(int n_lambda,  int Num_tests, size_t _len,  int Threshold, 
         auto start_CondDec_HD2 = high_resolution_clock::now();
         string recovered_hd2Bytes;
         int CondDecOut = 0;
-        CondDecOut = EditDistOne::CondDec(pkobj._ppk, ED1_ctx_typo_Bytes, pkobj._psk, Threshold, recovered_hd2Bytes,
-                                          _len, 28);
+        CondDecOut = EditDistOne::CondDec(pkobj._ppk, ED1_ctx_typo_Bytes, pkobj._psk, recovered_hd2Bytes,
+                                          _len);
         cout <<CondDecOut <<"\n";
 
         auto stop_CondDec_HD2 = high_resolution_clock::now();
@@ -278,8 +284,8 @@ int testCondEncEDist(int n_lambda,  int Num_tests, size_t _len,  int Threshold, 
         EDOnedataL << _len << "\t" << duration_Enc_ED1_Sum / Num_tests << "\t"
                    << duration_CondEnc_ED1_Sum / Num_tests << "\t"
                    << duration_CondDec_ED1_Sum / Num_tests << "\t"
-                   << TradCtxSize << "\t"
-                   << CondCtxSize << "\n";
+                   << TradCtxSize_Sum/Num_tests << "\t"
+                   << CondCtxSize_Sum/Num_tests << "\n";
 
         CondEncEDatMost1.close();
         paillier_freepubkey(pkobj._ppk);
@@ -291,13 +297,14 @@ int testCondEncEDist(int n_lambda,  int Num_tests, size_t _len,  int Threshold, 
 }
 
 
-int testCondEncHamDist(int n_lambda, int Num_tests, size_t _len, int Threshold, size_t AE_CtxtSize1, size_t SizeShare)
+int testCondEncHamDist(int n_lambda, int Num_tests, size_t _len, int MaxHam)
 {
 
-    size_t ell = _len - Threshold;
+
+    size_t Threshold = _len - MaxHam;
     // std::string filename = "PWDvsTyposDataSet/PWDvsTypoDataSetLessThan"+to_string(_len)+"OrNotHold.txt";
     // std::vector<std::pair<std::string, std::string>> data = LoadPWDvsTypoForTEST(filename);
-    std::string filename = "PWDvsTyposDataSet/PWDvsTypoDataSetLessThan"+to_string(_len)+"HamDisNotHold"+to_string(ell)+".txt";
+    std::string filename = "PWDvsTyposDataSet/PWDvsTypoDataSetLessThan"+to_string(_len)+"HamDisNotHold"+to_string(MaxHam)+".txt";
     std::vector<std::pair<std::string, std::string>> data = LoadPWDvsTypoForTEST(filename);
 
     PwPkCrypto pkobj;
@@ -361,7 +368,7 @@ int testCondEncHamDist(int n_lambda, int Num_tests, size_t _len, int Threshold, 
         auto start_CondDec_HD = high_resolution_clock::now();
         string recovered_hdBytes;
         int CondDecOut  = 0;
-        CondDecOut = HamDistTwo::CondDec(pkobj._ppk, HD_ctx_typo_Bytes, pkobj._psk, Threshold, recovered_hdBytes, _len, SizeShare);
+        CondDecOut = HamDistTwo::CondDec(pkobj._ppk, HD_ctx_typo_Bytes, pkobj._psk, Threshold, recovered_hdBytes, _len);
         // CondDecOut = HamDistTwo::CondDec_Optimized(pkobj._ppk, HD_ctx_typo_Bytes, pkobj._psk, Threshold, recovered_hdBytes, _len, SizeShare, msg.size());
         // CondDecOut = HamDistTwo::CondDec_Optimized_UnknownMsgLength(pkobj._ppk, HD_ctx_typo_Bytes, pkobj._psk, Threshold, recovered_hdBytes, _len, SizeShare);
         // CondDecOut = HamDistTwo::CondDec_NewOPT(pkobj._ppk, HD_ctx_typo_Bytes, pkobj._psk, Threshold, recovered_hdBytes, _len, SizeShare);
@@ -402,25 +409,17 @@ int testCondEncHamDist(int n_lambda, int Num_tests, size_t _len, int Threshold, 
     // string File1 = "OPTJustHam2HoldingHDdataL_T" + std::to_string(NumOfErrs -1) + ".dat";
     // string File2 = "OPTJustHam2HoldingHDdataL" + std::to_string(_len) + "_T.dat";
 
+
     std::ofstream HDdataL(File1, std::ios_base::app | std::ios_base::out);
     std::ofstream HDdataT(File2, std::ios_base::app | std::ios_base::out);
-//    std::ofstream HDdataL("HDdataL.dat", std::ios_base::app | std::ios_base::out);
-//    std::ofstream HDdataT("HDdataT.dat", std::ios_base::app | std::ios_base::out);
-    size_t MaxDist  = _len - Threshold;
 
-//    HDdataT << "The predicate is Hamming distance at most Threshold =" << _len - Threshold <<
-//            "[# of errors as the worst case: "<< NumOfErrs << " _len = " << _len << "and KeySize = " << n_lambda <<
-//            "****\n";
+    size_t MaxDist  = _len - Threshold;
 
     HDdataT << MaxDist << "\t"<< _len << "\t" << duration_Enc_HD_Sum / Num_tests << "\t"
             << duration_CondEnc_HD_Sum / Num_tests << "\t"
             << duration_CondDec_HD_Sum / Num_tests << "\t"
             << TradCtxSize  << "\t"
             << CondCtxSize_HD_Sum /Num_tests  << "\n";
-
-//    HDdataL << "The predicate is Hamming distance at most Threshold =" << _len - Threshold <<
-//            "[# of errors as the worst case: "<< NumOfErrs << " _len = " << _len << "and KeySize = " << n_lambda <<
-//            "****\n";
 
     HDdataL << MaxDist << "\t"<< _len << "\t" << duration_Enc_HD_Sum / Num_tests << "\t"
             << duration_CondEnc_HD_Sum / Num_tests << "\t"
@@ -431,19 +430,16 @@ int testCondEncHamDist(int n_lambda, int Num_tests, size_t _len, int Threshold, 
     CondEncHD.close();
     paillier_freepubkey(pkobj._ppk);
     paillier_freeprvkey(pkobj._psk);
-    cout << "OPT_The predicate is Hamming distance at most Threshold =" << _len - Threshold <<
-         "[# of errors as the worst case: "<< NumOfErrs << " _len = " << _len << "and KeySize = " << n_lambda <<
-         "****\n";
+
     return 1;
 }
 
-int testCondEncHamDist_NonOPT(int n_lambda, int Num_tests, size_t _len, int Threshold, size_t AE_CtxtSize1, size_t SizeShare)
+int testCondEncHamDist_NonOPT(int n_lambda, int Num_tests, size_t _len, int MaxHam)
 {
-
-    size_t ell = _len - Threshold;
+    size_t Threshold = _len - MaxHam;
     // std::string filename = "PWDvsTyposDataSet/PWDvsTypoDataSetLessThan"+to_string(_len)+"OrNotHold.txt";
     // std::vector<std::pair<std::string, std::string>> data = LoadPWDvsTypoForTEST(filename);
-    std::string filename = "PWDvsTyposDataSet/PWDvsTypoDataSetLessThan"+to_string(_len)+"HamDisNotHold"+to_string(ell)+".txt";
+    std::string filename = "PWDvsTyposDataSet/PWDvsTypoDataSetLessThan"+to_string(_len)+"HamDisNotHold"+to_string(MaxHam)+".txt";
     std::vector<std::pair<std::string, std::string>> data = LoadPWDvsTypoForTEST(filename);
 
     PwPkCrypto pkobj;
@@ -508,7 +504,7 @@ int testCondEncHamDist_NonOPT(int n_lambda, int Num_tests, size_t _len, int Thre
         string recovered_hdBytes;
         int CondDecOut  = 0;
 
-        CondDecOut = HamDistTwo::CondDec_NonSmallFieldCheck(pkobj._ppk, HD_ctx_typo_Bytes, pkobj._psk, Threshold, recovered_hdBytes, _len, SizeShare);
+        CondDecOut = HamDistTwo::CondDec_NonSmallFieldCheck(pkobj._ppk, HD_ctx_typo_Bytes, pkobj._psk, Threshold, recovered_hdBytes, _len);
 
 
         auto stop_CondDec_HD = high_resolution_clock::now();
@@ -529,8 +525,8 @@ int testCondEncHamDist_NonOPT(int n_lambda, int Num_tests, size_t _len, int Thre
 
     }
 
-    string File1 = "OPT_HDdataL_T" + std::to_string(NumOfErrs -1) + ".dat";
-    string File2 = "OPT_HDdataL" + std::to_string(_len) + "_T.dat";
+    string File1 = "HDdataL_T" + std::to_string(NumOfErrs -1) + ".dat";
+    string File2 = "HDdataL" + std::to_string(_len) + "_T.dat";
 
     // string File1 = "HDdataL_T" + std::to_string(NumOfErrs -1) + ".dat";
     // string File2 = "HDdataL" + std::to_string(_len) + "_T.dat";
@@ -572,18 +568,16 @@ int testCondEncHamDist_NonOPT(int n_lambda, int Num_tests, size_t _len, int Thre
     CondEncHD.close();
     paillier_freepubkey(pkobj._ppk);
     paillier_freeprvkey(pkobj._psk);
-    cout << "OPT_The predicate is Hamming distance at most Threshold =" << _len - Threshold <<
-         "[# of errors as the worst case: "<< NumOfErrs << " _len = " << _len << "and KeySize = " << n_lambda <<
-         "****\n";
     return 1;
 }
 
 
-int testCondEncOR(int n_lambda, int Num_tests, size_t _len, int Threshold, size_t AE_CtxtSize1, size_t SizeShare)
+int testCondEncOR(int n_lambda, int Num_tests, size_t _len, int MaxHam)
 {
     PwPkCrypto pkobj;
     pkobj.Paill_pk_init(n_lambda);
 
+    size_t Threshold  = _len - MaxHam;
 
 
     size_t PailCtxtSize =  PAILLIER_BITS_TO_BYTES(pkobj._ppk->bits)*2;
@@ -609,10 +603,6 @@ int testCondEncOR(int n_lambda, int Num_tests, size_t _len, int Threshold, size_
     string typo;
     string payload;
 
-//    typo  = msg + 'a' + 'v' + 's';
-
-
-//    payload = typo;
     ofstream CondEncHD;
     CondEncHD.open("CondEncHDAtmostT.txt");
 
@@ -650,25 +640,6 @@ int testCondEncOR(int n_lambda, int Num_tests, size_t _len, int Threshold, size_
         char OrPred_Char_ORigCTx[ ORPrdrigCtxSize];
         char OrPred_ctx_typo_Bytes [CondEncOR_CtxSize];
 
-        // while(control ==1)
-        // {
-        //     msg = SelectRandPwd();
-        //     typo = ORMakeTypo(msg);
-        //
-        //     if(msg.size() >=  _len || typo.size() >= _len-1 )
-        //     {
-        //         control = 1;
-        //     }else
-        //     {control = 0; }
-        //
-        // }
-        //
-        // if (typo.size() >= _len)
-        // {
-        //     cout << "typo is greater than _len";
-        //     break;
-        // }
-
 
 
         // payload = typo;
@@ -694,14 +665,14 @@ int testCondEncOR(int n_lambda, int Num_tests, size_t _len, int Threshold, size_
 
         auto stop_CondEnc_HD2 = high_resolution_clock::now();
         auto duration_CondEnc_HD2 = duration_cast<milliseconds>(stop_CondEnc_HD2 - start_CondEnc_HD2);
-        cout << "strat to decrypt OR\n";
+        cout << "start to decrypt OR\n";
         string recovered_hd2Bytes;
         int CondDecOut = 0;
         auto start_CondDec_HD2 = high_resolution_clock::now();
         // CondDecOut = Class_OrPredicate->CondDec_Optimized_for_HD2(pkobj._ppk, OrPred_ctx_typo_Bytes, pkobj._psk, Threshold, recovered_hd2Bytes, _len, SizeShare);
         // CondDecOut = Class_OrPredicate->CondDec_Optimized_for_HD2(pkobj._ppk, OrPred_ctx_typo_Bytes, pkobj._psk, Threshold, recovered_hd2Bytes, _len, SizeShare);
         // CondDecOut = OrPredicate::CondDec(pkobj._ppk, &ctx_final[0], pkobj._psk, 30, recovered_hd2Bytes, 32, 28);
-        CondDecOut = OrPredicate::CondDec(pkobj._ppk, OrPred_ctx_typo_Bytes, pkobj._psk, _len-2, recovered_hd2Bytes, _len, 28);
+        CondDecOut = OrPredicate::CondDec(pkobj._ppk, OrPred_ctx_typo_Bytes, pkobj._psk, _len-2, recovered_hd2Bytes, _len);
 
 
         auto stop_CondDec_HD2 = high_resolution_clock::now();
@@ -750,7 +721,7 @@ int testCondEncOR(int n_lambda, int Num_tests, size_t _len, int Threshold, size_
 
 }
 
-int testCondEncCAPSLOCK(int n_lambda, int Num_tests, size_t _len, int Threshold, size_t AE_CtxtSize1, size_t SizeShare)
+int testCondEncCAPSLOCK(int n_lambda, int Num_tests, size_t _len)
 {
 
     std::string filename = "PWDvsTyposDataSet/PWDvsTypoDataSetLessThan"+to_string(_len)+".txt";
@@ -805,12 +776,6 @@ int testCondEncCAPSLOCK(int n_lambda, int Num_tests, size_t _len, int Threshold,
         char CAPSLOCK_Pred_Char_ORigCTx [CAPSLocOrigCtxSize];
         char CAPSLOCK_Pred_ctx_typo_Bytes [CondEncCPSLKCtxSize];
 
-
-        // msg = "HassanHassanHassanHassanHassan";
-        // payload = typo = "hASSANhASSANhASSANhASSANhASSAN";
-        // msg = "Hassan";
-        // payload = typo = "hASSAN";
-
         cout  <<msg << "\n" << typo << "\n";
 
         auto start_Enc = high_resolution_clock::now();
@@ -829,7 +794,7 @@ int testCondEncCAPSLOCK(int n_lambda, int Num_tests, size_t _len, int Threshold,
         // std::string ctx_final;
         auto start_CondEnc = high_resolution_clock::now();
         auto ctx_final = CAPLOCKpredicate::CondEnc(pkobj._ppk, CAPSLOCK_Pred_Char_ORigCTx, typo,
-            payload,_len, Threshold, CAPSLOCK_Pred_ctx_typo_Bytes);
+            payload, CAPSLOCK_Pred_ctx_typo_Bytes);
         auto stop_CondEnc = high_resolution_clock::now();
         auto duration_CondEnc = duration_cast<milliseconds>(stop_CondEnc - start_CondEnc);
         // cout << ctx_final << "\n";
@@ -838,7 +803,7 @@ int testCondEncCAPSLOCK(int n_lambda, int Num_tests, size_t _len, int Threshold,
 
         auto start_CondDec = high_resolution_clock::now();
 
-        CondDecOut = CAPLOCKpredicate::CondDec(pkobj._ppk, CAPSLOCK_Pred_ctx_typo_Bytes, pkobj._psk, Threshold, recovered_hd2Bytes, _len, SizeShare);
+        CondDecOut = CAPLOCKpredicate::CondDec(pkobj._ppk, CAPSLOCK_Pred_ctx_typo_Bytes, pkobj._psk, recovered_hd2Bytes);
         auto stop_CondDec = high_resolution_clock::now();
         auto duration_CondDec= duration_cast<milliseconds>(stop_CondDec- start_CondDec);
         // cout << "Hassan3\n";
@@ -883,4 +848,185 @@ int testCondEncCAPSLOCK(int n_lambda, int Num_tests, size_t _len, int Threshold,
     // free(CAPSLOCK_Pred_Char_ORigCTx);
     // free(CAPSLOCK_Pred_ctx_typo_Bytes);
     return 1;
+}
+
+
+
+int GenerateDataForPlottingFig1a(int Num_tests)
+{
+    auto OPT_SmallField_r8_1 = testCondEncHamDist(1024, 300, 8,1);
+    auto OPT_SmallField_r8_2 = testCondEncHamDist(1024, 300, 8,2);
+    auto OPT_SmallField_r8_3 = testCondEncHamDist(1024, 100, 8,3);
+    auto OPT_SmallField_r8_4 = testCondEncHamDist(1024, 50, 8, 4);
+
+    auto OPT_SmallField_r16_1 = testCondEncHamDist(1024, 300, 16, 1);
+    auto OPT_SmallField_r16_2 = testCondEncHamDist(1024, 300, 16, 2);
+    auto OPT_SmallField_r16_3 = testCondEncHamDist(1024, 100, 16, 3);
+    auto OPT_SmallField_r16_4 = testCondEncHamDist(1024, 50, 16,  4);
+
+    auto OPT_SmallField_r32_1 = testCondEncHamDist(1024, 300, 32, 1);
+    auto OPT_SmallField_r32_2 = testCondEncHamDist(1024, 300, 32, 2);
+    auto OPT_SmallField_r32_3 = testCondEncHamDist(1024, 100, 32, 3);
+    auto OPT_SmallField_r32_4 = testCondEncHamDist(1024, 50, 32,  4);
+
+    auto OPT_SmallField_r64_1 = testCondEncHamDist(2048, 100, 64, 1);
+    auto OPT_SmallField_r64_2 = testCondEncHamDist(2048, 100, 64, 2);
+    auto OPT_SmallField_r64_3 = testCondEncHamDist(2048, 25, 64,  3);
+    auto OPT_SmallField_r64_4 = testCondEncHamDist(2048, 5, 64,   4);
+
+    auto OPT_SmallField_r128_1 = testCondEncHamDist(3072, 3, 128,  1);
+    auto OPT_SmallField_r128_2 = testCondEncHamDist(3072, 1, 128,  2);
+    auto OPT_SmallField_r128_3 = testCondEncHamDist(3072, 1, 128,  3);
+    auto OPT_SmallField_r128_4 = testCondEncHamDist(3072, 10, 128, 4);
+
+    auto r8_1 = testCondEncHamDist_NonOPT(1024, 300, 8,1);
+    auto r8_2 = testCondEncHamDist_NonOPT(1024, 300, 8,2);
+    auto r8_3 = testCondEncHamDist_NonOPT(1024, 100, 8,3);
+    auto r8_4 = testCondEncHamDist_NonOPT(1024, 50, 8, 4);
+
+    auto r16_1 = testCondEncHamDist_NonOPT(1024, 300, 16, 1);
+    auto r16_2 = testCondEncHamDist_NonOPT(1024, 300, 16, 2);
+    auto r16_3 = testCondEncHamDist_NonOPT(1024, 100, 16, 3);
+    auto r16_4 = testCondEncHamDist_NonOPT(1024, 50, 16,  4);
+
+    auto r32_1 = testCondEncHamDist_NonOPT(1024, 300, 32, 1);
+    auto r32_2 = testCondEncHamDist_NonOPT(1024, 300, 32, 2);
+    auto r32_3 = testCondEncHamDist_NonOPT(1024, 100, 32, 3);
+    auto r32_4 = testCondEncHamDist_NonOPT(1024, 50, 32,  4);
+
+    auto r64_1 = testCondEncHamDist_NonOPT(2048, 100, 64, 1);
+    auto r64_2 = testCondEncHamDist_NonOPT(2048, 100, 64, 2);
+    auto r64_3 = testCondEncHamDist_NonOPT(2048, 25, 64,  3);
+    auto r64_4 = testCondEncHamDist_NonOPT(2048, 5, 64,   4);
+
+    auto r128_1 = testCondEncHamDist_NonOPT(3072, 3, 128,  1);
+    auto r128_2 = testCondEncHamDist_NonOPT(3072, 1, 128,  2);
+    auto r128_3 = testCondEncHamDist_NonOPT(3072, 1, 128,  3);
+    auto r128_4 = testCondEncHamDist_NonOPT(3072, 10, 128, 4);
+
+    return 1;
+}
+
+
+int GenerateBlankDataFilesToStorEvaluationResults(int l)
+{
+    // std::ofstream HDdataL("HDdataL.dat", std::ios_base::app | std::ios_base::out);
+    // std::ofstream HDdataT("HDdataT.dat", std::ios_base::app | std::ios_base::out);
+    std::ofstream EDOnedataL("EDOnedataL.dat", std::ios_base::app | std::ios_base::out);
+    std::ofstream CAPSLKdataL("CAPSLKdataL.dat", std::ios_base::app | std::ios_base::out);
+    std::ofstream ORdataL("ORdataL.dat", std::ios_base::app | std::ios_base::out);
+    std::ofstream SSdataL("SecretSharing.dat", std::ios_base::app | std::ios_base::out);
+
+
+    /*
+     * Generating the raw HammingDistanc-related .dat files
+     */
+
+    for(int i = 1; i<5; i++)
+    {
+        std::ofstream HD1("HDdataL_T"+ to_string(i)+  ".dat", std::ios_base::app | std::ios_base::out);
+        HD1 << "# Performance evaluation of Conditional Encryption associated with Hamming Distance in terms of\n "
+              "# T:             MAXHAM distancen\n"
+              "# L:             Maximum lenght of secret message m_1\n"
+              "# Enc:           Regular Encryption time (mili second)\n"
+              "# CondEnc:       Conditional Encryption time (mili second)\n"
+              "# CondDec:       Conditional Decryption time (mili second) No Optimization\n"
+              "# CtxtSize:      Regular Encryption Ciphertext size (Byte)\n"
+              "# CondCtxtSize:  Conditional Encryption Ciphertext size (Byte)\n\n";
+
+        HD1 << "T" << "\t"  << "L" << "\t" << "Enc" << "\t" << "CondEnc"<< "\t" << "CondDec" << "\t" << "CtxtSize" << "\t" << "CondCtxtSize\n";
+
+        HD1.close();
+
+        std::ofstream OPTHD1("OPT_HDdataL_T"+ to_string(i)+  ".dat", std::ios_base::app | std::ios_base::out);
+
+        OPTHD1 << "# Performance evaluation of Conditional Encryption associated with Hamming Distance in terms of\n "
+              "# T:             MAXHAM distancen\n"
+              "# L:             Maximum lenght of secret message m_1\n"
+              "# Enc:           Regular Encryption time (mili second)\n"
+              "# CondEnc:       Conditional Encryption time (mili second)\n"
+              "# CondDec:       Conditional Decryption time (mili second) Small Field Optimization\n"
+              "# CtxtSize:      Regular Encryption Ciphertext size (Byte)\n"
+              "# CondCtxtSize:  Conditional Encryption Ciphertext size (Byte)\n\n";
+
+        OPTHD1 << "T" << "\t"  << "L" << "\t" << "Enc" << "\t" << "CondEnc"<< "\t" << "CondDec" << "\t" << "CtxtSize" << "\t" << "CondCtxtSize\n";
+
+
+        OPTHD1.close();
+
+    }
+
+    for (int i =1; i< 6; i++)
+    {
+        int j = 8 *  pow(2, i-1);
+        std::ofstream HDL("HDdataL"+ to_string(j)+  "_T.dat", std::ios_base::app | std::ios_base::out);
+
+        HDL << "# Performance evaluation of Conditional Encryption associated with Hamming Distance in terms of\n "
+              "# T:             MAXHAM distancen\n"
+              "# L:             Maximum lenght of secret message m_1\n"
+              "# Enc:           Regular Encryption time (mili second)\n"
+              "# CondEnc:       Conditional Encryption time (mili second)\n"
+              "# CondDec:       Conditional Decryption time (mili second) No Optimization\n"
+              "# CtxtSize:      Regular Encryption Ciphertext size (Byte)\n"
+              "# CondCtxtSize:  Conditional Encryption Ciphertext size (Byte)\n\n";
+
+        HDL << "T" << "\t"  << "L" << "\t" << "Enc" << "\t" << "CondEnc"<< "\t" << "CondDec" << "\t" << "CtxtSize" << "\t" << "CondCtxtSize\n";
+
+        HDL.close();
+
+        std::ofstream OPTHDL("OPT_HDdataL"+ to_string(j)+  "_T.dat", std::ios_base::app | std::ios_base::out);
+
+        OPTHDL << "# Performance evaluation of Conditional Encryption associated with Hamming Distance in terms of\n "
+              "# T:             MAXHAM distancen\n"
+              "# L:             Maximum lenght of secret message m_1\n"
+              "# Enc:           Regular Encryption time (mili second)\n"
+              "# CondEnc:       Conditional Encryption time (mili second)\n"
+              "# CondDec:       Conditional Decryption time (mili second) Small Field Optimization\n"
+              "# CtxtSize:      Regular Encryption Ciphertext size (Byte)\n"
+              "# CondCtxtSize:  Conditional Encryption Ciphertext size (Byte)\n\n";
+
+        OPTHDL << "T" << "\t"  << "L" << "\t" << "Enc" << "\t" << "CondEnc"<< "\t" << "CondDec" << "\t" << "CtxtSize" << "\t" << "CondCtxtSize\n";
+
+
+        OPTHDL.close();
+    }
+
+
+
+    // HDdataL << "L" << "\t" << "Enc" << "\t" << "CondEnc"<< "\t" << "CondDec" << "\t" << "CtxtSize" << "\t" << "CondCtxtSize\n";
+    // HDdataT << "T" << "\t" << "Enc" << "\t" << "CondEnc"<< "\t" << "CondDec" << "\t" << "CtxtSize" << "\t" << "CondCtxtSize\n";
+
+    EDOnedataL << "# Performance evaluation of Conditional Encryption for Edit Distance at most 1 in terms of\n "
+              "# L:             Maximum lenght of secret message m_1\n"
+              "# Enc:           Regular Encryption time (mili second)\n"
+              "# CondEnc:       Conditional Encryption time (mili second)\n"
+              "# CondDec:       Conditional Decryption time (mili second)\n"
+              "# CtxtSize:      Regular Encryption Ciphertext size (Byte)\n"
+              "# CondCtxtSize:  Conditional Encryption Ciphertext size (Byte)\n\n";
+
+    EDOnedataL << "L" << "\t" << "Enc" << "\t" << "CondEnc"<< "\t" << "CondDec" << "\t" << "CtxtSize" << "\t" << "CondCtxtSize\n";
+
+    CAPSLKdataL << "# Performance evaluation of Conditional Encryption for CAPSLOCK-On Predicate in terms of\n "
+              "# L:             Maximum lenght of secret message m_1\n"
+              "# Enc:           Regular Encryption time (mili second)\n"
+              "# CondEnc:       Conditional Encryption time (mili second)\n"
+              "# CondDec:       Conditional Decryption time (mili second)\n"
+              "# CtxtSize:      Regular Encryption Ciphertext size (Byte)\n"
+              "# CondCtxtSize:  Conditional Encryption Ciphertext size (Byte)\n\n";
+
+    CAPSLKdataL << "L" << "\t" << "Enc" << "\t" << "CondEnc"<< "\t" << "CondDec" << "\t" << "CtxtSize" << "\t" << "CondCtxtSize\n";
+
+    ORdataL << "# Performance evaluation of Conditional Encryption for OR Predicate in terms of\n "
+              "# L:             Maximum lenght of secret message m_1\n"
+              "# Enc:           Regular Encryption time (mili second)\n"
+              "# CondEnc:       Conditional Encryption time (mili second)\n"
+              "# CondDec:       Conditional Decryption time (mili second)\n"
+              "# CtxtSize:      Regular Encryption Ciphertext size (Byte)\n"
+              "# CondCtxtSize:  Conditional Encryption Ciphertext size (Byte)\n\n";
+
+    ORdataL << "L" << "\t" << "Enc" << "\t" << "CondEnc"<< "\t" << "CondDec" << "\t" << "CtxtSize" << "\t" << "CondCtxtSize\n";
+
+    SSdataL << "T" << "\t" << "Recover\n";
+    l++;
+    return l;
 }

@@ -4,7 +4,7 @@
 BINARY_PATH="./tests"
 
 # Arguments to pass to the binary
-ARGUMENTS="CommandLine "
+ARGUMENTS="DataPlotFig1a"
 
 # Run the binary with the arguments
 $BINARY_PATH $ARGUMENTS

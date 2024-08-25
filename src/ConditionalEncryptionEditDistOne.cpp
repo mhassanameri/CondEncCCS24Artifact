@@ -148,7 +148,6 @@ string EditDistOne::CondEnc(paillier_pubkey_t* ppk,
                           string& typo,
                           string& payload,
                           size_t len,
-                          int threshold,
                           char ctx_final[])
 {
     vector<paillier_ciphertext_t *> Ctxt_z(len + 1);//The len should be the actual length of padded typo.
@@ -506,10 +505,8 @@ vector<paillier_ciphertext_t*> EditDistOne::Pail_Parse_Ctx_size_AECtx(paillier_p
 int EditDistOne::CondDec(paillier_pubkey_t* ppk,
                               char* typo_ctx,
                               paillier_prvkey_t* psk,
-                              int threshold,
                               string &recovered,
-                              size_t _len,
-                              size_t ShareSize)
+                              size_t _len)
 {
     int ret = -1;
     vector<paillier_ciphertext_t*> V_ctx_typo( 2 * _len + 1);

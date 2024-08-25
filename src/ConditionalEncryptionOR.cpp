@@ -90,10 +90,10 @@ using namespace std::chrono;
       std::string pad_typo = CryptoSymWrapperFunctions::Wrapper_pad(typo, _len);
 
       string ctx_CPSLKRslt;
-      ctx_CPSLKRslt = CAPLOCKpredicate::CondEnc(ppk, Orig_ctx_pull, typo, payload,_len, threshold,  ctx_final);
+      ctx_CPSLKRslt = CAPLOCKpredicate::CondEnc(ppk, Orig_ctx_pull, typo, payload,  ctx_final);
       cout << "The CapsLOCK Encrypt is Done\n";
       std::string ctx_EDOneRlst;
-      ctx_EDOneRlst= EditDistOne::CondEnc(ppk, Orig_ctx_pull + CAPSLocOrigCtxSize, pad_typo, payload,_len, threshold, ctx_final + CondEncCPSLKCtxSize ); //TODO: make sure that the typo is padded [Impprtant], AND remember: Thershold should be 30,
+      ctx_EDOneRlst= EditDistOne::CondEnc(ppk, Orig_ctx_pull + CAPSLocOrigCtxSize, pad_typo, payload,_len, ctx_final + CondEncCPSLKCtxSize ); //TODO: make sure that the typo is padded [Impprtant], AND remember: Thershold should be 30,
 
       cout << "The EDOne Encrypt is Done\n";
       std::string ctx_HDTowRslt;
@@ -108,8 +108,7 @@ using namespace std::chrono;
                           paillier_prvkey_t* psk,
                           int threshold,
                           string &recovered,
-                          size_t _len,
-                          size_t ShareSize )
+                          size_t _len)
 {
 
 //    int VecSize;
@@ -156,7 +155,7 @@ using namespace std::chrono;
 
 
       cout << "strat to decrypt CAPSLOACK\n";
-     RsltCAPS  = CAPLOCKpredicate::CondDec(ppk, typo_ctx, psk, threshold, RecoverCAPS, _len,ShareSize);
+     RsltCAPS  = CAPLOCKpredicate::CondDec(ppk, typo_ctx, psk, RecoverCAPS);
 
      if (RsltCAPS == 1)
      {
@@ -165,7 +164,7 @@ using namespace std::chrono;
      }
 
       cout << "strat to decrypt EDOne\n";
-    RsltEDOne = EditDistOne::CondDec(ppk, typo_ctx + CondEncCPSLKCtxSize, psk,threshold, RecoverEDOne, _len, ShareSize);
+    RsltEDOne = EditDistOne::CondDec(ppk, typo_ctx + CondEncCPSLKCtxSize, psk, RecoverEDOne, _len);
 
     if (RsltEDOne == 1)
     {
@@ -176,7 +175,7 @@ using namespace std::chrono;
 
     cout << "strat to decrypt HmaDis\n";
     // RsltHDTwo = HamDistTwo::CondDec(ppk, typo_ctx + CondEncCPSLKCtxSize + CondEncEDOneCtxSize, psk,threshold, RecoverHDTwo, _len, ShareSize);
-    RsltHDTwo = HamDistTwo::CondDec(ppk, typo_ctx + CondEncCPSLKCtxSize + CondEncEDOneCtxSize, psk,threshold, RecoverHDTwo, _len, ShareSize);
+    RsltHDTwo = HamDistTwo::CondDec(ppk, typo_ctx + CondEncCPSLKCtxSize + CondEncEDOneCtxSize, psk,threshold, RecoverHDTwo, _len);
 
 
     if (RsltHDTwo == 1)
@@ -200,8 +199,7 @@ using namespace std::chrono;
                                       paillier_prvkey_t* psk,
                                       int threshold,
                                       string &recovered,
-                                      size_t _len,
-                                      size_t ShareSize)
+                                      size_t _len)
  {
 
       size_t AE_CtxtSize = 2 * KEYSIZE_BYTES + _len;
@@ -227,7 +225,7 @@ using namespace std::chrono;
 
 
 
-     RsltCAPS  = CAPLOCKClass->CondDec(ppk, typo_ctx, psk, threshold, RecoverCAPS, _len,ShareSize);
+     RsltCAPS  = CAPLOCKClass->CondDec(ppk, typo_ctx, psk, RecoverCAPS);
 
      if (RsltCAPS == 1)
      {
@@ -236,7 +234,7 @@ using namespace std::chrono;
      }
 
 
-     RsltEDOne = EDOneClass->CondDec(ppk, typo_ctx + CondEncCPSLKCtxSize, psk,threshold, RecoverEDOne, _len, ShareSize);
+     RsltEDOne = EDOneClass->CondDec(ppk, typo_ctx + CondEncCPSLKCtxSize, psk, RecoverEDOne, _len);
 
      if (RsltEDOne == 1)
      {
@@ -245,7 +243,7 @@ using namespace std::chrono;
      }
 
 
-     RsltHDTwo = HamDisTwoClass->CondDec_2dif(ppk, typo_ctx + CondEncCPSLKCtxSize + CondEncEDOneCtxSize, psk,threshold, RecoverHDTwo, _len, ShareSize);
+     RsltHDTwo = HamDisTwoClass->CondDec_2dif(ppk, typo_ctx + CondEncCPSLKCtxSize + CondEncEDOneCtxSize, psk,threshold, RecoverHDTwo, _len);
 
 
      if (RsltHDTwo == 1)

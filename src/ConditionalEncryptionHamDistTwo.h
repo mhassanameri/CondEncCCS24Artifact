@@ -31,7 +31,7 @@ using CryptoPP::HMAC;
 #include "base64.h"
 using CryptoPP::Base64URLEncoder;
 using CryptoPP::Base64URLDecoder;
-
+const size_t SSShareSize = 28; //Indicating the secret sharing size;
 /*
  * Class description:
  *          Conditional Encryption for Hamming Distance Two Predicate Using Shamir Secret Sharing
@@ -40,6 +40,8 @@ using CryptoPP::Base64URLDecoder;
 class HamDistTwo {
 
 public:
+
+
 
     /* API Documentation
 	 * Algorithm description: Raw encryption scheme which uses the traditional encryption schemes (here we use Partially
@@ -117,32 +119,28 @@ public:
                         paillier_prvkey_t* psk,
                         int threshold,
                         string &recovered,
-                        size_t _len,
-                        size_t ShareSize);
+                        size_t _len);
 
     static int CondDec_NonSmallFieldCheck(paillier_pubkey_t* ppk,
                         char typo_ctx [],
                         paillier_prvkey_t* psk,
                         int threshold,
                         string &recovered,
-                        size_t _len,
-                        size_t ShareSize);
+                        size_t _len);
 
     static int CondDec_NewOPT(paillier_pubkey_t* ppk,
                         char typo_ctx [],
                         paillier_prvkey_t* psk,
                         int threshold,
                         string &recovered,
-                        size_t _len,
-                        size_t ShareSize);
+                        size_t _len);
 
     static int CondDec_2dif(paillier_pubkey_t* ppk,
                               char typo_ctx [],
                               paillier_prvkey_t* psk,
                               int threshold,
                               string &recovered,
-                              size_t _len,
-                              size_t ShareSize);
+                              size_t _len);
 
     static int CondDec_Optimized(paillier_pubkey_t* ppk,
                                       char typo_ctx [],
@@ -150,7 +148,6 @@ public:
                                       int threshold,
                                       string &recovered,
                                       size_t _len,
-                                      size_t ShareSize,
                                       size_t l_m);
 
 

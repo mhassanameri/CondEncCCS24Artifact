@@ -58,8 +58,6 @@ public:
                        char RlPwd_ctx_pull[],
                        string& m1,
                        string& m2,
-                       size_t _len,
-                       int threshold,
                        char ctx_final[]);
 
     /* API Documenation should specify
@@ -74,10 +72,7 @@ public:
     static int CondDec( paillier_pubkey_t* ppk,
                          char* typo_ctx,
                          paillier_prvkey_t* psk,
-                         int threshold,
-                         string &recovered,
-                         size_t _len,
-                         size_t ShareSize);
+                         string &recovered);
 
 	static int RegDec(paillier_pubkey_t* ppk,
 						 char typo_ctx[],

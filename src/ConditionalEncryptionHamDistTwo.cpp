@@ -441,20 +441,20 @@ string HamDistTwo::CondEnc(paillier_pubkey_t* ppk,
                                char ctx_final[])
 {
 
-    string seed = CryptoPP::IntToString(time(NULL));
-    seed.resize(16, ' ');
-    CryptoPP::RandomPool rng;
-    rng.IncorporateEntropy((CryptoPP::byte*)seed.data(), strlen(seed.data()));
-    int shares = _len;
-    const unsigned int CHID_LENGTH = 4;
-    bool fail, pass;
-    string cipherText, encoded;
+     string seed = CryptoPP::IntToString(time(NULL));
+     seed.resize(AES::DEFAULT_KEYLENGTH, ' '); //The defualt key length is 16
+     CryptoPP::RandomPool rng;
+     rng.IncorporateEntropy((CryptoPP::byte*)seed.data(), strlen(seed.data()));
+     int shares = _len;
+     const unsigned int CHID_LENGTH = 4;
+     bool fail, pass;
+     string cipherText, encoded;
 
     // size_t AECtxSize = 24; // for 128  bit, the output is 192 bit as the size of the EncryptedKey.
-    size_t AECtxSize = 2 * KEYSIZE_BYTES + payload.size();
+     size_t AECtxSize = 2 * KEYSIZE_BYTES + payload.size();
 
      size_t Ctxt_Vec_size =_len; //1 for the numeber of elemements, 2 for the AE and its lenght, and 2 * _len PaillerCtxt samples
-    size_t Ctxt_Byte_size =  PAILLIER_BITS_TO_BYTES(ppk->bits)*2;
+     size_t Ctxt_Byte_size =  PAILLIER_BITS_TO_BYTES(ppk->bits)*2;
      memcpy(ctx_final, &Ctxt_Vec_size, sizeof(size_t));
      memcpy(ctx_final + sizeof(size_t), &AECtxSize, sizeof(size_t));
      memcpy(ctx_final + 2 * sizeof(size_t), &Ctxt_Byte_size, sizeof(size_t));
@@ -477,17 +477,16 @@ string HamDistTwo::CondEnc(paillier_pubkey_t* ppk,
      delete[] EncrypteKey;
 
 
-    size_t ShareSize = 28; //TODO: make sure to find the properp place to consider as the input of the function
-
-    string msg = CryptoSymWrapperFunctions::Wrapper_pad(typo,_len); //orig_typo TODO: make sure the correct input is added here perviously was orig_typo extract from encoded typo. It should be handled outside this fubnction
-    vector<paillier_ciphertext_t*> vctx(_len);
-    vector<paillier_ciphertext_t*> vctx1(_len); //Used for encrypting the chars of typo.
-    vector<paillier_ciphertext_t*> vctx_Shrs(_len);
+     size_t ShareSize = SSShareSize;
+     string msg = CryptoSymWrapperFunctions::Wrapper_pad(typo,_len); //orig_typo TODO: make sure the correct input is added here perviously was orig_typo extract from encoded typo. It should be handled outside this fubnction
+     vector<paillier_ciphertext_t*> vctx(_len);
+     vector<paillier_ciphertext_t*> vctx1(_len); //Used for encrypting the chars of typo.
+     vector<paillier_ciphertext_t*> vctx_Shrs(_len);
 //    vector<paillier_ciphertext_t *> V_ctx_typo(_len);
-    int VecSize;
-    string Ctxt_0;
+     int VecSize;
+     string Ctxt_0;
 
-    vctx = PaillerWrapperFunctions::Pail_Parse_Ctx_size(ppk, RlPwd_ctx_pull); // Extracting the ctxt of each char of the original meesage using the parsing function desined in Paillier Wrapper functions.
+     vctx = PaillerWrapperFunctions::Pail_Parse_Ctx_size(ppk, RlPwd_ctx_pull); // Extracting the ctxt of each char of the original meesage using the parsing function desined in Paillier Wrapper functions.
 
      vctx1 = PaillerWrapperFunctions::Enc_Vec_Typo(msg, ppk);
 
@@ -824,8 +823,7 @@ int HamDistTwo::CondDec_NonSmallFieldCheck(paillier_pubkey_t* ppk,
                               paillier_prvkey_t* psk,
                               int threshold,
                               string &recovered,
-                              size_t _len,
-                              size_t ShareSize)
+                              size_t _len)
 {
     int ret =0;
     string CtxAE;
@@ -844,9 +842,8 @@ int HamDistTwo::CondDec_NonSmallFieldCheck(paillier_pubkey_t* ppk,
 
     mpz_t P_GF;
     mpz_init(P_GF);
-    size_t ShareStreamSizer = ShareSize;
-//        ShareStreamSizer = strShares[0].size();
-    int max_power_int = (ShareStreamSizer * 8) + 1;
+     size_t ShareSize =  SSShareSize;
+    int max_power_int = (ShareSize * 8) + 1;
     mpz_ui_pow_ui(P_GF, 2, max_power_int);
     mpz_sub_ui(P_GF, P_GF, 1); // computing the value of P_GF based on the size of the input value.
     void* ByteDec;
@@ -927,16 +924,15 @@ int HamDistTwo::CondDec(paillier_pubkey_t* ppk,
                               paillier_prvkey_t* psk,
                               int threshold,
                               string &recovered,
-                              size_t _len,
-                              size_t ShareSize)
+                              size_t _len)
 {
-    int ret =0;
-    string CtxAE;
-    vector<paillier_ciphertext_t*> V_ctx_typo(_len);
-    int pars_rslt =0;
+     int ret =0;
+     string CtxAE;
+     vector<paillier_ciphertext_t*> V_ctx_typo(_len);
+     int pars_rslt =0;
 
 
-    pars_rslt = HamDistTwo::Pail_Parse_Ctx_size_AECtx2(ppk, typo_ctx, CtxAE, V_ctx_typo );
+     pars_rslt = HamDistTwo::Pail_Parse_Ctx_size_AECtx2(ppk, typo_ctx, CtxAE, V_ctx_typo );
 //    std::string CtxAE;
 //    CtxAE = CtxAE2;
 //    memcpy(&CtxAE, &CtxAE2, 24);
@@ -944,22 +940,21 @@ int HamDistTwo::CondDec(paillier_pubkey_t* ppk,
 //    CtxAE2.clear();
 //    memcpy(&CtxAE, &CtxAE2[0], CtxAE2.size() );
 
-    vector<string> strShares_Zero(_len);
-    vector<string> strShares_Main(_len);
-    paillier_plaintext_t* dec;
-    const unsigned int CHID_LENGTH = 4;
+     vector<string> strShares_Zero(_len);
+     vector<string> strShares_Main(_len);
+     paillier_plaintext_t* dec;
+     const unsigned int CHID_LENGTH = 4;
 
 
-    mpz_t P_GF;
-    mpz_init(P_GF);
-    size_t ShareStreamSizer = ShareSize;
-//        ShareStreamSizer = strShares[0].size();
-    int max_power_int = (ShareStreamSizer * 8) + 1;
-    mpz_ui_pow_ui(P_GF, 2, max_power_int);
-    mpz_sub_ui(P_GF, P_GF, 1); // computing the value of P_GF based on the size of the input value.
-    void* ByteDec;
-    for  (int j = 0; j <_len; j++)
-    {
+     mpz_t P_GF;
+     mpz_init(P_GF);
+     size_t ShareSize = SSShareSize;
+     int max_power_int = (ShareSize * 8) + 1;
+     mpz_ui_pow_ui(P_GF, 2, max_power_int);
+     mpz_sub_ui(P_GF, P_GF, 1); // computing the value of P_GF based on the size of the input value.
+     void* ByteDec;
+     for  (int j = 0; j <_len; j++)
+     {
         dec = paillier_dec(NULL, ppk, psk, V_ctx_typo[j]);
         mpz_mod(dec->m, dec->m, P_GF); // The DRand function which transfers which cancelouts the term a_i * GF_P which was added previously.
         //Jsut now we need to export the mpz_t element to byte stream which are elements of the secret sharing scheme.
@@ -981,7 +976,7 @@ int HamDistTwo::CondDec(paillier_pubkey_t* ppk,
         paillier_freeplaintext(dec);
 //        paillier_freeciphertext(V_ctx_typo[j]);
 
-    }
+     }
 
 
 
@@ -995,60 +990,6 @@ int HamDistTwo::CondDec(paillier_pubkey_t* ppk,
     v = HamDistTwo::GnereateVectorOfIntegeres(_len);
     rsltRcVr = HamDistTwo::generatesubsets(strShares_Main, strShares_Zero,  CtxAE, MainRecoveredSecret,
                                            plaintext_rcv, v,0,threshold, Valid_selected, ValidSelected);
-
-//    if(_len == 8)
-//    {
-//        vector<int> v{0, 1, 2, 3, 4, 5, 6, 7};
-//        rsltRcVr = HamDistTwo::generatesubsets(strShares_Main, strShares_Zero,  CtxAE, MainRecoverShare,
-//                                               plaintext_rcv, v,0,threshold, Valid_selected);
-//    } else if(_len ==16)
-//    {
-//        vector<int> v{0, 1, 2, 3, 4, 5, 6, 7,
-//                      8, 9, 10, 11, 12, 13, 14, 15};
-//        rsltRcVr = HamDistTwo::generatesubsets(strShares_Main, strShares_Zero,  CtxAE, MainRecoverShare,
-//                                               plaintext_rcv, v,0,threshold, Valid_selected);
-//    } else if(_len  == 32)
-//    {
-//        vector<int> v{0, 1, 2, 3, 4, 5, 6, 7,
-//                      8, 9, 10, 11, 12, 13, 14, 15,
-//                      16, 17, 18, 19, 20, 21, 22, 23,
-//                      24, 25, 26, 27, 28, 29, 30, 31};
-//        rsltRcVr = HamDistTwo::generatesubsets(strShares_Main, strShares_Zero,  CtxAE, MainRecoverShare,
-//                                               plaintext_rcv, v,0,threshold, Valid_selected);
-//    } else if(_len  == 64)
-//    {
-//        vector<int> v{0, 1, 2, 3, 4, 5, 6, 7,
-//                      8, 9, 10, 11, 12, 13, 14, 15,
-//                      16, 17, 18, 19 ,20, 21, 22, 23,
-//                      24, 25, 26 ,27, 28, 29, 30, 31,
-//                      32, 33, 34, 35, 36, 37, 38, 39,
-//                      40, 41, 42, 43, 44, 45, 46, 47,
-//                      48, 49, 50, 51, 52, 53, 54, 55,
-//                      56, 57, 58, 59, 60, 61, 62, 63};
-//        rsltRcVr = HamDistTwo::generatesubsets(strShares_Main, strShares_Zero,  CtxAE, MainRecoverShare,
-//                                               plaintext_rcv, v,0,threshold, Valid_selected);
-//    }else if(_len == 128)
-//    {
-//        vector<int> v{0, 1, 2, 3, 4, 5, 6, 7,
-//                      8, 9, 10, 11, 12, 13, 14, 15,
-//                      16, 17, 18, 19 ,20, 21, 22, 23,
-//                      24, 25, 26 ,27, 28, 29, 30, 31,
-//                      32, 33, 34, 35, 36, 37, 38, 39,
-//                      40, 41, 42, 43, 44, 45, 46, 47,
-//                      48, 49, 50, 51, 52, 53, 54, 55,
-//                      56, 57, 58, 59, 60, 61, 62, 63,
-//                      64, 65, 66, 67, 68, 69, 70, 71,
-//                      72, 73, 74, 75, 76, 77, 78, 79,
-//                      80, 81, 82, 83, 84, 85, 86, 87,
-//                      88, 89, 90, 91, 92, 93, 94, 95,
-//                      96, 97, 98, 99, 100, 101, 102, 103,
-//                      104, 105, 106, 107, 108, 109, 110, 111,
-//                      112, 113, 114, 115, 116, 117, 118, 119,
-//                      120, 121, 122, 123, 124, 125, 126, 127};
-//        rsltRcVr = HamDistTwo::generatesubsets(strShares_Main, strShares_Zero,  CtxAE, MainRecoverShare,
-//                                               plaintext_rcv, v,0,threshold, Valid_selected);
-//    }
-
 
 
 //    string ciphertext_rcv;
@@ -1091,8 +1032,7 @@ int HamDistTwo::CondDec_2dif(paillier_pubkey_t* ppk,
                               paillier_prvkey_t* psk,
                               int threshold,
                               string &recovered,
-                              size_t _len,
-                              size_t ShareSize)
+                              size_t _len)
  {
      int ret =0;
      string CtxAE;
@@ -1110,9 +1050,9 @@ int HamDistTwo::CondDec_2dif(paillier_pubkey_t* ppk,
 
      mpz_t P_GF;
      mpz_init(P_GF);
-     size_t ShareStreamSizer = ShareSize;
-     //        ShareStreamSizer = strShares[0].size();
-     int max_power_int = (ShareStreamSizer * 8) + 1;
+     size_t ShareSize = SSShareSize;
+
+     int max_power_int = (ShareSize * 8) + 1;
      mpz_ui_pow_ui(P_GF, 2, max_power_int);
      mpz_sub_ui(P_GF, P_GF, 1); // computing the value of P_GF based on the size of the input value.
      void* ByteDec;
@@ -1231,14 +1171,13 @@ int HamDistTwo::CondDec_NewOPT(paillier_pubkey_t* ppk,
                               paillier_prvkey_t* psk,
                               int threshold,
                               string &recovered,
-                              size_t _len,
-                              size_t ShareSize)
+                              size_t _len)
  {
      int ret  = -1;
      size_t max_num_typos =  _len-threshold;
      for(size_t k = max_num_typos - 1; k< _len-1; k++ )
      {
-         auto CondDecOut = HamDistTwo::CondDec_Optimized(ppk, typo_ctx, psk, threshold , recovered, _len, ShareSize, k);
+         auto CondDecOut = HamDistTwo::CondDec_Optimized(ppk, typo_ctx, psk, threshold , recovered, _len, k);
          if (CondDecOut == 1)
          {
              return ret =1;
@@ -1259,7 +1198,6 @@ int HamDistTwo::CondDec_Optimized(paillier_pubkey_t* ppk,
                         int threshold,
                         string &recovered,
                         size_t _len,
-                        size_t ShareSize,
                         size_t l_m)
 {
     int ret =0;
@@ -1275,8 +1213,8 @@ int HamDistTwo::CondDec_Optimized(paillier_pubkey_t* ppk,
 
     mpz_t P_GF;
     mpz_init(P_GF);
-    size_t ShareStreamSizer = ShareSize;
-    int max_power_int = (ShareStreamSizer * 8) + 1;
+    size_t ShareSize = SSShareSize;
+    int max_power_int = (ShareSize * 8) + 1;
     mpz_ui_pow_ui(P_GF, 2, max_power_int);
     mpz_sub_ui(P_GF, P_GF, 1); // computing the value of P_GF based on the size of the input value.
     void* ByteDec;

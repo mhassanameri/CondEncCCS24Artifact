@@ -13,7 +13,7 @@ include_directories(${GMP_INCLUDE_DIRS})
 
 set(TEST_SRCS test-main.cpp testCondEncEvaluation.cpp testCondEncEvaluation.h
         ../paillier/pailliercpp.cpp ../paillier/pailliercpp.h
-#        set(TEST_SRCS test-main.cpp test_pw_crypto.cpp test_install.cpp
+        #        set(TEST_SRCS test-main.cpp test_pw_crypto.cpp test_install.cpp
 #        set(TEST_SRCS testCondEncEvaluation.cpp testCondEncEvaluation.h
 #        ../src/PaillierWrapperFunctions.cpp ../src/PaillierWrapperFunctions.h
 #        ../src/ConditionalEncryptionHamDistTwo.cpp ../src/ConditionalEncryptionHamDistTwo.h
@@ -43,7 +43,7 @@ add_executable(tests ${TEST_SRCS}
 #        ../paillier/pailliercpp.cpp ../paillier/pailliercpp.h
 #        ../src/PK_crypto.cpp ../src/PK_crypto.h
         testCondEncEvaluation.cpp testCondEncEvaluation.h
-        )
+)
 
 #set(Protobuf_PREFIX_PATH
 #        "/homes/mameriek/protobuf/usr/local/include"

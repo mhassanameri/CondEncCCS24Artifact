@@ -6,7 +6,8 @@
 /*
  * In this document we will provide and extensive performance evaluation
  * of our suggested conditional encryption schemes designed for different
- * binary predicates.
+ * binary predicates like: CAPSLOCK on, Edit distance at most one, Hamming Distance (at most 1, 2, 3 and 4) and OR of
+ * (CAPSLOCK, Edit distance at most one, Hamming distance at most 2).
  *
  * */
 
@@ -58,74 +59,134 @@
 using namespace std::chrono;
 using std::vector;
 
+int GenerateBlankDataFilesToStorEvaluationResults(int l);
+int GenerateDataForPlottingFig1a(int Num_tests);
+
 string random_msg() {
     SecByteBlock s(32);
     PRNG.GenerateBlock(s.data(), s.size());
     return string(s.begin(), s.end());
 }
 
-TEST_CASE("Generating Raw data files for storing the extracted data after testing")
+
+
+TEST_CASE("GenerateBlankDatFiles")
 {
 
-    std::ofstream HDdataL("HDdataL.dat", std::ios_base::app | std::ios_base::out);
-    std::ofstream HDdataT("HDdataT.dat", std::ios_base::app | std::ios_base::out);
-    std::ofstream EDOnedataL("EDOnedataL.dat", std::ios_base::app | std::ios_base::out);
-    std::ofstream CAPSLKdataL("CAPSLKdataL.dat", std::ios_base::app | std::ios_base::out);
-    std::ofstream ORdataL("ORdataL.dat", std::ios_base::app | std::ios_base::out);
-    std::ofstream SSdataL("SecretSharing.dat", std::ios_base::app | std::ios_base::out);
+    int Result =0;
+    Result  = GenerateBlankDataFilesToStorEvaluationResults(0);
 
-
-    HDdataL << "L" << "\t" << "Enc" << "\t" << "CondEnc"<< "\t" << "CondDec" << "\t" << "CtxtSize" << "\t" << "CondCtxtSize\n";
-    HDdataT << "T" << "\t" << "Enc" << "\t" << "CondEnc"<< "\t" << "CondDec" << "\t" << "CtxtSize" << "\t" << "CondCtxtSize\n";
-    EDOnedataL << "L" << "\t" << "Enc" << "\t" << "CondEnc"<< "\t" << "CondDec" << "\t" << "CtxtSize" << "\t" << "CondCtxtSize\n";
-    CAPSLKdataL << "L" << "\t" << "Enc" << "\t" << "CondEnc"<< "\t" << "CondDec" << "\t" << "CtxtSize" << "\t" << "CondCtxtSize\n";
-    ORdataL << "L" << "\t" << "Enc" << "\t" << "CondEnc"<< "\t" << "CondDec" << "\t" << "CtxtSize" << "\t" << "CondCtxtSize\n";
-    SSdataL << "T" << "\t" << "Recover\n";
 }
 
 
 string SelectRandPwd();
 
+/*
+ * This function takes as input the FileName containing the set of passwords and their corresponding typos and load
+ * them to an array which will be used as the inputs of the functions testing conditional encryption.
+ *
+ */
 std::vector<std::pair<std::string, std::string>> LoadPWDvsTypoForTEST(const std::string& FileName);
 
-//We note that the AE_CtxtSize =24 and the SizeShare = 28;
-int testCondEncHamDist(int n_lambda, int Num_tests, size_t _len, int Threshold, size_t AE_CtxtSize1, size_t SizeShare);
+/*
+ * "testCondEncHamDist":
+ * This function Evaluates Conditional Encryption performance which is associated to the Hamming distance.
+ * Conditional Decryption applies the small Field Optimization.
+ * It takes as input:
+ *  n_lambda: the public key size  [e.g., 1024, 2048, 3072 bits modulus]
+ *  Num_tests: Number of times that we performed Conditional encryption (Enc, CondEnc, CondDec)
+ *  _len: The upper bound of the input secret message length (m_1) [e.g., 8, 16, 32, 64, 128 characters]
+ *  MaxHam Distance: The maximum allowed Hamming distance of the control message: [0, 1, 2, 3, 4]
+ *
+ */
+int testCondEncHamDist(int n_lambda, int Num_tests, size_t _len, int MaxHam);
 
-int testCondEncEDist(int n_lambda,  int Num_tests, size_t _len, int Threshold, size_t AE_CtxtSize, int NumOfErrs);
-int testCondEncOR(int n_lambda, int Num_tests, size_t _len, int Threshold, size_t AE_CtxtSize, size_t SizeShare);
+/*
+ * "testCondEncHamDist_NonOPT":
+ * This function Evaluates Conditional Encryption performance which is associated to the Hamming distance.
+ * Conditional Decryption is done without any optimization.
+ * It takes as input:
+ *  n_lambda: the public key size  [e.g., 1024, 2048, 3072 bits modulus]
+ *  Num_tests: Number of times that we performed Conditional encryption (Enc, CondEnc, CondDec)
+ *  _len: The upper bound of the input secret message length (m_1) [e.g., 8, 16, 32, 64, 128 characters]
+ *  MaxHam Distance: The maximum allowed Hamming distance of the control message: [0, 1, 2, 3, 4]
+ *
+ */
+int testCondEncHamDist_NonOPT(int n_lambda, int Num_tests, size_t _len, int MaxHam);
 
-int testCondEncCAPSLOCK(int n_lambda, int Num_tests, size_t _len, int Threshold, size_t AE_CtxtSize1, size_t SizeShare);
+
+/*
+ * "testCondEncEDist":
+ * This function Evaluates Conditional Encryption performance designed for the Edit distance at most one predicate.
+ * It takes as input:
+ *  n_lambda: the public key size  [e.g., 1024, 2048, 3072 bits modulus]
+ *  Num_tests: Number of times that we performed Conditional encryption (Enc, CondEnc, CondDec)
+ *  _len: The upper bound of the input secret message length (m_1) [e.g., 8, 16, 32, 64, 128 characters]
+ *  MaxHam Distance: The maximum allowed Hamming distance of the control message: [0, 1, 2, 3, 4]
+ *
+ */
+int testCondEncEDist(int n_lambda,  int Num_tests, size_t _len);
 
 
-inline int main_test(string argv[] )
+/*
+ * "testCondEncOR":
+ * This function Evaluates Conditional Encryption performance designed for the OR (OR of CAPSLOCK,  Hamming Distance at
+ * most two, Edit distance at most one) predicate.
+ * It takes as input:
+ *  n_lambda: the public key size  [e.g., 1024, 2048, 3072 bits modulus]
+ *  Num_tests: Number of times that we performed Conditional encryption (Enc, CondEnc, CondDec)
+ *  _len: The upper bound of the input secret message length (m_1) [e.g., 8, 16, 32, 64, 128 characters]
+ *  MaxHam Distance: The maximum allowed Hamming distance of the control message: [MaxHam =2  for our OR predicate]
+ *
+ */
+int testCondEncOR(int n_lambda, int Num_tests, size_t _len, int MaxHam);
+
+
+/*
+ * "testCondEncCAPSLOCK":
+ * This function Evaluates Conditional Encryption preformance designed for the CAPSLOCK ON predicate.
+ * It takes as input:
+ *  n_lambda: the public key size  [e.g., 1024, 2048, 3072 bits modulus]
+ *  Num_tests: Number of times that we performed Conditional encryption (Enc, CondEnc, CondDec)
+ *  _len: The upper bound of the input secret message length (m_1) [e.g., 8, 16, 32, 64, 128 characters]
+ *
+ */
+int testCondEncCAPSLOCK(int n_lambda, int Num_tests, size_t _len);
+
+
+
+
+inline int DataForPlottingFigure1a(string argv[] )
 {
 
 
     if(argv[0] == "PlotFig1a")
     {
 
-        auto r16_1 = testCondEncHamDist(1024, 300, 16, 15, 24, 28);
-        auto r16_2 = testCondEncHamDist(1024, 300, 16, 14, 24, 28);
-        auto r16_3 = testCondEncHamDist(1024, 100, 16, 13, 24, 28);
-        auto r16_4 =testCondEncHamDist(1024, 50, 16, 12, 24, 28);
 
-        auto r32_1 = testCondEncHamDist(1024, 300, 32, 31, 24, 28);
-        auto r32_2 = testCondEncHamDist(1024, 300, 32, 30, 24, 28);
-        auto r32_3 = testCondEncHamDist(1024, 100, 32, 29, 24, 28);
-        auto r32_4 =testCondEncHamDist(1024, 50, 32, 28, 24, 28);
+        auto r16_1 = testCondEncHamDist(1024, 300, 16, 15);
+        auto r16_2 = testCondEncHamDist(1024, 300, 16, 14);
+        auto r16_3 = testCondEncHamDist(1024, 100, 16, 13);
+        auto r16_4 = testCondEncHamDist(1024, 50, 16, 12);
 
-        auto r64_1 = testCondEncHamDist(2048, 100, 64, 63, 24, 28);
-        auto r64_2 = testCondEncHamDist(2048, 100, 64, 62, 24, 28);
-        auto r64_3 = testCondEncHamDist(2048, 25, 64, 61, 24, 28);
-        auto r64_4 = testCondEncHamDist(2048, 5, 64, 60, 24, 28);
+        auto r32_1 = testCondEncHamDist(1024, 300, 32, 31);
+        auto r32_2 = testCondEncHamDist(1024, 300, 32, 30);
+        auto r32_3 = testCondEncHamDist(1024, 100, 32, 29);
+        auto r32_4 = testCondEncHamDist(1024, 50, 32, 28);
 
-        auto r128_1 = testCondEncHamDist(3072, 3, 128, 127, 24, 28);
-        auto r128_2 = testCondEncHamDist(3072, 1, 128, 126, 24, 28);
-        auto r128_3 = testCondEncHamDist(3072, 1, 128, 125, 24, 28);
-        auto r128_4 = testCondEncHamDist(3072, 10, 128, 124, 24, 28);
+        auto r64_1 = testCondEncHamDist(2048, 100, 64, 63);
+        auto r64_2 = testCondEncHamDist(2048, 100, 64, 62);
+        auto r64_3 = testCondEncHamDist(2048, 25, 64, 61);
+        auto r64_4 = testCondEncHamDist(2048, 5, 64, 60);
+
+        auto r128_1 = testCondEncHamDist(3072, 3, 128, 127);
+        auto r128_2 = testCondEncHamDist(3072, 1, 128, 126);
+        auto r128_3 = testCondEncHamDist(3072, 1, 128, 125);
+        auto r128_4 = testCondEncHamDist(3072, 10, 128, 124);
+
+
 
     }
-
 
     return 1;
 }
@@ -141,10 +202,21 @@ TEST_CASE("CommandLine")
     // std::cout << "Please enter Num_tests (for full text the value is 1000): ";
     // std::cin >> input[2];
     // std::cout << "Please enter maximum length of secret message (_len) [8, 16, 32, 64, 128]";
-    auto r = main_test(input);
+
+
+    auto r = DataForPlottingFigure1a(input);
 
 }
 
+
+TEST_CASE("DataPlotFig1a")
+{
+
+
+    auto r_test =  GenerateDataForPlottingFig1a(1);
+
+
+}
 
 TEST_CASE("Loading test data")
 {
@@ -234,7 +306,7 @@ TEST_CASE("OR predicate" )
     // auto rsltOr127 =testCondEncOR(3072, 50, 128, 126, 24, 28);
 }
 
-TEST_CASE("Tabke One Comparing All OPT vs No OPT when Predicate is holding" )
+TEST_CASE("Table One Comparing All OPT vs No OPT when Predicate is holding" )
 {
     // std::ofstream ORdataL("Table1.dat", std::ios_base::app | std::ios_base::out);
     // ORdataL << "L(SecondOPT)" << "\t" << "Enc" << "\t" << "CondEnc"<< "\t" << "CondDec" << "\t" << "CtxtSize" << "\t" << "CondCtxtSize\n";

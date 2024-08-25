@@ -56,9 +56,9 @@ set(CONDENCCPP_SRCS  ${CONDENCCPP_SRCS} ${CONDENCCPP_HDRS}  ${PROTO_SRCS} ${PROT
         ConditionalEncryptionEditDistOne.cpp ConditionalEncryptionEditDistOne.h
         ConditionalEncryptionHamDistTwo.cpp ConditionalEncryptionHamDistTwo.h
         ConditionalEncryptionCAPSLOCK.cpp ConditionalEncryptionCAPSLOCK.h
-        ConditionalEncryptionOR.cpp ConditionalEncryptionOR.h
+        ConditionalEncryptionOR.cpp
 
-        )
+)
 
 message(STATUS ">>>> ${CONDENCCPP_SRCS}")
 
@@ -78,7 +78,7 @@ add_executable(condenccpp main.cpp
         #        conditionalcrypto.h
         ConditionalEncryptionEditDistOne.cpp ConditionalEncryptionEditDistOne.h
         ConditionalEncryptionHamDistTwo.cpp ConditionalEncryptionHamDistTwo.h
-        ConditionalEncryptionOR.cpp ConditionalEncryptionOR.h
+        ConditionalEncryptionOR.cpp
         ConditionalEncryptionCAPSLOCK.cpp ConditionalEncryptionCAPSLOCK.h
         )  # Not sure why we have win32
 

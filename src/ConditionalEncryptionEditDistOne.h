@@ -88,7 +88,6 @@ public:
                               string& typo,
                               string& payload,
                               size_t _len,
-                              int threshold,
                                char ctx_final[]);
 
 
@@ -117,10 +116,8 @@ public:
     static int CondDec(paillier_pubkey_t* ppk,
                              char* typo_ctx,
                              paillier_prvkey_t* psk,
-                             int threshold,
                              string &recovered,
-                             size_t _len,
-                             size_t ShareSize);
+                             size_t _len);
 
 };
 #endif //CONDENCCPP_CONDITIONALENCRYPTIONEDITDISTONE_H
