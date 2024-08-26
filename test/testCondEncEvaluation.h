@@ -69,7 +69,11 @@ string random_msg() {
 }
 
 
-
+/*
+ * Executing this test case will generate and initilize the .dat files which store the performance evaluation
+ * results like average time for regular encryption, Conditional Encryption and Condtiontional decryption as well as
+ * the regular and conditional encryption ciphertext size.
+ * */
 TEST_CASE("GenerateBlankDatFiles")
 {
 
@@ -156,30 +160,34 @@ int testCondEncCAPSLOCK(int n_lambda, int Num_tests, size_t _len);
 
 
 
-inline int DataForPlottingFigure1a(string argv[] )
+inline int DataForPlottingFigure1(string argv[] )
 {
 
 
     if(argv[0] == "PlotFig1a")
     {
-
-
         // auto r16_1 = testCondEncHamDist(1024, 300, 16, 1);
         // auto OR_32 = testCondEncOR(1024, 100, 32, 30);
-
+    }
+    else if(argv[0] == "PlotFig1aNo128")
+    {
 
     }
 
     return 1;
 }
 
-TEST_CASE("CommandLine")
+TEST_CASE("ArtifactCCS24")
 {
-    std::string input[6];
+    std::string input[4];
     std::ifstream inputFile("input.txt"); // Open the file "input.txt"
-    inputFile >> input[0];
+    inputFile >> input[0]; //put the first line as the first argument
+    inputFile >> input[1]; //put the second line as the second argument and the same for 2 and 3
+    inputFile >> input[2];
+    inputFile >> input[3];
 
-    // std::cout << "Please enter your input [PlotFig1a, PlotFig1b]: ";
+
+// std::cout << "Please enter your input [PlotFig1a, PlotFig1b]: ";
     // std::cin >> input[0];
     // std::cout << "Please enter n_lambda which indicates the public key size [1024, 2048, 3072]: ";
     // std::cin >> input[1];
