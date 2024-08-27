@@ -45,7 +45,7 @@
 #include "PaillierWrapperFunctions.h"
 #include "CryptoSymWrapperFunctions.h"
 
-#include "ConditionalEncryptionHamDistTwo.h"
+#include "ConditionalEncryptionHamDistAtmostT.h"
 #include "ConditionalEncryptionOR.h"
 #include "ConditionalEncryptionCAPSLOCK.h"
 #include "ConditionalEncryptionEditDistOne.h"
@@ -166,12 +166,13 @@ inline int DataForPlottingFigure1(string argv[] )
 
     if(argv[0] == "PlotFig1a")
     {
+        cout << argv[1] <<  "\n" + argv[2] + "\n" + argv[3] + "\n" + argv[4]+ "\n" << endl;
         // auto r16_1 = testCondEncHamDist(1024, 300, 16, 1);
         // auto OR_32 = testCondEncOR(1024, 100, 32, 30);
     }
     else if(argv[0] == "PlotFig1aNo128")
     {
-
+        cout << argv[0];
     }
 
     return 1;
@@ -196,7 +197,7 @@ TEST_CASE("ArtifactCCS24")
     // std::cout << "Please enter maximum length of secret message (_len) [8, 16, 32, 64, 128]";
 
 
-    // auto r = DataForPlottingFigure1a(input);
+    auto r = DataForPlottingFigure1(input);
 
 }
 

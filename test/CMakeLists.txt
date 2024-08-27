@@ -16,7 +16,7 @@ set(TEST_SRCS test-main.cpp testCondEncEvaluation.cpp testCondEncEvaluation.h
         #        set(TEST_SRCS test-main.cpp test_pw_crypto.cpp test_install.cpp
 #        set(TEST_SRCS testCondEncEvaluation.cpp testCondEncEvaluation.h
 #        ../src/PaillierWrapperFunctions.cpp ../src/PaillierWrapperFunctions.h
-#        ../src/ConditionalEncryptionHamDistTwo.cpp ../src/ConditionalEncryptionHamDistTwo.h
+#        ../src/ConditionalEncryptionHamDistAtmostT.cpp ../src/ConditionalEncryptionHamDistAtmostT.h
 #        ../src/ConditionalEncryptionEditDistOne.cpp ../src/ConditionalEncryptionEditDistOne.h
 #        ../src/CryptoSymWrapperFunctions.cpp ../src/CryptoSymWrapperFunctions.h
 #        ../src/conditionalcrypto.h
@@ -35,7 +35,7 @@ add_executable(tests ${TEST_SRCS}
 #        ../src/CryptoSymWrapperFunctions.cpp ../src/CryptoSymWrapperFunctions.h
 #        ../src/PaillierWrapperFunctions.cpp ../src/PaillierWrapperFunctions.h
 #        ../src/ConditionalEncryptionEditDistOne.cpp ../src/ConditionalEncryptionEditDistOne.h
-#        ../src/ConditionalEncryptionHamDistTwo.cpp ../src/ConditionalEncryptionHamDistTwo.h
+#        ../src/ConditionalEncryptionHamDistAtmostT.cpp ../src/ConditionalEncryptionHamDistAtmostT.h
 #        ../src/ConditionalEncryptionOR.cpp ../src/ConditionalEncryptionOR.h
 #        ../src/conditionalcrypto.h
 #        ../src/ConditionalEncryptionCAPSLOCK.cpp ../src/ConditionalEncryptionCAPSLOCK.h

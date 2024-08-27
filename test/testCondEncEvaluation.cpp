@@ -353,14 +353,14 @@ int testCondEncHamDist(int n_lambda, int Num_tests, size_t _len, int MaxHam)
         /*  Running the traditional Encryption of chosen*/
         auto start_Enc_HD = high_resolution_clock::now();
         int tradEncRslt =0;
-        tradEncRslt = HamDistTwo::Enc(pkobj._ppk, msg_pad, HD_Char_ORigCTx);
+        tradEncRslt = HamDistAtmostT::Enc(pkobj._ppk, msg_pad, HD_Char_ORigCTx);
         auto stop_Enc_HD = high_resolution_clock::now();
         auto duration_Enc_HD = duration_cast<milliseconds>(stop_Enc_HD - start_Enc_HD);
 
 
         /*Running the Conditional Encryption*/
         auto start_CondEnc_HD = high_resolution_clock::now();
-        auto ctx_final = HamDistTwo::CondEnc(pkobj._ppk, HD_Char_ORigCTx, typo, payload,_len, Threshold, HD_ctx_typo_Bytes);
+        auto ctx_final = HamDistAtmostT::CondEnc(pkobj._ppk, HD_Char_ORigCTx, typo, payload,_len, Threshold, HD_ctx_typo_Bytes);
         auto stop_CondEnc_HD = high_resolution_clock::now();
         auto duration_CondEnc_HD = duration_cast<milliseconds>(stop_CondEnc_HD - start_CondEnc_HD);
         cout <<"successfull Cond encryption\n";
@@ -368,12 +368,12 @@ int testCondEncHamDist(int n_lambda, int Num_tests, size_t _len, int MaxHam)
         auto start_CondDec_HD = high_resolution_clock::now();
         string recovered_hdBytes;
         int CondDecOut  = 0;
-        CondDecOut = HamDistTwo::CondDec(pkobj._ppk, HD_ctx_typo_Bytes, pkobj._psk, Threshold, recovered_hdBytes, _len);
-        // CondDecOut = HamDistTwo::CondDec_Optimized(pkobj._ppk, HD_ctx_typo_Bytes, pkobj._psk, Threshold, recovered_hdBytes, _len, SizeShare, msg.size());
-        // CondDecOut = HamDistTwo::CondDec_Optimized_UnknownMsgLength(pkobj._ppk, HD_ctx_typo_Bytes, pkobj._psk, Threshold, recovered_hdBytes, _len, SizeShare);
-        // CondDecOut = HamDistTwo::CondDec_NewOPT(pkobj._ppk, HD_ctx_typo_Bytes, pkobj._psk, Threshold, recovered_hdBytes, _len, SizeShare);
-        // CondDecOut = HamDistTwo::CondDec_NonSmallFieldCheck(pkobj._ppk, HD_ctx_typo_Bytes, pkobj._psk, Threshold, recovered_hdBytes, _len, SizeShare);
-        // CondDecOut = HamDistTwo::CondDec_2dif(pkobj._ppk, HD_ctx_typo_Bytes, pkobj._psk, Threshold, recovered_hdBytes, _len, SizeShare);
+        CondDecOut = HamDistAtmostT::CondDec(pkobj._ppk, HD_ctx_typo_Bytes, pkobj._psk, Threshold, recovered_hdBytes, _len);
+        // CondDecOut = HamDistAtmostT::CondDec_Optimized(pkobj._ppk, HD_ctx_typo_Bytes, pkobj._psk, Threshold, recovered_hdBytes, _len, SizeShare, msg.size());
+        // CondDecOut = HamDistAtmostT::CondDec_Optimized_UnknownMsgLength(pkobj._ppk, HD_ctx_typo_Bytes, pkobj._psk, Threshold, recovered_hdBytes, _len, SizeShare);
+        // CondDecOut = HamDistAtmostT::CondDec_NewOPT(pkobj._ppk, HD_ctx_typo_Bytes, pkobj._psk, Threshold, recovered_hdBytes, _len, SizeShare);
+        // CondDecOut = HamDistAtmostT::CondDec_NonSmallFieldCheck(pkobj._ppk, HD_ctx_typo_Bytes, pkobj._psk, Threshold, recovered_hdBytes, _len, SizeShare);
+        // CondDecOut = HamDistAtmostT::CondDec_2dif(pkobj._ppk, HD_ctx_typo_Bytes, pkobj._psk, Threshold, recovered_hdBytes, _len, SizeShare);
 
 
 
@@ -488,14 +488,14 @@ int testCondEncHamDist_NonOPT(int n_lambda, int Num_tests, size_t _len, int MaxH
         /*  Running the traditional Encryption of chosen*/
         auto start_Enc_HD = high_resolution_clock::now();
         int tradEncRslt =0;
-        tradEncRslt = HamDistTwo::Enc(pkobj._ppk, msg_pad, HD_Char_ORigCTx);
+        tradEncRslt = HamDistAtmostT::Enc(pkobj._ppk, msg_pad, HD_Char_ORigCTx);
         auto stop_Enc_HD = high_resolution_clock::now();
         auto duration_Enc_HD = duration_cast<milliseconds>(stop_Enc_HD - start_Enc_HD);
 
 
         /*Running the Conditional Encryption*/
         auto start_CondEnc_HD = high_resolution_clock::now();
-        auto ctx_final = HamDistTwo::CondEnc(pkobj._ppk, HD_Char_ORigCTx, typo, payload,_len, Threshold, HD_ctx_typo_Bytes);
+        auto ctx_final = HamDistAtmostT::CondEnc(pkobj._ppk, HD_Char_ORigCTx, typo, payload,_len, Threshold, HD_ctx_typo_Bytes);
         auto stop_CondEnc_HD = high_resolution_clock::now();
         auto duration_CondEnc_HD = duration_cast<milliseconds>(stop_CondEnc_HD - start_CondEnc_HD);
         cout <<"successfull Cond encryption\n";
@@ -504,7 +504,7 @@ int testCondEncHamDist_NonOPT(int n_lambda, int Num_tests, size_t _len, int MaxH
         string recovered_hdBytes;
         int CondDecOut  = 0;
 
-        CondDecOut = HamDistTwo::CondDec_NonSmallFieldCheck(pkobj._ppk, HD_ctx_typo_Bytes, pkobj._psk, Threshold, recovered_hdBytes, _len);
+        CondDecOut = HamDistAtmostT::CondDec_NonSmallFieldCheck(pkobj._ppk, HD_ctx_typo_Bytes, pkobj._psk, Threshold, recovered_hdBytes, _len);
 
 
         auto stop_CondDec_HD = high_resolution_clock::now();

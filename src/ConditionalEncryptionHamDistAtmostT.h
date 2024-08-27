@@ -2,8 +2,8 @@
 // Created by mameriek on 9/10/21.
 //
 
-#ifndef CONDENCCPP_CONDITIONALENCRYPTIONHAMDISTTWO_H
-#define CONDENCCPP_CONDITIONALENCRYPTIONHAMDISTTWO_H
+#ifndef CONDENCCPP_CONDITIONALENCRYPTIONHAMDISTATMOSTT_H
+#define CONDENCCPP_CONDITIONALENCRYPTIONHAMDISTATMOSTT_H
 
 #if defined(CRYPTOPP_CXX11_NULLPTR) && !defined(NULLPTR)
 # define NULLPTR nullptr
@@ -37,7 +37,7 @@ const size_t SSShareSize = 28; //Indicating the secret sharing size;
  *          Conditional Encryption for Hamming Distance Two Predicate Using Shamir Secret Sharing
  * */
 // public PaillerWrapperFunctions, public CryptoSymWrapperFunctions
-class HamDistTwo {
+class HamDistAtmostT {
 
 public:
 
@@ -281,4 +281,4 @@ public:
 };
 
 
-#endif //CONDENCCPP_CONDITIONALENCRYPTIONHAMDISTTWO_H
+#endif //CONDENCCPP_CONDITIONALENCRYPTIONHAMDISTATMOSTT_H

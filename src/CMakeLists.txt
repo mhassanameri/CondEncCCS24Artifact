@@ -54,7 +54,7 @@ set(CONDENCCPP_SRCS  ${CONDENCCPP_SRCS} ${CONDENCCPP_HDRS}  ${PROTO_SRCS} ${PROT
         CryptoSymWrapperFunctions.cpp CryptoSymWrapperFunctions.h
         PaillierWrapperFunctions.cpp PaillierWrapperFunctions.h
         ConditionalEncryptionEditDistOne.cpp ConditionalEncryptionEditDistOne.h
-        ConditionalEncryptionHamDistTwo.cpp ConditionalEncryptionHamDistTwo.h
+        ConditionalEncryptionHamDistAtmostT.cpp ConditionalEncryptionHamDistAtmostT.h
         ConditionalEncryptionCAPSLOCK.cpp ConditionalEncryptionCAPSLOCK.h
         ConditionalEncryptionOR.cpp
 
@@ -77,7 +77,7 @@ add_executable(condenccpp main.cpp
         PaillierWrapperFunctions.cpp PaillierWrapperFunctions.h
         #        conditionalcrypto.h
         ConditionalEncryptionEditDistOne.cpp ConditionalEncryptionEditDistOne.h
-        ConditionalEncryptionHamDistTwo.cpp ConditionalEncryptionHamDistTwo.h
+        ConditionalEncryptionHamDistAtmostT.cpp ConditionalEncryptionHamDistAtmostT.h
         ConditionalEncryptionOR.cpp
         ConditionalEncryptionCAPSLOCK.cpp ConditionalEncryptionCAPSLOCK.h
         )  # Not sure why we have win32

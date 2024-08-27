@@ -8,7 +8,7 @@ BINARY_PATH="./tests"
 ARGUMENTS="ArtifactCCS24"
 
 
-echo  -e "PlotFig1a" > input.txt
+echo  -e "PlotFig1a\n1000\n32\n2" > input.txt
 
 
 #echo -e "PlotFig1aNo128\n input1\n input2\n input3\n input4 ..." > input.txt #This generate Fig1a excluding secret message of length at most 128.

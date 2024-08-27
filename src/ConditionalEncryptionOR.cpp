@@ -7,7 +7,7 @@
 using namespace std::chrono;
 
 /*
- * High level functionality: The algorithm calls the tradtitional encryption schemes of two classes HamDistTwo and
+ * High level functionality: The algorithm calls the tradtitional encryption schemes of two classes HamDistAtmostT and
  * EditDistOne and concatenate the ciphertext with each other and generates the final ctxt.
  *
  *
@@ -27,21 +27,21 @@ using namespace std::chrono;
      string msg_pad = CryptoSymWrapperFunctions::Wrapper_pad(msg, _len);//assuming the the imput message is given in unpadded version.
 
      // std::unique_ptr<EditDistOne> EDOneClass(new EditDistOne());
-     // std::unique_ptr<HamDistTwo>  HamDisTwoClass(new HamDistTwo());
+     // std::unique_ptr<HamDistAtmostT>  HamDisTwoClass(new HamDistAtmostT());
      // std::unique_ptr<CAPLOCKpredicate>  CAPLOCKClass(new CAPLOCKpredicate());
 
 
 //     int EditOneOrigCtxtRslt = EditDistOne::Enc(ppk,msg_pad, Aux_ctx_EDOne);
-//     int HamDisTwoOrigCtxtRslt = HamDistTwo::Enc(ppk,msg_pad, Aux_ctx_HDTwo);
+//     int HamDisTwoOrigCtxtRslt = HamDistAtmostT::Enc(ppk,msg_pad, Aux_ctx_HDTwo);
 //     int CApsOrigCtxtRslt  = CAPLOCKpredicate::Enc(ppk, msg, Aux_ctx_CAPS);
 
 //     int CApsOrigCtxtRslt  = CAPLOCKpredicate::Enc(ppk, msg, ctx_final);
 //     int EditOneOrigCtxtRslt = EditDistOne::Enc(ppk,msg_pad, ctx_final + CapsLockCtxSize);
-//     int HamDisTwoOrigCtxtRslt = HamDistTwo::Enc(ppk,msg_pad, ctx_final + CapsLockCtxSize + EDOneCtxSize);
+//     int HamDisTwoOrigCtxtRslt = HamDistAtmostT::Enc(ppk,msg_pad, ctx_final + CapsLockCtxSize + EDOneCtxSize);
 
     int CApsOrigCtxtRslt    = CAPLOCKpredicate::Enc(ppk, msg, ctx_final);
     int EditOneOrigCtxtRslt = EditDistOne::Enc(ppk,msg_pad, ctx_final + CapsLockCtxSize);
-    int HamDisTwoOrigCtxtRslt = HamDistTwo::Enc(ppk,msg_pad, ctx_final + CapsLockCtxSize + EDOneCtxSize);
+    int HamDisTwoOrigCtxtRslt = HamDistAtmostT::Enc(ppk,msg_pad, ctx_final + CapsLockCtxSize + EDOneCtxSize);
      /*Using the smart pointer to avoid memory leakage*/
 
 
@@ -97,7 +97,7 @@ using namespace std::chrono;
 
       cout << "The EDOne Encrypt is Done\n";
       std::string ctx_HDTowRslt;
-      ctx_HDTowRslt = HamDistTwo::CondEnc(ppk, Orig_ctx_pull + CAPSLocOrigCtxSize + EDOneOrigCtxSize, typo, payload,_len, threshold, ctx_final + CondEncCPSLKCtxSize + CondEncEDOneCtxSize); //the threshold is 30 here as well
+      ctx_HDTowRslt = HamDistAtmostT::CondEnc(ppk, Orig_ctx_pull + CAPSLocOrigCtxSize + EDOneOrigCtxSize, typo, payload,_len, threshold, ctx_final + CondEncCPSLKCtxSize + CondEncEDOneCtxSize); //the threshold is 30 here as well
       cout << "The OR Encrypt is Done\n";
       return "ctx_CPSLKRslt";
 
@@ -131,7 +131,7 @@ using namespace std::chrono;
 
 
      // std::unique_ptr<EditDistOne> EDOneClass(new EditDistOne());
-     // std::unique_ptr<HamDistTwo>  HamDisTwoClass(new HamDistTwo());
+     // std::unique_ptr<HamDistAtmostT>  HamDisTwoClass(new HamDistAtmostT());
      // std::unique_ptr<CAPLOCKpredicate>  CAPLOCKClass(new CAPLOCKpredicate());
 
 //    memcpy(Aux_Cond_ctx_CAPS, typo_ctx, CondEncCPSLKCtxSize );
@@ -174,8 +174,8 @@ using namespace std::chrono;
 
 
     cout << "strat to decrypt HmaDis\n";
-    // RsltHDTwo = HamDistTwo::CondDec(ppk, typo_ctx + CondEncCPSLKCtxSize + CondEncEDOneCtxSize, psk,threshold, RecoverHDTwo, _len, ShareSize);
-    RsltHDTwo = HamDistTwo::CondDec(ppk, typo_ctx + CondEncCPSLKCtxSize + CondEncEDOneCtxSize, psk,threshold, RecoverHDTwo, _len);
+    // RsltHDTwo = HamDistAtmostT::CondDec(ppk, typo_ctx + CondEncCPSLKCtxSize + CondEncEDOneCtxSize, psk,threshold, RecoverHDTwo, _len, ShareSize);
+    RsltHDTwo = HamDistAtmostT::CondDec(ppk, typo_ctx + CondEncCPSLKCtxSize + CondEncEDOneCtxSize, psk,threshold, RecoverHDTwo, _len);
 
 
     if (RsltHDTwo == 1)
@@ -209,7 +209,7 @@ using namespace std::chrono;
      size_t CondEncEDOneCtxSize = 3 * sizeof(size_t) + sizeof (char) * AE_CtxtSize  + ((2 * _len + 1) *  PailCtxtSize);
 
      std::unique_ptr<EditDistOne> EDOneClass(new EditDistOne());
-     std::unique_ptr<HamDistTwo>  HamDisTwoClass(new HamDistTwo());
+     std::unique_ptr<HamDistAtmostT>  HamDisTwoClass(new HamDistAtmostT());
      std::unique_ptr<CAPLOCKpredicate>  CAPLOCKClass(new CAPLOCKpredicate());
 
 

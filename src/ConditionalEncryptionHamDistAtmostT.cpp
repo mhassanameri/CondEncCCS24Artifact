@@ -2,10 +2,10 @@
 // Created by mameriek on 9/10/21.
 //
 
-#include "ConditionalEncryptionHamDistTwo.h"
+#include "ConditionalEncryptionHamDistAtmostT.h"
 
 
- bool HamDistTwo::TestIfTheSahreAreValid (vector<string> &strShares, int threshold, vector<int> &selected)
+ bool HamDistAtmostT::TestIfTheSahreAreValid (vector<string> &strShares, int threshold, vector<int> &selected)
 {
     string channel;
     const unsigned int CHID_LENGTH = 4;
@@ -42,7 +42,7 @@
 }
 
 
-  void HamDistTwo::makeCombiUtil(vector<vector<int> >& ans,
+  void HamDistAtmostT::makeCombiUtil(vector<vector<int> >& ans,
                    vector<int>& tmp, int n, int left, int k)
 {
     // Pushing this vector to a vector of vector
@@ -65,7 +65,7 @@
 }
 
 
- bool HamDistTwo::RecoverSecretFromValidShares (vector<string> &strShares,
+ bool HamDistAtmostT::RecoverSecretFromValidShares (vector<string> &strShares,
                                                 int threshold,
                                                 vector<int> &selected,
                                                 string &RecoveredSecret)
@@ -107,7 +107,7 @@
 }
 
 
-//void HamDistTwo::combinationUtil(int arr[], int n, int r, int index,
+//void HamDistAtmostT::combinationUtil(int arr[], int n, int r, int index,
 //                     int data[], int i, std::vector<std::string> &MainstrShares, std::vector<std::string> &strShares)
 //{
 //    // Current combination is ready, print it
@@ -133,7 +133,7 @@
 //}
 
 
-int HamDistTwo::generatesubsets(vector<string> &MainstrShares, vector<string> &strShares,
+int HamDistAtmostT::generatesubsets(vector<string> &MainstrShares, vector<string> &strShares,
                     const string& DecoddCtxAE, string &recoveredMainSecret, string &plaintext_rcv, vector<int> choices,
                     int current, int K, vector<int> selected,
                     vector<int> Valid_selected) {
@@ -146,7 +146,7 @@ int HamDistTwo::generatesubsets(vector<string> &MainstrShares, vector<string> &s
         //process subset
         bool pass;
 
-        pass = HamDistTwo::TestIfTheSahreAreValid(strShares, K, selected );//For the optimized solution
+        pass = HamDistAtmostT::TestIfTheSahreAreValid(strShares, K, selected );//For the optimized solution
         if (pass)
         {
 
@@ -155,7 +155,7 @@ int HamDistTwo::generatesubsets(vector<string> &MainstrShares, vector<string> &s
 
             cout <<  "Valid Shares Detected\n";
             // bool ifCorrectShareVec;
-            // ifCorrectShareVec = HamDistTwo::RecoverSecretFromValidShares (MainstrShares, K, selected, recoverTheMainSecret );
+            // ifCorrectShareVec = HamDistAtmostT::RecoverSecretFromValidShares (MainstrShares, K, selected, recoverTheMainSecret );
             // size_t key_size = recoverTheMainSecret.size();
             // CryptoPP::StringSink ss_recoveredMainSecret(recoveredMainSecret);
             // auto reMainSecrtSize = ss_recoveredMainSecret.Put((const CryptoPP::byte*)recoverTheMainSecret.data(),  recoverTheMainSecret.size(), false);
@@ -171,17 +171,17 @@ int HamDistTwo::generatesubsets(vector<string> &MainstrShares, vector<string> &s
         return 0;
 
     selected.push_back(choices[current]);
-    if (HamDistTwo::generatesubsets(MainstrShares, strShares, DecoddCtxAE, recoveredMainSecret, plaintext_rcv,
+    if (HamDistAtmostT::generatesubsets(MainstrShares, strShares, DecoddCtxAE, recoveredMainSecret, plaintext_rcv,
                         choices,current+1,K,selected,  Valid_selected) == 1) return 1;
     selected.pop_back();
-    if (HamDistTwo::generatesubsets(MainstrShares, strShares, DecoddCtxAE, recoveredMainSecret, plaintext_rcv,
+    if (HamDistAtmostT::generatesubsets(MainstrShares, strShares, DecoddCtxAE, recoveredMainSecret, plaintext_rcv,
                         choices,current+1,K,selected, Valid_selected) == 1) return 1;
 
     return 0;
 }
 
 
- int HamDistTwo::generatesubsets_NonSmallFieldCheck(vector<string> &MainstrShares,
+ int HamDistAtmostT::generatesubsets_NonSmallFieldCheck(vector<string> &MainstrShares,
                     const string& DecoddCtxAE, string &recoveredMainSecret, string &plaintext_rcv, vector<int> choices,
                     int current, int K, vector<int> selected,
                     vector<int> Valid_selected) {
@@ -192,7 +192,7 @@ int HamDistTwo::generatesubsets(vector<string> &MainstrShares, vector<string> &s
     if(selected.size()==K){
         Valid_selected = selected;
         string recoverTheMainSecret;
-        HamDistTwo::RecoverSecretFromValidShares (MainstrShares, K, selected, recoverTheMainSecret );
+        HamDistAtmostT::RecoverSecretFromValidShares (MainstrShares, K, selected, recoverTheMainSecret );
         size_t key_size = recoverTheMainSecret.size();
         CryptoPP::StringSink ss_recoveredMainSecret(recoveredMainSecret);
         ss_recoveredMainSecret.Put((const CryptoPP::byte*)recoverTheMainSecret.data(),  recoverTheMainSecret.size(), false);
@@ -212,17 +212,17 @@ int HamDistTwo::generatesubsets(vector<string> &MainstrShares, vector<string> &s
         return 0;
 
     selected.push_back(choices[current]);
-    if (HamDistTwo::generatesubsets_NonSmallFieldCheck(MainstrShares, DecoddCtxAE, recoveredMainSecret, plaintext_rcv,
+    if (HamDistAtmostT::generatesubsets_NonSmallFieldCheck(MainstrShares, DecoddCtxAE, recoveredMainSecret, plaintext_rcv,
                         choices,current+1,K,selected,  Valid_selected) == 1) return 1;
     selected.pop_back();
-    if (HamDistTwo::generatesubsets_NonSmallFieldCheck(MainstrShares, DecoddCtxAE, recoveredMainSecret, plaintext_rcv,
+    if (HamDistAtmostT::generatesubsets_NonSmallFieldCheck(MainstrShares, DecoddCtxAE, recoveredMainSecret, plaintext_rcv,
                         choices,current+1,K,selected, Valid_selected) == 1) return 1;
 
     return 0;
 }
 
 
-int HamDistTwo::generatesubsets_Optimized(vector<string> &MainstrShares, vector<string> &strShares,
+int HamDistAtmostT::generatesubsets_Optimized(vector<string> &MainstrShares, vector<string> &strShares,
                                 const string& DecoddCtxAE, string &recoveredMainSecret, string &plaintext_rcv, vector<int> choices,
                                 int current, size_t l_m, int K, vector<int> selected,
                                 vector<int> Valid_selected) {
@@ -234,12 +234,12 @@ int HamDistTwo::generatesubsets_Optimized(vector<string> &MainstrShares, vector<
         // vector<std::string> o[selected];
         //process subset
         bool pass;
-        pass = HamDistTwo::TestIfTheSahreAreValid(strShares, K, selected );//For the optimized solution
+        pass = HamDistAtmostT::TestIfTheSahreAreValid(strShares, K, selected );//For the optimized solution
         if (pass)
         {
             Valid_selected = selected;
             string recoverTheMainSecret;
-            HamDistTwo::RecoverSecretFromValidShares (MainstrShares, K, selected, recoverTheMainSecret );
+            HamDistAtmostT::RecoverSecretFromValidShares (MainstrShares, K, selected, recoverTheMainSecret );
             size_t key_size = recoverTheMainSecret.size();
 //            recoveredMainSecret = recoverTheMainSecret;
 
@@ -270,10 +270,10 @@ int HamDistTwo::generatesubsets_Optimized(vector<string> &MainstrShares, vector<
         return 0;
 
     selected.push_back(choices[current]);
-    if (HamDistTwo::generatesubsets_Optimized(MainstrShares, strShares, DecoddCtxAE, recoveredMainSecret, plaintext_rcv,
+    if (HamDistAtmostT::generatesubsets_Optimized(MainstrShares, strShares, DecoddCtxAE, recoveredMainSecret, plaintext_rcv,
                                     choices,current+1, l_m, K,  selected,  Valid_selected) == 1) return 1;
     selected.pop_back();
-    if (HamDistTwo::generatesubsets_Optimized(MainstrShares, strShares, DecoddCtxAE, recoveredMainSecret, plaintext_rcv,
+    if (HamDistAtmostT::generatesubsets_Optimized(MainstrShares, strShares, DecoddCtxAE, recoveredMainSecret, plaintext_rcv,
                                     choices,current+1, l_m, K,  selected, Valid_selected) == 1) return 1;
 
     return 0;
@@ -286,7 +286,7 @@ int HamDistTwo::generatesubsets_Optimized(vector<string> &MainstrShares, vector<
  * gmp library.
  * */
 //    vector<paillier_ciphertext_t*> Enc_SecrtShr(std::vector<std::string> strShares,  paillier_pubkey_t* ppk) const {
-int HamDistTwo::Enc_SecrtShr(vector<string> strShares,  paillier_pubkey_t* ppk,
+int HamDistAtmostT::Enc_SecrtShr(vector<string> strShares,  paillier_pubkey_t* ppk,
                                                   vector<paillier_ciphertext_t*> &Shar_Ctxt, size_t ShareSize,
                                                   size_t _len )  {
 
@@ -347,7 +347,7 @@ int HamDistTwo::Enc_SecrtShr(vector<string> strShares,  paillier_pubkey_t* ppk,
     return 1;
 }
 
-vector<paillier_ciphertext_t*> HamDistTwo::Enc_SecrtShr_V2(vector<string> strShares,  paillier_pubkey_t* ppk,
+vector<paillier_ciphertext_t*> HamDistAtmostT::Enc_SecrtShr_V2(vector<string> strShares,  paillier_pubkey_t* ppk,
                                                size_t ShareSize, size_t _len )
 {
     vector<paillier_ciphertext_t*> Shar_Ctxt(_len);
@@ -374,7 +374,7 @@ vector<paillier_ciphertext_t*> HamDistTwo::Enc_SecrtShr_V2(vector<string> strSha
     return Shar_Ctxt;
 }
 
-paillier_plaintext_t* HamDistTwo::RandEncod(string &share, size_t ShareSize, mpz_t N_p_floor, mpz_t P_GF)
+paillier_plaintext_t* HamDistAtmostT::RandEncod(string &share, size_t ShareSize, mpz_t N_p_floor, mpz_t P_GF)
 {
 
     mpz_t a_i;
@@ -414,7 +414,7 @@ paillier_plaintext_t* HamDistTwo::RandEncod(string &share, size_t ShareSize, mpz
 //}
 
 
- int HamDistTwo::Enc(paillier_pubkey_t* ppk, string &msg, char ctx_final[])
+ int HamDistAtmostT::Enc(paillier_pubkey_t* ppk, string &msg, char ctx_final[])
  {
      auto& str = msg;
      string s(begin(str), end(str));
@@ -430,9 +430,9 @@ paillier_plaintext_t* HamDistTwo::RandEncod(string &share, size_t ShareSize, mpz
  }
 
 
-//unique_ptr<char []> HamDistTwo::CondEncBytes(paillier_pubkey_t* ppk,
+//unique_ptr<char []> HamDistAtmostT::CondEncBytes(paillier_pubkey_t* ppk,
 
-string HamDistTwo::CondEnc(paillier_pubkey_t* ppk,
+string HamDistAtmostT::CondEnc(paillier_pubkey_t* ppk,
                                char RlPwd_ctx_pull[],
                                string& typo,
                                string& payload,
@@ -589,7 +589,7 @@ string HamDistTwo::CondEnc(paillier_pubkey_t* ppk,
 
     }
 //    int out = Enc_SecrtShr(strShares_for_Enc,  ppk, vctx_Shrs, ShareSize, _len); // Encrypt the shares to extract a vector of ctxts elemets.
-    vctx_Shrs = HamDistTwo::Enc_SecrtShr_V2(strShares_for_Enc, ppk, ShareSize, _len); // Encrypt the shares to extract a vector of ctxts elemets.
+    vctx_Shrs = HamDistAtmostT::Enc_SecrtShr_V2(strShares_for_Enc, ppk, ShareSize, _len); // Encrypt the shares to extract a vector of ctxts elemets.
 
 
 
@@ -636,7 +636,7 @@ string HamDistTwo::CondEnc(paillier_pubkey_t* ppk,
 }
 
 
-tuple<vector<paillier_ciphertext_t*>, string>  HamDistTwo::Pail_Parse_Ctx_size_AECtx(paillier_pubkey_t* ppk,
+tuple<vector<paillier_ciphertext_t*>, string>  HamDistAtmostT::Pail_Parse_Ctx_size_AECtx(paillier_pubkey_t* ppk,
                                                                      char* ctx)
 {
 
@@ -727,7 +727,7 @@ tuple<vector<paillier_ciphertext_t*>, string>  HamDistTwo::Pail_Parse_Ctx_size_A
 }
 
 
-int HamDistTwo::Pail_Parse_Ctx_size_AECtx2(paillier_pubkey_t* ppk,
+int HamDistAtmostT::Pail_Parse_Ctx_size_AECtx2(paillier_pubkey_t* ppk,
                                             char* ctx, string& CtxtAEStr,
                                             vector<paillier_ciphertext_t*> &Vect_Ctx)
 {
@@ -818,7 +818,7 @@ int HamDistTwo::Pail_Parse_Ctx_size_AECtx2(paillier_pubkey_t* ppk,
     return 1;
 }
 
-int HamDistTwo::CondDec_NonSmallFieldCheck(paillier_pubkey_t* ppk,
+int HamDistAtmostT::CondDec_NonSmallFieldCheck(paillier_pubkey_t* ppk,
                               char typo_ctx [],
                               paillier_prvkey_t* psk,
                               int threshold,
@@ -831,7 +831,7 @@ int HamDistTwo::CondDec_NonSmallFieldCheck(paillier_pubkey_t* ppk,
     int pars_rslt =0;
 
 
-    pars_rslt = HamDistTwo::Pail_Parse_Ctx_size_AECtx2(ppk, typo_ctx, CtxAE, V_ctx_typo );
+    pars_rslt = HamDistAtmostT::Pail_Parse_Ctx_size_AECtx2(ppk, typo_ctx, CtxAE, V_ctx_typo );
 
 
     vector<string> strShares_Zero(_len);
@@ -880,12 +880,12 @@ int HamDistTwo::CondDec_NonSmallFieldCheck(paillier_pubkey_t* ppk,
     int rsltRcVr;
 
     vector<int> v(_len);
-    v = HamDistTwo::GnereateVectorOfIntegeres(_len);
-    rsltRcVr = HamDistTwo::generatesubsets_NonSmallFieldCheck(strShares_Main, CtxAE, MainRecoveredSecret,
+    v = HamDistAtmostT::GnereateVectorOfIntegeres(_len);
+    rsltRcVr = HamDistAtmostT::generatesubsets_NonSmallFieldCheck(strShares_Main, CtxAE, MainRecoveredSecret,
                                            plaintext_rcv, v,0,threshold, Valid_selected);
 
     bool AEReslt;
-//    HamDistTwo::ToConstStringConvert(CtxAE2);
+//    HamDistAtmostT::ToConstStringConvert(CtxAE2);
     /*I have modified the function for handling the following part*/
 
     AEReslt = CryptoSymWrapperFunctions::Wrapper_AuthDecrypt(MainRecoveredSecret, CtxAE,plaintext_rcv );
@@ -919,7 +919,7 @@ int HamDistTwo::CondDec_NonSmallFieldCheck(paillier_pubkey_t* ppk,
 }
 
 
-int HamDistTwo::CondDec(paillier_pubkey_t* ppk,
+int HamDistAtmostT::CondDec(paillier_pubkey_t* ppk,
                               char typo_ctx [],
                               paillier_prvkey_t* psk,
                               int threshold,
@@ -932,7 +932,7 @@ int HamDistTwo::CondDec(paillier_pubkey_t* ppk,
      int pars_rslt =0;
 
 
-     pars_rslt = HamDistTwo::Pail_Parse_Ctx_size_AECtx2(ppk, typo_ctx, CtxAE, V_ctx_typo );
+     pars_rslt = HamDistAtmostT::Pail_Parse_Ctx_size_AECtx2(ppk, typo_ctx, CtxAE, V_ctx_typo );
 //    std::string CtxAE;
 //    CtxAE = CtxAE2;
 //    memcpy(&CtxAE, &CtxAE2, 24);
@@ -987,14 +987,14 @@ int HamDistTwo::CondDec(paillier_pubkey_t* ppk,
 
     vector<int> v(_len);
     vector<int> ValidSelected(threshold);
-    v = HamDistTwo::GnereateVectorOfIntegeres(_len);
-    rsltRcVr = HamDistTwo::generatesubsets(strShares_Main, strShares_Zero,  CtxAE, MainRecoveredSecret,
+    v = HamDistAtmostT::GnereateVectorOfIntegeres(_len);
+    rsltRcVr = HamDistAtmostT::generatesubsets(strShares_Main, strShares_Zero,  CtxAE, MainRecoveredSecret,
                                            plaintext_rcv, v,0,threshold, Valid_selected, ValidSelected);
 
 
 //    string ciphertext_rcv;
     bool AEReslt;
-//    HamDistTwo::ToConstStringConvert(CtxAE2);
+//    HamDistAtmostT::ToConstStringConvert(CtxAE2);
     /*I have modified the function for handling the following part*/
 
     AEReslt = CryptoSymWrapperFunctions::Wrapper_AuthDecrypt(MainRecoveredSecret, CtxAE,plaintext_rcv );
@@ -1027,7 +1027,7 @@ int HamDistTwo::CondDec(paillier_pubkey_t* ppk,
     return rsltRcVr;
 }
 
-int HamDistTwo::CondDec_2dif(paillier_pubkey_t* ppk,
+int HamDistAtmostT::CondDec_2dif(paillier_pubkey_t* ppk,
                               char typo_ctx [],
                               paillier_prvkey_t* psk,
                               int threshold,
@@ -1040,7 +1040,7 @@ int HamDistTwo::CondDec_2dif(paillier_pubkey_t* ppk,
      int pars_rslt =0;
 
 
-     pars_rslt = HamDistTwo::Pail_Parse_Ctx_size_AECtx2(ppk, typo_ctx, CtxAE, V_ctx_typo );
+     pars_rslt = HamDistAtmostT::Pail_Parse_Ctx_size_AECtx2(ppk, typo_ctx, CtxAE, V_ctx_typo );
 
      vector<string> strShares_Zero(_len);
      vector<string> strShares_Main(_len);
@@ -1082,7 +1082,7 @@ int HamDistTwo::CondDec_2dif(paillier_pubkey_t* ppk,
      vector<int> v(_len);
      vector<int> ValidSelected;
 
-     v = HamDistTwo::GnereateVectorOfIntegeres(_len);
+     v = HamDistAtmostT::GnereateVectorOfIntegeres(_len);
 
 
      for (int i = 1; i<_len; i += 2)
@@ -1096,11 +1096,11 @@ int HamDistTwo::CondDec_2dif(paillier_pubkey_t* ppk,
              }
          }
          bool pass;
-         pass = HamDistTwo::TestIfTheSahreAreValid(strShares_Zero, threshold, selected );//For the optimized solution
+         pass = HamDistAtmostT::TestIfTheSahreAreValid(strShares_Zero, threshold, selected );//For the optimized solution
          if (pass)
          {
              string recoverTheMainSecret;
-             HamDistTwo::RecoverSecretFromValidShares (strShares_Main, threshold, selected, recoverTheMainSecret );
+             HamDistAtmostT::RecoverSecretFromValidShares (strShares_Main, threshold, selected, recoverTheMainSecret );
              size_t key_size = recoverTheMainSecret.size();
              //            recoveredMainSecret = recoverTheMainSecret;
 
@@ -1136,11 +1136,11 @@ int HamDistTwo::CondDec_2dif(paillier_pubkey_t* ppk,
                  }
              }
              bool pass;
-             pass = HamDistTwo::TestIfTheSahreAreValid(strShares_Zero, threshold, selected );//For the optimized solution
+             pass = HamDistAtmostT::TestIfTheSahreAreValid(strShares_Zero, threshold, selected );//For the optimized solution
              if (pass)
              {
                  string recoverTheMainSecret;
-                 HamDistTwo::RecoverSecretFromValidShares (strShares_Main, threshold, selected, recoverTheMainSecret );
+                 HamDistAtmostT::RecoverSecretFromValidShares (strShares_Main, threshold, selected, recoverTheMainSecret );
                  size_t key_size = recoverTheMainSecret.size();
                  //            recoveredMainSecret = recoverTheMainSecret;
 
@@ -1166,7 +1166,7 @@ int HamDistTwo::CondDec_2dif(paillier_pubkey_t* ppk,
  }
 
 
-int HamDistTwo::CondDec_NewOPT(paillier_pubkey_t* ppk,
+int HamDistAtmostT::CondDec_NewOPT(paillier_pubkey_t* ppk,
                               char typo_ctx [],
                               paillier_prvkey_t* psk,
                               int threshold,
@@ -1177,7 +1177,7 @@ int HamDistTwo::CondDec_NewOPT(paillier_pubkey_t* ppk,
      size_t max_num_typos =  _len-threshold;
      for(size_t k = max_num_typos - 1; k< _len-1; k++ )
      {
-         auto CondDecOut = HamDistTwo::CondDec_Optimized(ppk, typo_ctx, psk, threshold , recovered, _len, k);
+         auto CondDecOut = HamDistAtmostT::CondDec_Optimized(ppk, typo_ctx, psk, threshold , recovered, _len, k);
          if (CondDecOut == 1)
          {
              return ret =1;
@@ -1192,7 +1192,7 @@ int HamDistTwo::CondDec_NewOPT(paillier_pubkey_t* ppk,
 
 
 
-int HamDistTwo::CondDec_Optimized(paillier_pubkey_t* ppk,
+int HamDistAtmostT::CondDec_Optimized(paillier_pubkey_t* ppk,
                         char typo_ctx [],
                         paillier_prvkey_t* psk,
                         int threshold,
@@ -1204,7 +1204,7 @@ int HamDistTwo::CondDec_Optimized(paillier_pubkey_t* ppk,
     string CtxAE;
     vector<paillier_ciphertext_t*> V_ctx_typo(_len);
     int pars_rslt =0;
-    pars_rslt = HamDistTwo::Pail_Parse_Ctx_size_AECtx2(ppk, typo_ctx, CtxAE, V_ctx_typo );
+    pars_rslt = HamDistAtmostT::Pail_Parse_Ctx_size_AECtx2(ppk, typo_ctx, CtxAE, V_ctx_typo );
 
     vector<string> strShares_Zero(_len);
     vector<string> strShares_Main(_len);
@@ -1248,9 +1248,9 @@ int HamDistTwo::CondDec_Optimized(paillier_pubkey_t* ppk,
     int rsltRcVr;
 
     vector<int> v(_len);
-    v = HamDistTwo::GnereateVectorOfIntegeres(_len);
+    v = HamDistAtmostT::GnereateVectorOfIntegeres(_len);
 
-    rsltRcVr = HamDistTwo::generatesubsets_Optimized(strShares_Main, strShares_Zero,  CtxAE, MainRecoveredSecret,
+    rsltRcVr = HamDistAtmostT::generatesubsets_Optimized(strShares_Main, strShares_Zero,  CtxAE, MainRecoveredSecret,
                                            plaintext_rcv, v,0, l_m,  threshold, Valid_selected);
     int AEReslt;
 
@@ -1272,7 +1272,7 @@ int HamDistTwo::CondDec_Optimized(paillier_pubkey_t* ppk,
 }
 
 
-int HamDistTwo::CondDec_Optimized_UnknownMsgLength(paillier_pubkey_t* ppk,
+int HamDistAtmostT::CondDec_Optimized_UnknownMsgLength(paillier_pubkey_t* ppk,
                         char typo_ctx [],
                         paillier_prvkey_t* psk,
                         int threshold,
@@ -1284,7 +1284,7 @@ int HamDistTwo::CondDec_Optimized_UnknownMsgLength(paillier_pubkey_t* ppk,
     string CtxAE;
     vector<paillier_ciphertext_t*> V_ctx_typo(_len);
     int pars_rslt =0;
-    pars_rslt = HamDistTwo::Pail_Parse_Ctx_size_AECtx2(ppk, typo_ctx, CtxAE, V_ctx_typo );
+    pars_rslt = HamDistAtmostT::Pail_Parse_Ctx_size_AECtx2(ppk, typo_ctx, CtxAE, V_ctx_typo );
 
     vector<string> strShares_Zero(_len);
     vector<string> strShares_Main(_len);
@@ -1329,9 +1329,9 @@ int HamDistTwo::CondDec_Optimized_UnknownMsgLength(paillier_pubkey_t* ppk,
         int rsltRcVr;
 
         vector<int> v(_len);
-        v = HamDistTwo::GnereateVectorOfIntegeres(_len);
+        v = HamDistAtmostT::GnereateVectorOfIntegeres(_len);
 
-        rsltRcVr = HamDistTwo::generatesubsets_Optimized(strShares_Main, strShares_Zero,  CtxAE, MainRecoveredSecret,
+        rsltRcVr = HamDistAtmostT::generatesubsets_Optimized(strShares_Main, strShares_Zero,  CtxAE, MainRecoveredSecret,
                                                plaintext_rcv, v,0, l_m,  threshold, Valid_selected);
 
         int AEReslt;
@@ -1356,7 +1356,7 @@ int HamDistTwo::CondDec_Optimized_UnknownMsgLength(paillier_pubkey_t* ppk,
     return ret;
 }
 
-vector<int> HamDistTwo::GnereateVectorOfIntegeres (int _len)
+vector<int> HamDistAtmostT::GnereateVectorOfIntegeres (int _len)
 {
     vector<int> Result;
     for (int i = 0; i<_len; i++)

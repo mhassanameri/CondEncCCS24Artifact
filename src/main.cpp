@@ -1,6 +1,6 @@
 
 #include "PK_crypto.h"
-#include "ConditionalEncryptionHamDistTwo.h"
+#include "ConditionalEncryptionHamDistAtmostT.h"
 #include "ConditionalEncryptionOR.h"
 #include "ConditionalEncryptionCAPSLOCK.h"
 #include "ConditionalEncryptionEditDistOne.h"

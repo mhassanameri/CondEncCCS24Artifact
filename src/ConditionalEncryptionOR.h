@@ -9,7 +9,7 @@
 //#include "conditionalcrypto.h"
 #include "ConditionalEncryptionCAPSLOCK.h"
 #include "ConditionalEncryptionEditDistOne.h"
-#include "ConditionalEncryptionHamDistTwo.h"
+#include "ConditionalEncryptionHamDistAtmostT.h"
 
 //
 
