@@ -69,18 +69,6 @@ string random_msg() {
 }
 
 
-/*
- * Executing this test case will generate and initilize the .dat files which store the performance evaluation
- * results like average time for regular encryption, Conditional Encryption and Condtiontional decryption as well as
- * the regular and conditional encryption ciphertext size.
- * */
-TEST_CASE("GenerateBlankDatFiles")
-{
-
-    int Result =0;
-    Result  = GenerateBlankDataFilesToStorEvaluationResults(0);
-
-}
 
 
 string SelectRandPwd();
@@ -160,15 +148,20 @@ int testCondEncCAPSLOCK(int n_lambda, int Num_tests, size_t _len);
 
 
 
+
+
+int PlotFig1a(int NumTest_SmallM, int NumTest_64, int NumTest_128);
+
 inline int DataForPlottingFigure1(string argv[] )
 {
 
 
     if(argv[0] == "PlotFig1a")
     {
-        cout << argv[1] <<  "\n" + argv[2] + "\n" + argv[3] + "\n" + argv[4]+ "\n" << endl;
-        // auto r16_1 = testCondEncHamDist(1024, 300, 16, 1);
-        // auto OR_32 = testCondEncOR(1024, 100, 32, 30);
+        cout << argv[1] <<  "\n" + argv[2] + "\n" + argv[3] << endl;
+
+        auto PlotFig1aResult = PlotFig1a( std::stoi(argv[1]),  std::stoi(argv[1]),  std::stoi(argv[1]));
+
     }
     else if(argv[0] == "PlotFig1aNo128")
     {
@@ -178,14 +171,30 @@ inline int DataForPlottingFigure1(string argv[] )
     return 1;
 }
 
+
+
+/*
+ * Executing this test case will generate and initialize the .dat files which store the performance evaluation
+ * results like average time for regular encryption, Conditional Encryption and Conditional decryption as well as
+ * the regular and conditional encryption ciphertext size.
+ * */
+TEST_CASE("GenerateBlankDatFiles")
+{
+
+    int Result =0;
+    Result  = GenerateBlankDataFilesToStorEvaluationResults(0);
+
+}
+
+
 TEST_CASE("ArtifactCCS24")
 {
     std::string input[4];
     std::ifstream inputFile("input.txt"); // Open the file "input.txt"
-    inputFile >> input[0]; //put the first line as the first argument
-    inputFile >> input[1]; //put the second line as the second argument and the same for 2 and 3
-    inputFile >> input[2];
-    inputFile >> input[3];
+    inputFile >> input[0]; //The first input indicates the intended Figure to plot []
+    inputFile >> input[1]; // Number or Tests on HamDist associated with messages of length at most 8, 16, 32 Characters
+    inputFile >> input[2]; // Number or Tests on HamDist associated with messages of length at most 64 Characters
+    inputFile >> input[3]; // Number or Tests on HamDist associated with messages of length at most 128 Characters
 
 
 // std::cout << "Please enter your input [PlotFig1a, PlotFig1b]: ";

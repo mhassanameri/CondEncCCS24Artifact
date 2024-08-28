@@ -853,6 +853,29 @@ int testCondEncCAPSLOCK(int n_lambda, int Num_tests, size_t _len)
     return 1;
 }
 
+int PlotFig1a(int NumTest_SmallM, int NumTest_64, int NumTest_128)
+{
+    for (int i = 1; i<4; i++)
+    {
+        testCondEncHamDist(1024, NumTest_SmallM , 8,i);
+        testCondEncHamDist(1024, NumTest_SmallM , 16,i);
+        testCondEncHamDist(1024, NumTest_SmallM , 32,i);
+
+        testCondEncHamDist(2048,  NumTest_64 , 64,i);
+        testCondEncHamDist(3072,  NumTest_128 , 128,i);
+
+
+        testCondEncHamDist_NonOPT(1024, NumTest_SmallM, 8,i);
+        testCondEncHamDist_NonOPT(1024, NumTest_SmallM, 16,i);
+        testCondEncHamDist_NonOPT(1024, NumTest_SmallM, 32,i);
+        testCondEncHamDist_NonOPT(2048, NumTest_64, 64,  i);
+        testCondEncHamDist_NonOPT(3072, NumTest_128, 128,  i);
+
+    }
+ return 1;
+
+}
+
 
 
 int GenerateDataForPlottingFig1a(int Num_tests)
@@ -1033,3 +1056,5 @@ int GenerateBlankDataFilesToStorEvaluationResults(int l)
     l++;
     return l;
 }
+
+
