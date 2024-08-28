@@ -160,7 +160,7 @@ inline int DataForPlottingFigure1(string argv[] )
     {
         cout << argv[1] <<  "\n" + argv[2] + "\n" + argv[3] << endl;
 
-        auto PlotFig1aResult = PlotFig1a( std::stoi(argv[1]),  std::stoi(argv[1]),  std::stoi(argv[1]));
+        int PlotFig1aResult = PlotFig1a( std::stoi(argv[1]),  std::stoi(argv[2]),  std::stoi(argv[3]));
 
     }
     else if(argv[0] == "PlotFig1aNo128")
@@ -216,7 +216,7 @@ TEST_CASE("DataPlotFig1a")
 
 
     // auto r_test =  GenerateDataForPlottingFig1a(1);
-    auto OR_32 = testCondEncOR(1024, 100, 32, 30);
+    // auto OR_32 = testCondEncOR(1024, 100, 32, 30);
 
 
 }

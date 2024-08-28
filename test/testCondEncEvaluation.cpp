@@ -855,21 +855,29 @@ int testCondEncCAPSLOCK(int n_lambda, int Num_tests, size_t _len)
 
 int PlotFig1a(int NumTest_SmallM, int NumTest_64, int NumTest_128)
 {
-    for (int i = 1; i<4; i++)
+    for (int i = 1; i<5; i++)
     {
+        cout << "OPT HamDist at most  " + to_string(i)  + "_len= 8" << endl;
         testCondEncHamDist(1024, NumTest_SmallM , 8,i);
+        cout << "OPT HamDist at most  " + to_string(i)  + "_len= 16" << endl;
         testCondEncHamDist(1024, NumTest_SmallM , 16,i);
+        cout << "OPT HamDist at most  " + to_string(i)  + "_len= 32" << endl;
         testCondEncHamDist(1024, NumTest_SmallM , 32,i);
-
+        cout << "OPT HamDist at most  " + to_string(i)  + "_len= 64" << endl;
         testCondEncHamDist(2048,  NumTest_64 , 64,i);
-        testCondEncHamDist(3072,  NumTest_128 , 128,i);
+        // cout << "OPT HamDist at most  " + to_string(i)  + "_len= 128" << endl;
+        // testCondEncHamDist(3072,  NumTest_128 , 128,i);
 
-
+        cout << "No_OPT HamDist at most  " + to_string(i)  + "_len= 8" << endl;
         testCondEncHamDist_NonOPT(1024, NumTest_SmallM, 8,i);
+        cout << "No_OPT HamDist at most  " + to_string(i)  + "_len= 16" << endl;
         testCondEncHamDist_NonOPT(1024, NumTest_SmallM, 16,i);
+        cout << "No_OPT HamDist at most  " + to_string(i)  + "_len= 32" << endl;
         testCondEncHamDist_NonOPT(1024, NumTest_SmallM, 32,i);
+        cout << "No_OPT HamDist at most  " + to_string(i)  + "_len= 64" << endl;
         testCondEncHamDist_NonOPT(2048, NumTest_64, 64,  i);
-        testCondEncHamDist_NonOPT(3072, NumTest_128, 128,  i);
+        // cout << "No_OPT HamDist at most  " + to_string(i)  + "_len= 128" << endl;
+        // testCondEncHamDist_NonOPT(3072, NumTest_128, 128,  i);
 
     }
  return 1;

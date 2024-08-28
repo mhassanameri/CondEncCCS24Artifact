@@ -101,6 +101,7 @@
 //    RecoveredSecret =  recovered;
 
      CryptoPP::StringSink ss_RecoveredSecret(RecoveredSecret);
+cout << "";
     KeySizePut =  ss_RecoveredSecret.Put((const CryptoPP::byte*)recovered.data(),  recovered.size(), false);
 
      return true;
@@ -190,11 +191,14 @@ int HamDistAtmostT::generatesubsets(vector<string> &MainstrShares, vector<string
     if(choices.size()-current<K-selected.size())
         return 0;
     if(selected.size()==K){
+
         Valid_selected = selected;
         string recoverTheMainSecret;
-        HamDistAtmostT::RecoverSecretFromValidShares (MainstrShares, K, selected, recoverTheMainSecret );
+        bool SSRecoverRsl = HamDistAtmostT::RecoverSecretFromValidShares (MainstrShares, K, selected, recoverTheMainSecret );
+
         size_t key_size = recoverTheMainSecret.size();
         CryptoPP::StringSink ss_recoveredMainSecret(recoveredMainSecret);
+        cout << "";
         ss_recoveredMainSecret.Put((const CryptoPP::byte*)recoverTheMainSecret.data(),  recoverTheMainSecret.size(), false);
 
         bool AEReslt;
@@ -880,15 +884,20 @@ int HamDistAtmostT::CondDec_NonSmallFieldCheck(paillier_pubkey_t* ppk,
     int rsltRcVr;
 
     vector<int> v(_len);
+
     v = HamDistAtmostT::GnereateVectorOfIntegeres(_len);
     rsltRcVr = HamDistAtmostT::generatesubsets_NonSmallFieldCheck(strShares_Main, CtxAE, MainRecoveredSecret,
                                            plaintext_rcv, v,0,threshold, Valid_selected);
 
-    bool AEReslt;
+    bool AEReslt = false;
 //    HamDistAtmostT::ToConstStringConvert(CtxAE2);
     /*I have modified the function for handling the following part*/
 
-    AEReslt = CryptoSymWrapperFunctions::Wrapper_AuthDecrypt(MainRecoveredSecret, CtxAE,plaintext_rcv );
+     // if (rsltRcVr == 1)
+     // {
+     //     AEReslt = CryptoSymWrapperFunctions::Wrapper_AuthDecrypt(MainRecoveredSecret, CtxAE,plaintext_rcv );
+     // }
+
 
 
 //    AEReslt = CryptoSymWrapperFunctions::Wrapper_AuthDecrypt(MainRecoverShare, CtxAE,recovered );
@@ -896,7 +905,7 @@ int HamDistAtmostT::CondDec_NonSmallFieldCheck(paillier_pubkey_t* ppk,
 //    AEReslt = CryptoSymWrapperFunctions::Wrapper_AuthDecrypt(MainRecoverShare, std::get<1>(ParsedCtxt),plaintext_rcv );
 
     mpz_clear(P_GF);
-    if (AEReslt == true)
+    if (rsltRcVr == 1)
     {
         recovered = plaintext_rcv;
         ret =1;
@@ -904,7 +913,8 @@ int HamDistAtmostT::CondDec_NonSmallFieldCheck(paillier_pubkey_t* ppk,
     else
     {
 //        recovered = ""; //(The original agreed i one)
-        recovered = plaintext_rcv;
+        // recovered = plaintext_rcv;
+        recovered = "The predicate is not holding";
         ret = -1;
     }
 
