@@ -281,10 +281,10 @@ int testCondEncEDist(int n_lambda,  int Num_tests, size_t _len)
     }
         string File1 = "EDOnedataL.dat";
         std::ofstream EDOnedataL(File1, std::ios_base::app | std::ios_base::out);
-        EDOnedataL << _len << "\t" << duration_Enc_ED1_Sum / Num_tests << "\t"
-                   << duration_CondEnc_ED1_Sum / Num_tests << "\t"
-                   << duration_CondDec_ED1_Sum / Num_tests << "\t"
-                   << TradCtxSize_Sum/Num_tests << "\t"
+        EDOnedataL << _len << "\t" << duration_Enc_ED1_Sum / Num_tests << ",\t"
+                   << duration_CondEnc_ED1_Sum / Num_tests << ",\t"
+                   << duration_CondDec_ED1_Sum / Num_tests << ",\t"
+                   << TradCtxSize_Sum/Num_tests << ",\t"
                    << CondCtxSize_Sum/Num_tests << "\n";
 
         CondEncEDatMost1.close();
@@ -341,11 +341,12 @@ int testCondEncHamDist(int n_lambda, int Num_tests, size_t _len, int MaxHam)
         cout << msg << "\t" <<typo << "\n";
 
         payload =  typo;
-        CondCtxSize_HD_Sum = CondCtxSize_HD_Sum + _len;
+
         size_t AE_CtxtSize = 2 * KEYSIZE_BYTES + _len;
         char HD_Char_ORigCTx [TradCtxSize];
         size_t CondCtxSize = 3 * sizeof(size_t) + AE_CtxtSize + (_len *  PailCtxtSize);
         char HD_ctx_typo_Bytes[CondCtxSize];
+        CondCtxSize_HD_Sum = CondCtxSize_HD_Sum + CondCtxSize;
 
         string msg_pad  = CryptoSymWrapperFunctions::Wrapper_pad(msg, _len);
         string pad_typo = CryptoSymWrapperFunctions::Wrapper_pad(typo, _len);
@@ -415,16 +416,16 @@ int testCondEncHamDist(int n_lambda, int Num_tests, size_t _len, int MaxHam)
 
     size_t MaxDist  = _len - Threshold;
 
-    HDdataT << MaxDist << "\t"<< _len << "\t" << duration_Enc_HD_Sum / Num_tests << "\t"
-            << duration_CondEnc_HD_Sum / Num_tests << "\t"
-            << duration_CondDec_HD_Sum / Num_tests << "\t"
-            << TradCtxSize  << "\t"
+    HDdataT << MaxDist << ",\t"<< _len << ",\t" << duration_Enc_HD_Sum / Num_tests << ",\t"
+            << duration_CondEnc_HD_Sum / Num_tests << ",\t"
+            << duration_CondDec_HD_Sum / Num_tests << ",\t"
+            << TradCtxSize  << ",\t"
             << CondCtxSize_HD_Sum /Num_tests  << "\n";
 
-    HDdataL << MaxDist << "\t"<< _len << "\t" << duration_Enc_HD_Sum / Num_tests << "\t"
-            << duration_CondEnc_HD_Sum / Num_tests << "\t"
-            << duration_CondDec_HD_Sum / Num_tests << "\t"
-            << TradCtxSize << "\t"
+    HDdataL << MaxDist << ",\t"<< _len << ",\t" << duration_Enc_HD_Sum / Num_tests << ",\t"
+            << duration_CondEnc_HD_Sum / Num_tests << ",\t"
+            << duration_CondDec_HD_Sum / Num_tests << ",\t"
+            << TradCtxSize << ",\t"
             << CondCtxSize_HD_Sum /Num_tests << "\n";
 
     CondEncHD.close();
@@ -472,15 +473,16 @@ int testCondEncHamDist_NonOPT(int n_lambda, int Num_tests, size_t _len, int MaxH
         msg = data[T].first;
         typo = data[T].second;
         payload = CryptoSymWrapperFunctions::Wrapper_pad( typo, _len);
-        cout << msg.size() << "\t" <<typo.size() << "\n";
-        cout << msg << "\t" <<typo << "\n";
+        cout << msg.size() << ",\t" <<typo.size() << "\n";
+        cout << msg << ",\t" <<typo << "\n";
 
         payload =  typo;
-        CondCtxSize_HD_Sum = CondCtxSize_HD_Sum + _len;
+
         size_t AE_CtxtSize = 2 * KEYSIZE_BYTES + _len;
         char HD_Char_ORigCTx [TradCtxSize];
         size_t CondCtxSize = 3 * sizeof(size_t) + AE_CtxtSize + (_len *  PailCtxtSize);
         char HD_ctx_typo_Bytes[CondCtxSize];
+        CondCtxSize_HD_Sum = CondCtxSize_HD_Sum + CondCtxSize;
 
         string msg_pad  = CryptoSymWrapperFunctions::Wrapper_pad(msg, _len);
         string pad_typo = CryptoSymWrapperFunctions::Wrapper_pad(typo, _len);
@@ -549,20 +551,20 @@ int testCondEncHamDist_NonOPT(int n_lambda, int Num_tests, size_t _len, int MaxH
 //            "[# of errors as the worst case: "<< NumOfErrs << " _len = " << _len << "and KeySize = " << n_lambda <<
 //            "****\n";
 
-    HDdataT << MaxDist << "\t"<< _len << "\t" << duration_Enc_HD_Sum / Num_tests << "\t"
-            << duration_CondEnc_HD_Sum / Num_tests << "\t"
-            << duration_CondDec_HD_Sum / Num_tests << "\t"
-            << TradCtxSize  << "\t"
+    HDdataT << MaxDist << ",\t"<< _len << ",\t" << duration_Enc_HD_Sum / Num_tests << ",\t"
+            << duration_CondEnc_HD_Sum / Num_tests << ",\t"
+            << duration_CondDec_HD_Sum / Num_tests << ",\t"
+            << TradCtxSize  << ",\t"
             << CondCtxSize_HD_Sum /Num_tests  << "\n";
 
 //    HDdataL << "The predicate is Hamming distance at most Threshold =" << _len - Threshold <<
 //            "[# of errors as the worst case: "<< NumOfErrs << " _len = " << _len << "and KeySize = " << n_lambda <<
 //            "****\n";
 
-    HDdataL << MaxDist << "\t"<< _len << "\t" << duration_Enc_HD_Sum / Num_tests << "\t"
-            << duration_CondEnc_HD_Sum / Num_tests << "\t"
-            << duration_CondDec_HD_Sum / Num_tests << "\t"
-            << TradCtxSize << "\t"
+    HDdataL << MaxDist << ",\t"<< _len << ",\t" << duration_Enc_HD_Sum / Num_tests << ",\t"
+            << duration_CondEnc_HD_Sum / Num_tests << ",\t"
+            << duration_CondDec_HD_Sum / Num_tests << ",\t"
+            << TradCtxSize << ",\t"
             << CondCtxSize_HD_Sum /Num_tests << "\n";
 
     CondEncHD.close();
@@ -708,10 +710,10 @@ int testCondEncOR(int n_lambda, int Num_tests, size_t _len, int MaxHam)
     string File1 = "ORdataL.dat";
     std::ofstream CondEncORpred(File1, std::ios_base::app | std::ios_base::out);
 
-    CondEncORpred << _len << "\t" << duration_Enc_ED1_Sum / Num_tests << "\t"
-               << duration_CondEnc_ED1_Sum / Num_tests << "\t"
-               << duration_CondDec_ED1_Sum / Num_tests << "\t"
-               << ORPrdrigCtxSize << "\t"
+    CondEncORpred << _len << ",\t" << duration_Enc_ED1_Sum / Num_tests << ",\t"
+               << duration_CondEnc_ED1_Sum / Num_tests << ",\t"
+               << duration_CondDec_ED1_Sum / Num_tests << ",\t"
+               << ORPrdrigCtxSize << ",\t"
                << CondEncOR_CtxSize_Sum/Num_tests << "\n";
 
     CondEncORpred.close();
@@ -838,10 +840,10 @@ int testCondEncCAPSLOCK(int n_lambda, int Num_tests, size_t _len)
     string File1 = "CAPSLKdataL.dat";
     std::ofstream CondEncORpred(File1, std::ios_base::app | std::ios_base::out);
 
-    CondEncORpred << _len << "\t" << duration_Enc_Sum / Num_tests << "\t"
-                  << duration_CondEnc_Sum / Num_tests << "\t"
-                  << duration_CondDec_Sum / Num_tests << "\t"
-                  << CAPSLocOrigCtxSize << "\t"
+    CondEncORpred << _len << ",\t" << duration_Enc_Sum / Num_tests << ",\t"
+                  << duration_CondEnc_Sum / Num_tests << ",\t"
+                  << duration_CondDec_Sum / Num_tests << ",\t"
+                  << CAPSLocOrigCtxSize << ",\t"
                   << CondEncCPSLKCtxSize_Sum /Num_tests << "\n";
 
     cout << "CAPSLOCK Error predicate is finished L =" <<_len << "\n";

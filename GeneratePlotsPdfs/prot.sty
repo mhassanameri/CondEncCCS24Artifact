@@ -1,0 +1,45 @@
+% prot.sty
+%
+% Usage:
+%
+%   \begin{protocol}{Alice}{Bob}
+%     \protright{produce x}{x}{consume \\ \ x}
+%     \protleft{$y=g^x$}{$y$}{check whether $y$ is odd or even}
+%     \protno{\vdots}{\vdots}
+%   \end{protocol}
+
+
+\newlength{\protwidthlr}\setlength{\protwidthlr}{.5\textwidth}
+\newlength{\protwidthm}\setlength{\protwidthm}{.2\textwidth}
+\newlength{\protarrowraise}\setlength{\protarrowraise}{1.5ex}
+\newlength{\protarrowlength}\setlength{\protarrowlength}{\protwidthm}
+\addtolength{\protarrowlength}{-.1\protarrowlength}
+
+\newcommand{\genarrow}[3]%
+{ \setlength{\unitlength}{#1}%
+  \raisebox{0.5ex}{\begin{picture}(0,0)\thinlines #3\end{picture}}%
+  \raisebox{1.0ex}{\makebox[#1]{#2}}%
+}
+
+\newcommand{\protright}[3]%
+{ \parbox[b]{\protwidthlr}{#1}
+  & \genarrow{\protarrowlength}{#2}%
+    {\put(0,0){\vector(1,0){1}}}
+  & \parbox[t]{\protwidthlr}{#3}\vspace{2ex}\\}
+\newcommand{\protleft}[3]%
+{ \parbox[t]{\protwidthlr}{#1}
+  & \genarrow{\protarrowlength}{#2}%
+    {\put(1,0){\vector(-1,0){1}}}
+  & \parbox[b]{\protwidthlr}{#3}\vspace{2ex}\\}
+\newcommand{\protno}[2]%
+{ \parbox[t]{\protwidthlr}{#1} && \parbox[b]{\protwidthlr}{#2}\vspace{2ex}\\}
+\newcommand{\protcenter}[1]{\hfill #1\hfill\hfill}
+
+\newenvironment{protocol}[2]%
+{ \begin{center}
+    \begin{tabular}{p{\protwidthlr}cp{\protwidthlr}}
+      \protcenter{\bf #1} && \protcenter{\bf #2}\vspace{2ex}\\
+}%
+{   \end{tabular}
+  \end{center}
+}

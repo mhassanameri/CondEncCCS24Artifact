@@ -1,0 +1,44 @@
+% !TEX root = main.tex
+
+
+
+\subsection{OR Composition}\seclab{CompositionAND/OR}
+Suppose we have conditional encryption schemes $\Pi_1,\ldots, \Pi_k$ for $k$ different predicates $P_1,\ldots, P_k$ and that each scheme has the same message space. Let $P_{or}(m_1,m_2) = \bigvee_{i=1}^k P_i(m_1,m_2)$ the predicate which is $0$ (false) if and only if all of the predicates are false i.e., $P_i(m_1,m_2)=0$ for all $i \leq k$. We will define a conditional encryption scheme $\Pi_{or} = (\KG, \Enc,\Cond\Enc,\Dec)$ for the predicate $P_{or}$. 
+
+Intuitively, our key generation algorithm $\KG(1^{\lambda})$ runs $(sk_i,pk_i) \gets \KG_i(1^\lambda)$ for each $i$ and outputs $(sk,pk)$ where $sk = (sk_1,\ldots, sk_k)$ and $pk = (pk_1,\ldots, pk_k)$\footnote{As an optimization if $\Pi_i.\KG_i(1^\lambda)$ generates a Pallier key for each $i$ then we can generate one Pallier key $(sk_0,pk_0)$ and set $(sk_i,pk_i)=(sk_0,pk_0)$ for all $1 \leq i \leq k$. }. The algorithm $\Enc_{pk}(m)$ simply generates $c_i = \Pi_i.\Enc_{pk}(m)$ for each $i\leq k$ and outputs $(0,c_1,\ldots, c_k)$. Similarly, the algorithm $\Cond\Enc_{pk}\left(c=\left(0,c_1,\ldots,c_k\right),m',m''\right)$ simply generates $c_i = \Pi_i.\Cond\Enc_{pk}(c_i,m',m'')$ for each $i\leq k$ and outputs $(0,\tilde{c}_1,\ldots, \tilde{c}_k)$ --- if $\tilde{c}_i = \bot$ for any $i \leq k$ then we instead output $\Pi_{or}.\Cond\Enc_{pk}(c,m',m'') = \bot$. Finally, the $\Dec_{sk}(c)$ will run $m_i = \Pi_i.\Dec_{sk}(c)$ to obtain $m_i \in \mathcal{M} \cup \{\bot\}$. If $m_i=\bot$ for all $i\leq k$ then the algorithm outputs $\bot$; otherwise we output $m_j$ where $j$ is largest integer such that $m_j \neq \bot$. 
+
+
+% Given $c=(0,c_1,\ldots, c_k) = \Enc_{pk}(m)$ decryption is straightforward e.g., $\Dec_{sk}(m)=\Dec_{pk_1}^1(c_1)$. Given $c=(1, c_1',\ldots, c_k')$ the decryption algorithm $\Dec_{sk}(c)$ will run $m_i \gets \Dec_{sk_i}^i(c_i')$ for each $i\leq k$. If $m_i \neq \bot$ then we output $m_i$ otherwise we check the next ciphertext $c_{i+1}$. If $m_i=\bot$ for all $i\leq k$ then we output $\bot$. As long as each of the conditional encryption schemes  $\Pi_i$ is $1-\epsilon(\lambda)$-error detecting and $1-\epsilon(\lambda)$-correct we will be able to identify the correct message with probability at least $1-2k \epsilon(\lambda)$. To see this we can define the event $F_i$ to be the failure event that $P_i(m,m')=0$ and $m_i \neq \bot$ or $P_i(m,m')=1$ and $m_i \neq m''$. If $\Pi_i$ is $(1-\epsilon(\lambda))$-correct and $(1-\epsilon(\lambda))$-error detecting then for each $i$ we have $\Pr[F_i]\leq 2\epsilon(\lambda)$ and by union bounds $\Pr[\exists i. F_i] \leq 2k \epsilon(\lambda)$.  As long no failure events occur we will have $m_i \in \{\bot, m''\}$ for each $i$ and if $P_{OR}(m,m')=1$ we will have some $i$ with $m_i = m''$. Thus, the encryption scheme is $1-\epsilon'(\lambda)$-correct and $1-\epsilon'(\lambda)$-error detecting for $\epsilon'(\lambda)= 2k \epsilon(\lambda)$. We defer formal proofs to the appendix. 
+
+%\newcommand{\thmORPrivacy}{Suppose that we are given $ k $ separate conditional encryption schemes $ \Pi_1, \ldots, \Pi_k $ corresponding predicates $ P_1, \ldots, P_k $ and that each $\Pi_i$ provides $(t(\lambda), t_{\Sim,i}(\lambda), \eps'(\lambda))$-conditional encryption secrecy in the semi-honest (resp. malicious) setting. The construction $\Pi_{or}$ provides $ (t'(\lambda), t_{\Sim}'(\lambda), \eps'(t'(\lambda), \lambda)) $-conditional encryption secrecy in the semi-honest (resp. malicious) setting with $ t'(\lambda) = O\left(t\left(\lambda\right)\right)$, $ t'_{\Sim}(\lambda) \approx \sum_{i = 1}^{k} t_{\Sim_i}(\lambda) $ and $ \eps'\left(t'\left(\lambda\right),\lambda\right) = \sum_{i}^k \eps_i\left(t'\left(\lambda\right),\lambda\right)$.}
+
+
+
+\newcommand{\thmORPrivacy}{Suppose that we are given $ k $ separate conditional encryption schemes $ \Pi_1, \ldots, \Pi_k $ corresponding predicates $ P_1, \ldots, P_k $ and that each $\Pi_i$ provides $(t(\lambda), t_{\Sim,i}(\lambda), $ $\eps_i(t(\lambda),\lambda))$-conditional encryption secrecy. The construction $\Pi_{or}$ provides $ (t'(\lambda), t_{\Sim}'(\lambda), $ $\eps'(t'(\lambda), \lambda)) $-conditional encryption secrecy with $ t'(\lambda) = O\left(t\left(\lambda\right)\right)$, $ t'_{\Sim}(\lambda) \approx \sum_{i = 1}^{k} t_{\Sim_i}(\lambda) $ and $ \eps'\left(t'\left(\lambda\right),\lambda\right) = \sum_{i}^k \eps_i\left(t'\left(\lambda\right),\lambda\right)$. }
+
+
+\begin{theorem}{\thmlab{ORComp:Security}}
+     \thmORPrivacy
+\end{theorem} 
+
+%\begin{theorem}\thmlab{ORComp:Security}
+%\thmORPrivacy	
+%\end{theorem}
+
+The formal proof is available in \appref{apdx:MissingProofs}. Intuitively, the simulator $\Sim_{OR}(pk)$ for $\Pi_{OR}$ will run the simulator $\Sim_i(pk_i)$ for each conditional encryption scheme and concatenate all of the ciphertexts. 
+
+%\newcommand{\thmORCorrect}{Suppose that we are given $ k $ separate conditional encryption schemes $ \Pi_1, \ldots, \Pi_k $ corresponding to predicates $ P_1, \ldots, P_k $ and that each $\Pi_i$ is $1-\epsilon_i(\lambda)$-correct and $1-\epsilon_i'(\lambda)$-error detecting. Then the construction $\Pi_{or}$ is $1-\epsilon(\lambda)$-correct (resp.$1-\epsilon'(\lambda)$-error detecting) with  $\eps(\lambda) = \sum_{i}^k \eps_i'(\lambda) + \sum_{i}^k \eps_i(\lambda)$ (resp. $\eps'(\lambda) = \sum_{i=1}^\lambda\eps_i'(\lambda)$). }
+
+
+
+\newcommand{\thmORCorrect}{Suppose that we are given $ k $ separate conditional encryption schemes $ \Pi_1, \ldots, \Pi_k $ corresponding to predicates $ P_1, \ldots, P_k $ and that each $\Pi_i$ is $1-\epsilon_i(\lambda)$-correct and $1-\epsilon_i'(\lambda)$-error detecting. Then the construction $\Pi_{or}$ is $1-\epsilon(\lambda)$-correct (resp.$1-\epsilon'(\lambda)$-error detecting) with  $\eps(\lambda) = \sum_{i}^k \eps_i'(\lambda) + \sum_{i}^k \eps_i(\lambda)$ (resp. $\eps'(\lambda) = \sum_{i=1}^\lambda\eps_i'(\lambda)$). }
+
+
+\begin{theorem}{\thmlab{ORComp:Correct}}
+\thmORCorrect
+\end{theorem}
+
+The formal proof is available in \appref{apdx:MissingProofs}. 
+%\newcommand{\thmORRealORRAN}{Suppose that we are given $ k $ separate conditional encryption schemes $ \Pi_1, \ldots, \Pi_k $ corresponding to predicates $ P_1, \ldots, P_k $ and that each $\Pi_i$ provides  $(t_i(\lambda), q_i(\lambda), \eps_i(t_i(\lambda), q_i(\lambda), \lambda)) $ real or random security. Then the construction $\Pi_{or}$ provides $(t(\lambda), q(\lambda), \eps(t(\lambda), q(\lambda), \lambda))$ real or random security with  $\eps(\lambda) = \sum_{i=1}^k \eps_i(t_i(\lambda), q_i(\lambda), \lambda))$, $q(\lambda) = \min \{\frac{q_1(\lambda)}{2k}, \cdots, \frac{q_k(\lambda)}{2k} \}$ and $t(\lambda) = \min{\set{t_1(\lambda), \cdots, t_k(\lambda)}} - O(k \cdot \max{\set{t_{\Cond\Enc_1}, \cdots, t_{\Cond\Enc_k}}})$. }
+
+We also prove that the suggested construction provides Real-or-Random security as well. See \thmref{ORComp:ROR} and its corresponding proof in \appref{apdx:RealOrRandomProofs}.

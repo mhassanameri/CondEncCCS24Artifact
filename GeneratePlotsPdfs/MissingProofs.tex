@@ -1,0 +1,243 @@
+\section{Missing Proofs}
+% \label{apdx:MissingProofs}
+\applab{apdx:MissingProofs}
+
+\begin{remindertheorem} {\thmref{thm:EqCor}}
+\ThmEqCorrectness
+\end{remindertheorem}
+\begin{proofof}
+{\thmref{thm:EqCor}}
+ Since $\Enc_{pk}(m)$ simply runs regular Pallier encryption perfect correctness of Pallier immediately implies that 
+ $\Dec_{sk}\left( \Enc_{pk}(m)\right) =  \Dec_{sk}\left(P.\Enc_{pk}(\ToInt(m) \right)= \ToOrig$ $(\ToInt(m)) = m$ with probability $1$ for all messages $m \in \Sigma^{\leq n}$ and all public/private key pairs in the support of $\KG$. Similarly, if $c_1=\Enc_{pk}(m)$ and $P_{=}(m_1,m_2) = 1$ then $\Cond\Enc_{pk}(c_1,m_2,m_3)$ will output $(1,c')$ where $c' = g^{\ToInt{(m_3)}} r^n \mod{N^2}$ for some $r \in \mathbb{Z}_N^*$. Thus, $c'$ is a valid pallier ciphertext for $\ToInt{(m_3)}$ and, by correctness of Pallier, $\Dec_{sk}(1,c')$ will return $m_3$. 
+
+ On the other hand if $P_{=}(m_1,m_2) = 0$ then by \thmref{thm:EqualityTestSecrecy} the ciphertext $c'$ is a valid Pallier Ciphertext for some uniformly random integer $y \in \mathbb{Z}_N$ and we will have $\Dec_{sk}(1,c') = \bot$ as long as $y > |\Sigma|^{n+1}$. Thus, the construction is $1-\epsilon(\lambda)$-error detecting conditional encryption scheme with $\eps(\lambda) = \frac{|\Sigma|^{n+1}}{N} \leq \frac{1}{\max\{p,q\}}$.
+\end{proofof}
+
+
+
+\begin{remindertheorem}{\thmref{thm:EqualityTestSecrecy}}  
+\ThmEqTestSecrecy
+\end{remindertheorem}
+\begin{proofof}{\thmref{thm:EqualityTestSecrecy}}
+We define the simulator $ \Sim(pk) $ as follows. The simulator $ \Sim(pk) $ takes as input the Paillier public key $ pk $ and then selects $ R_s\in_R \mathbb{Z}_{N} $ and $r_s\in_R \mathbb{Z}^*_N$ uniformly at random and then encrypts $ R_s $ as $ C_{\Sim} = \Pail.\Enc_{pk}(R_s; r_s) = g^{R_s} r_s^{N} \mod N^2$ and outputs it. We now argue that for any $m_1, m_2 \in \Sigma^{n}$ with $P_{=}(m_1,m_2) = 0$ any payload message $m_3$ and any Pallier key $\left(pk=\left(N=pq,g\right),sk\right)$  which satisfies our condition that $|\Sigma|^{n+1} \leq \min\{p,q\}$ and any encryption $c_1 = g^{m_1} r_1^{N} \mod{N^2}$ of $m_1$ under $pk$ that the distributions $ \left(pk, sk, m_1, m_2, m_3, c_1, C_{m_3} = \Cond\Enc_{pk}\left(c_{m_1}, m_2, m_3\right) \right)$ and $ (pk, sk,$ $ m_1, m_2, m_3,c_1, C_{\Sim}= \Sim(pk)) $ are identical. In particular, it suffices to argue that $C_{\Sim}= \Sim(pk)$ and $\Cond\Enc_{pk}(c_{m_1}, m_2, m_3)$ are distributed identically. 
+
+To see this consider the generation of $\Cond\Enc_{pk}(c_{m_1}, m_2, m_3)$. First, we pick a random $R \in \mathbb{Z}_N$ and generate an encryption of $(-R \cdot m_2 \mod N)$ as $c_2 = g^{-R \cdot m_2} r_2^N \mod{N^2}$ where $r_2 \in \mathbb{Z}_N^*$ is picked randomly. We then compute $c_1^R = g^{m_1 \cdot R} r_1^{RN}$. Finally, we output
+\begin{eqnarray*}&&c_1^Rc_2 \cdot g^{m_3} \mod{N^2} =  g^{m_3+R(m_1-m_2)} r_1^{RN} r_2^N \\ 
+&&= g^{m_3+R(m_1-m_2) \mod N} \left(r_1^Rr_2 \mod{N}\right)^{N} \mod{N^2} \ . \end{eqnarray*}
+where the values $R \in \mathbb{Z}_N$, $r_2 \in \mathbb{Z}_N^*$ are fresh random values. In the last step we implicitly used the fact that if $r_1^Rr_2 = aN+b$ where $b = \left[r_1^Rr_2 \mod{N}\right]$ then \[ (aN+b)^N = \sum_{i=0}^N {N \choose i} (aN)^ib^{N-i} = b^{N} \mod{N^2} \ . \]
+
+Let us first focus on the term $m_3+R(m_1-m_2)$ in the exponent of $g$. We observe that $[m_1-m_2 \mod N] \in \mathbb{Z}_N^*$ since $1 \leq |m_1-m_2| \leq \left| \Sigma\right|^{n} \leq \min\{p,q\}$. It follows that for any $m_3$ that $R(m_1-m_2) + m_3$ is distributed uniformly at random in $\mathbb{Z}_N$ when $R \in \mathbb{Z}_N$ is picked randomly. We next consider the term $\left(r_1^Rr_2 \mod{N}\right)$ and argue for any fixed $r_1 \in \mathbb{Z}_N^*$ and $R \in \mathbb{Z}_N$ that $\left(r_1^Rr_2 \mod{N}\right)$ is distributed uniformly at random in $\mathbb{Z}_N^*$ when $r_2 \in \mathbb{Z}_N^*$ is picked randomly. It follows that for any $r_1 \in \mathbb{Z}_N^*, m_1,m_2,m_3$ such that $1 \leq |m_1-m_2| \leq \min\{p,q\}$ that the simulated ciphertext ($C_{\Sim}= \Sim(pk) = g^{R_s} r_s^N \mod{N^2}$ for random $r_s \in \mathbb{Z}_N^*$ and $R_s \in \mathbb{Z}_N$ ) is identically distributed to $\Cond\Enc_{pk}(c_{m_1}, m_2, m_3)$.
+\end{proofof}
+
+
+
+\begin{remindertheorem}{\thmref{thm:StatDistUak}}  
+\thmStatDistTwo
+\end{remindertheorem}
+\begin{proofof} {\thmref{thm:StatDistUak}}
+    ‌Based on the definition of statistical distance we have 
+    \begin{align}
+        \mathtt{SD}(\D_{ak}, \U_b) &= \frac{1}{2} \sum_{i = 0}^{b-1} |\Pr_{y\in_R \D_{ak}}[y = i] - \Pr_{y\in_R \U_b}[y = i]| \nonumber\\ 
+        & = \frac{1}{2} (ak) (| \frac{1}{b} - \frac{1}{a} \cdot\frac{1}{k}| + (b-ka) (|\frac{1}{b} - 0|)\nonumber\\ 
+        & = \frac{1}{2}(ak) (\frac{b-ak}{abk}) + \frac{1}{2}(r)(\frac{1}{b}) = \frac{r}{b} \leq \frac{1}{k+1}
+    \end{align}
+    
+\end{proofof}
+
+
+
+
+
+\begin{theorem}{\thmlab{thm:ArbHamm}}
+      \ThmHammingDistCorrectness
+\end{theorem} 
+\begin{proofof}{\thmref{thm:ArbHamm}}
+We first note Authenticated Encryption security implies that the term $\eps_{AE}(\lambda)$ is negligible. Otherwise, an AE attacker could simply pick a random key $K'$ and use $c=\Enc_{K'}(m)$ as an attempted forgery for the unknown secret key $K$! 
+
+ There are two conditions in the \defref{CondCorr} which need to be proved. The first condition is regular encryption correctness and the other one is the conditional encryption correctness. 
+
+The observation that $\Dec_{sk}\left( \Enc_{pk}(m;r)\right) = m $ for all messages $m \in \Sigma^n$, random coins $r$ and all $(sk,pk)$ in the support of the key generation algorithm follows immediately from the correctness of Pallier encryption. 
+
+
+It remains to to show that for all messages $ m_1, m_2 \in \Sigma^n$ such that $P_{\ell, \Ham}(m_1,m_2) $, all payload messages $m_3$, all $\{sk,pk\}$ in the support of our Key Generation algorithm and all random strings $ r_1, r_2 \in_R (\Mbb{Z}_{N}^*)^n$
+we have
+
+
+ 
+\begin{align}\eqnlab{EQ:EncCor2}	
+\Pr \Biggl[\Dec_{sk}(\Cond\Enc_{pk}(c_1, m_2, m_3; r_2)) = m_3 \Biggl| \begin{matrix}
+	(sk, pk)\gets \KG (1^\lambda) \\ 
+	c_1 = \Enc_{pk}(m_1; r_1) \\
+	P_{t,\Ham}  (m_1, m_2) = 1
+	\end{matrix} \Biggl] \geq 1 - \eps \ .
+  	\end{align}  
+   
+Let $K$ denote the authenticated encryption key and let  $ \ldb s \rdb_1,\ldots,   \ldb s \rdb_n$ denote the shares of $K$ that were generated by the conditional encryption algorithm. Let $\tilde{c} = (b,\tilde{c}_1,\ldots, \tilde{c}_n, C_{AE})$ denote the output of $\Cond\Enc_{pk}(c_1, m_2, m_3; r_2))$, and let  $\ldb s' \rdb_i = \RanDec\left( P.\Dec_{sk}(\tilde{c}_i) \right)$ denote the shares that are recovered. Finally, let $S^* = \{ i \in [n]~: ~m_2[i]=m_1[i]\}$ denote indices of the characters where $m_2$ and $m_1$ match. By correctness of Pallier we have $\ldb s' \rdb_i = \ldb s \rdb_i$  for {\em all} $i \in S^*$. For $i \not \in S^*$ the distribution over $\ldb s' \rdb_i$ is as follows: sample a uniformly random item $y_i$ from $\mathbb{Z}_N^*$ and output $y_i \mod{2^{\lambda}}$.
+
+
+
+
+If $P_{Hamm,\ell}(m_1,m_2)=1$ we have $|S^*| \geq n-\ell$ and there is some subset $S \subseteq S^*$ of size $|S|=n-\ell$ such that \[ K=K_{S} = \recover\left( \left\{\left(i, \ldb s' \rdb_i\right)_{i \in S} \right\} \right)   \ . \]
+From the correctness of the authenticated encryption scheme it follows that $\Auth.\Dec_{K_{S}}(c_{AE}) = m_3$.  
+
+Thus, the only possible to output an incorrect message $m'$ is if for some $S \subseteq n$ of size $n-\ell$ we have $K \neq K_S = \recover\left( \left\{\left(i, \ldb s' \rdb_i\right)_{i \in S}\right\}\right)$ and $\Auth.\Dec_{K_{S^*}}(c_{AE}) \neq \bot$. However, if $K_S \neq K$ then $S \not \subseteq S^*$ and we can find some $i \in S \setminus S^* $. For now assume that for all $i \not\in S^*$ the value of $\ldb s' \rdb_i$ is uniformly random we can view $K_S$ as a uniformly random key. If we view each $K_S$ as random then we have $\Pr[\Auth.\Dec_{K_S}(c_{AE}) \neq \bot] \leq \epsilon_{AE}$ and $\Pr[\exists S \subseteq [n]~.  \Auth.\Dec_{K_S}(c_{AE}) \not\in \{m_3, \bot \} ] \leq {n \choose \ell} \eps_{AE}$. 
+
+In the previous paragraph we assumed that the value $\ldb s' \rdb_i$ is uniformly random for each  $i \not\in S^*$ the value. This is close, but it is not quite true. In reality the distribution of $\ldb s' \rdb_i$ is described by sampling a uniformly random $y_i \in \mathbb{Z}_N^*$ and then outputting $y_i \mod{2^{\lambda}}$.However, by \thmref{thm:StatDistUak} the statistical distance between original/modified distribution of our recovered shares $ \ldb s' \rdb_1,\ldots,   \ldb s' \rdb_n$ is upper bounded by $2^{-\lambda}$. This follows since we are guaranteed that $N > n 2^{2\lambda}$ by definition of the key generation algorithm. Thus, we have 
+\[ \Pr \Biggl[\Dec_{sk}(\Cond\Enc_{pk}(c_1, m_2, m_3; r_2)) \neq m_3 \Biggl| \begin{matrix}
+	(sk, pk)\gets \KG (1^\lambda) \\ 
+	c_1 = \Enc_{pk}(m_1; r_1) \\
+	P_{t,\Ham}  (m_1, m_2) = 1
+	\end{matrix} \Biggl] \leq  {n \choose \ell} \epsilon_{AE} + 2^{-\lambda} \ . \]
+
+Similarly, if $P_{\ell,Hamm}(m_1,m_2)=0$ then for all $S \subseteq [n]$ of size $|S|=n-\ell$ we can (essentially) view $K_S$ as random since there is some $i \in S \setminus S^*$. It follows that 
+
+\[ \Pr \Biggl[\Dec_{sk}(\Cond\Enc_{pk}(c_1, m_2, m_3; r_2)) \neq \bot \Biggl| \begin{matrix}
+	(sk, pk)\gets \KG (1^\lambda) \\ 
+	c_1 = \Enc_{pk}(m_1; r_1) \\
+	P_{t,\Ham}  (m_1, m_2) = 0
+	\end{matrix} \Biggl] \leq {n \choose \ell} \epsilon_{AE} + 2^{-\lambda} \ . \]
+
+
+
+
+	
+	
+\end{proofof}
+
+
+\begin{remindertheorem}{    \thmref{thm:CondSecArbHamm}}
+ \thmSemiHonest
+\end{remindertheorem} 
+\begin{proofof}{\thmref{thm:CondSecArbHamm}}
+	To prove this theorem we use a hybrid argument. In the first hybrid (Hybrid 0, real world) the distinguisher is given the actual ciphertext output conditional encryption and in the last hybrid contains the adversary is given a ciphertext output by our simulator --- described in \figref{fig:SimArbHamm}. As the hybrids are indistinguishable, we can conclude that the first and last hybrid are indistinguishable as well which implies that the our suggested construction is secure and provides conditional encryption secrecy in the semi-honest model. Then we concretely compute the distinguishing advantage of the defined hybrids. In what follows, we describe the hybrids with more details. 
+	
+	
+	 	\begin{itemize}
+	 	\item \textbf{Hybrid 0}: In this hybrid the distinguisher $ \D $ is given    $(sk, pk,  m_1, ,m_2,$ $ m_3, c_{m_1}, (1, \tilde{c}))$  in which $ \tilde{c} = (\tilde{c}_1, \dots, \tilde{c}_n, c_{AE})  \leftarrow \Cond\Enc_{pk}(c_1,m_2,m_3)$. 
+	 	
+	 	\item \textbf{Hybrid 1}: Let $T = \{i : m_2[i] \neq m_1[i]\}$ be the set of the indexes that $ m_1 $ and $ m_2 $ have different characters. We define \textbf{Hybrid 1} similar to \textbf{Hybird 0}, except for all $j\in T $ we replace $$\tilde{c}_{j}= P.\Enc_{pk}\Big(R_i(m_2[j]-m_1[j])+ \RanEnc(\ldb s \rdb_i)\Big)$$ with $P.\Enc(R_j’)$ where $ R_j' \in_R \Mbb{Z}_N$ are fresh and uniform random values chosen from $\Mbb{Z}_N$.  
+
+	
+	 	\item \textbf{Hybrid 2}: This hybrid is exactly the same as the previous hybrid except we replace all the remaining ciphertexts $ j\in [1:n]/ T  $ with $ \tilde{c}_{j}= P.\Enc_{pk}\Big(R_j(m_2[j]-m_1[j])+ \RanEnc(\ldb s_r \rdb_j)\Big) $ where $ \ldb s_r \rdb_j \in_R \{0,1\}^{\lambda} $ are fresh uniformly random elements (chosen independently from the secret $K$)  chosen from the field $\Mbb{F}_{2^\lambda}$.
+
+           \item \textbf{Hybrid 3}: This hybrid is exactly the same as the previous hybrid except we replace all the ciphertexts $ j\in [1:n]/ T  $ with $ \tilde{c}_{j}= P.\Enc_{pk}\Big(R_j(m_2[j]-m_1[j])+ \hat{R}_j)\Big) $ where $ \hat{R}_j\in_R \Mbb{Z}_N $ are chosen from $\Mbb{Z}_{N}$ uniformly at random.
+
+       \item \textbf{Hybrid 4}: This hybrid is exactly the same as the previous hybrid except we replace ciphertexts $ \tilde{c}_{j}$ for all $ j\in [1:n]/ T  $, with $\Pail.\Enc_{pk}(R'_j)$ in which $ R'_j\in_R \Mbb{Z}_N $ are chosen from $\Mbb{Z}_{N}$ uniformly at random.
+           
+	 	\item \textbf{Hybrid 5}: This hybrid is exactly the same as the previous hybrid unless we replace $ c_{AE} $ with $ c'_{AE} \in_R \{0,1\}^{l(\lambda)}$ a $\lambda$-bit string chosen uniformly at random. We note that $l(\lambda)$ is a polynomila over the security parameter $\lambda$ which represents the ciphertext size of authenticated encryption. 
+	 
+	 	\item \textbf{Hybrid 6}: We replace the ciphertext of the conditional encryption with the output of the simulator $ \Sim $ described in \figref{fig:SimArbHamm}.
+	 	
+	 	
+	 	\end{itemize}
+ 	
+ 	
+	Now we are proving that the defined hybrids are equivalent. 
+
+
+\subsubsection{\textbf{Hybrid 0} $\equiv$ \textbf{Hybrid 1} } These hybrids are  equivalent i.e., we have 
+	\begin{align}
+& \Pr[\D^{H_{0}} =1] = \Pr[\D^{H_1} =1] \ . 
+\end{align} 
+Where $\D^{H_i}=1$ denotes the event that the distinguisher outputs $1$ in hybrid $i$. 
+The argument is essentially the same as what we had for the security of \textit{Equality test} predicate --- see the proof of \thmref{thm:EqualityTestSecrecy}. In particular, for each $j \in T$ we have $m_1[j] \neq m_2[j]$ and $\left|m_1\left[j\right]-m_2\left[j\right]\right| \leq \min\{p,q\}$ which implies that $\left(m_1\left[j\right]-m_2\left[j\right]\right) \in \mathbb{Z}_N^*$. It follows that $R_j \times \left(m_1\left[j\right]-m_2\left[j\right]\right)$ is uniformly random in $\mathbb{Z}_N$.  
+
+
+\subsubsection{\textbf{Hybrid 1} $ \equiv $ \textbf{Hybrid 2}} We have information theoretically eliminated all information about shares $\shrs{}$ with $j \in T$. Since $P_{\ell,\Ham}(m_1,m_2)=0$ we have $|T| > \ell$ and $|\overline{T}| < n-\ell$. Let $T=\{i_1,\ldots, i_t\}$ with $t < n-\ell$. Shamir Secret Sharing guarantees that $(s_{i_1} , s_{i_2} , \ldots , s_{i_t})$ is uniformly random in $\mathbb{F}_{2^{\lambda}}^t$. Thus, we can simply replace the shares with uniformly random values. We have \begin{align}
+& \Pr[\D^{H_{1}} ] =   \Pr[\D^{H_2} ] \ . 
+\end{align} 
+
+
+
+\subsubsection{Statistically indistinguishability of \textbf{Hybrid 2} $ \equiv $ \textbf{Hybrid 3}} We apply \thmref{thm:StatDistUak} with $a=2^{\lambda}$, $k = \lfloor \frac{N}{2^\lambda} \rfloor$ and $b=N$. We first observe that when $i \in \overline{T}$ the value of $s_i \in \mathbb{F}_{2^{\lambda}}$ is uniformly random so that $\RanEnc(s_i)$ is equivalent to $\mathcal{D}_{ak}$. It follows that the statistical distance between $\RanEnc(s_i)$ and the uniform ditribution $\Mbb{Z}_N$ is at most $\frac{1}{k} = \lfloor \frac{N}{2^\lambda} \rfloor^{-1}$. Since we are replacing the random value in $|\overline{T}|$ ciphertexts the overall statistical distance is upper bounded by $\frac{|\overline{T}|}{k} \leq \frac{n}{k}$  we have: 
+
+\begin{align}
+	& |\Pr[\D^{H_{2}} ] -   \Pr[\D^{H_3}]| \leq \frac{2^\lambda n}{N-2^{\lambda}} \leq 2^{-\lambda} \ . 
+\end{align}
+The last inequality follows since  we pick $N \geq 2n 2^{2\lambda}$ so that $\frac{2^\lambda n}{N-2^{\lambda}} \leq 2^{-\lambda}$.   
+
+
+\subsubsection{\textbf{Hybrid 3} $\equiv$ \textbf{Hybrid 4}} These hybrids are statistically indistinguishable as $R_j (m_2[j]-m_1[j]) + \hat{R}_j$ is already uniformly random in $\mathbb{Z}_N$. We have 
+\begin{align}
+	& \Pr[\D^{H_{3}} ] = \Pr[\D^{H_4} ] 
+\end{align}
+
+
+
+\subsubsection{Indistinguishability of  \textbf{Hybrid 4} and \textbf{Hybrid 5}}  By Hybrid 4 we have information theoretically elimated any information about the secret key $K$ for our authentication encryption scheme from $(\tilde{c}_1,\ldots, \tilde{c}_n)$. Thus, by AE security any adversary running in time at most $t_{AE} = t_{AE}(\lambda)$ can distinguish between $c_{AE}$ and $c_{AE}'$ with the advantage of at most $\eps_{AE}(t_{AE}, \lambda)$. So we have 
+
+	\begin{align}
+	& |\Pr[\D^{H_{4}} ] -   \Pr[\D^{H_1}=1]|  \leq \eps_{AE}(t_{AE}, \lambda)
+	\end{align}
+
+
+\subsubsection{\textbf{Hybrid 5}  $\equiv $ \textbf{Hybrid 6}} Looking at the definition of our our simulator in \figref{fig:SimArbHamm}, we can see that the conditionally encrypted ciphertext in Hybrids 5 and 6 are generated in exactly the same way. It follows that the hybrids are 
+information-theoretically equivalent and we have 
+\begin{align}
+	& \Pr[\D^{H_{5}}] = \Pr[\D^{H_6} ] 
+\end{align}
+
+Putting everything together we have 
+\begin{align}
+&\Big| \Pr\left[\D \left(sk, pk, m_1, m_2, m_3. \Cond\Enc_{pk}\left(\Enc_{pk}\left(m_1\right), m_2\right)\right)=1\right] \nonumber\\
+&-  \Pr\left[\D \left(sk, pk, m_1, m_2, m'_3,\Sim\left(pk\right)\right)=1\right]\Big| \nonumber \\
+&= \left|\Pr\left[\D^{H_0}\right]-\Pr\left[\D^{H_6}\right]\right| \nonumber \\
+&\leq \sum_{i=0}^5 \left|\Pr\left[\D^{H_i}\right]-\Pr\left[\D^{H_{i+1}}\right]\right| \nonumber \\
+&< \eps_{AE}(t',\lambda) + \frac{n2^\lambda}{N-2^{\lambda}} \leq \eps_{AE}(t',\lambda) + 2^{-\lambda}  \nonumber \ .
+\end{align}
+
+\begin{figure*}
+		\begin{itemize}
+			\item [] \underline{Design of simulator $ \Sim(pk) $}
+			\begin{itemize}
+				\item [1.] Sample, $ r''_1, \ldots, r''_n \in_R\Mbb{Z}^*_N, R''_1, \ldots, R''_n \in_R{\Mbb{Z}_N}^{n} $ uniformly at random  
+    
+				\item [2.] For all $ 1\leq i \leq n $ compute $ \tilde{c}'_i = \Pail.\Enc_{pk}(R''_i; r''_i ) $
+				
+				\item [3.] Pick $ R_K\in_R \set{0,1}^{l(\lambda)} $ uniformly at random and set $ c'_{AE} = R_K $.  //{\color{blue} $l(\lambda)$ represents the ciphertext size of our authenticated encryption.}
+
+				\item [4.] Output $ \tilde{c}' = (1, \tilde{c}'_1, \cdots, \tilde{c}'_n,  c'_{AE}) $. 
+			\end{itemize}
+		\end{itemize}\caption{Steps of designing the simulator $ \Sim $ for the conditional encryption secrecy when the predicate is $P_{\ell, \Ham}$}
+		\figlab{fig:SimArbHamm}
+\end{figure*}
+
+\end{proofof}
+
+
+\begin{remindertheorem} {\thmref{thm:EDCor}}
+\thmEDCorrect
+\end{remindertheorem}
+
+\begin{proofof}{\thmref{thm:EDCor}}
+Note that $\Enc_{pk}(m)$ includes $c[0] = P.\Enc_{pk}(\ToInt(m))$ and that therefore by correctness of Pallier we have  $\Dec_{sk}\left( \Enc_{pk}(m)\right) = \Dec_{sk}\left( P.\Enc_{pk}(\ToInt(m))\right) = \ToOrig$ $(\ToInt(m)) = m$ with probability $1$ for all messages $m \in \Sigma^{\leq n}$ and all public/private key pairs in the support of $\KG$. 
+
+Recall that if $c = (0,c[0],\ldots, c[n])=\Enc_{pk}(m)$ then $\Cond\Enc_{pk}(c,m',m'')$ will output a ciphertext of the form $(1,\tilde{c}_0,\ldots,\tilde{c}_{2n})$. If $P_{1,\ED}(m,m') = 0$ then we have $m_{-j} \neq m'$ and $m \neq m'_{-j}$ for all $0 \leq j \leq n$. Thus, by \thmref{thm:EqualityTestSecrecy} each $\tilde{c}_j = g^{y_j} r_j^n \mod{N^2}$ for random values $r_j \in \mathbb{Z}_N^*$ and $y_j \in \mathbb{Z}_N$. Thus, we have \[\Pr[\Dec_{sk}(1,\tilde{c}_0,\ldots,\tilde{c}_{2n}) \neq \bot] \leq \Pr[\exists j. y_j < |\Sigma|^{n+1}] \leq \frac{(2n+1) |\Sigma|^{n+1}}{N} \ .\] This implies that the construction is $1-\epsilon(\lambda)$-error detecting conditional encryption scheme with $\eps(\lambda) = \frac{|\Sigma|^{n+1}}{N} \leq \frac{1}{\max\{p,q\}}$.
+
+Finally, if $P_{1,\ED}(m,m') = 0$ then by perfect correctness of our conditional encryption scheme for equality predicate there exists some $j$ such that $\tilde{c}_j = g^{y_j} r_j^N \mod{N^2}$ is a valid Pallier encryption of  $y_j=\ToInt(m'')$. Furthermore, we have already shown that $\Pr[\exists j. y_j < |\Sigma|^{n+1} \wedge y_j \neq \ToInt(m'')] \leq \frac{(2n+1) |\Sigma|^{n+1}}{N}$. It follows that, except with probability $\frac{(2n+1) |\Sigma|^{n+1}}{N}$ that we will have $\Dec_{sk}(1,\tilde{c}_0,\ldots,\tilde{c}_{2n}) = \ToOrig(\ToInt(m''))$. 
+    
+\end{proofof}
+
+\begin{remindertheorem}{\thmref{ORComp:Security}}\thmORPrivacy
+\end{remindertheorem}
+\begin{proofof}{\thmref{ORComp:Security}}
+    The simulator $\Sim_{OR}(pk)$ for $\Pi_{OR}$ will run the simulator $\Sim_i(pk_i)$ for each conditional encryption scheme \footnote{In the malicious security setting the simulator $\Sim_{OR}(b, pk)$ is also given a bit $b=1$ if and only if $\Cond\Enc_{pk}(c,m',m'')=\bot$ i.e., if and only if $\Pi_i.\Cond\Enc_{pk}(c,m',m'')=\bot$ for some $i \leq k$. If $b=1$ then $\Sim_{OR}(b,pk)$ outputs $\bot$. Otherwise we simply run $\Sim_i(0,pk_i)$ for each $i \leq k$.} and concatenate all of the ciphertexts. Clearly, the running time of the simulator is $t_{\Sim}'(\lambda) \approx \sum_{i=1}^k t_{\Sim,i}(\lambda)$. We can now define a sequence of $k+1$ hybrids Hybrid $0$ to Hybrid $k$. Intuitively, in hybrid $i$ we set $c_j = \Sim_i(pk)$ for $j\leq i$ and $c_j = \Pi_j.\Cond\Enc(c,m',m'')$ for $j > i$. Note that in Hybrid $0$ we have $c_j = \Pi_j.\Cond\Enc(c,m',m'')$ for all $j$ and thus the final output is $\Cond\Enc(c,m',m'')$. By contrast, in Hybrid $k$ we have   $c_j = \Sim_j(pk_j)$ for all $j \leq k$ and thus the final output is $\Sim_{OR}(pk)$. 
+        
+    By assumption any attacker running in time $t'(\lambda)=t(\lambda) - o(t(\lambda))$ can distinguish hybrids $i-1$ and $i$ with probability at most $\epsilon_i(t(\lambda), \lambda)$. It follows that any attacker running in time $t'(\lambda)=t(\lambda)  - o(t(\lambda))$ can  distinguish hybrid $0$ from hybrid $k$ with probability at most  $\epsilon'(\lambda,t'(\lambda)) = \sum_{i=1}^k  \epsilon_i(t(\lambda), \lambda)$. 
+\end{proofof}
+
+\begin{remindertheorem}{\thmref{ORComp:Correct}}
+    \thmORCorrect
+\end{remindertheorem}
+\begin{proofof}{\thmref{ORComp:Correct}}
+Let $T= \{j: P_j(m_1,m_2)=1\}$ and $\overline{T} = \{j: P_j(m_1,m_2)=0\} = [k] \setminus T$.  We first suppose that $P_{OR}(m_1,m_2)=0$ which implies that $P_i(m_1,m_2)=0$ for all $i \leq k$ i.e., $\overline{T} = [k]$. 
+
+Now let $(pk,sk)$ be any honestly generated public/secret key and let $c = (0,c_1,\ldots,c_k) = \Cond\Enc_{pk}(m_1)$ with $c_i \doteq \Pi_i.\Enc_{pk}(m_1)$. The probability that $\Pi_i.\Dec_{sk}\left(\Pi_i.\Cond\Enc_{pk}(c_i,m_2,m_3)\right) \neq \bot$ is at most $\epsilon'_i(\lambda)$. Union bounding over all $i \leq k$ the probability that there exists $i$ such that $\Pi_i.\Dec_{sk}\left(\Pi_i.\Cond\Enc_{pk}(c_i)\right) \neq \bot$ is at most $\sum_{i=1}^k \epsilon'_i(\lambda) = \epsilon'(\lambda)$.
+
+On the other hand suppose that $P_{OR}(m_1,m_2)=1$ which means that $P_j(m_1,m_2)=1$ for some $j\leq k$. Clearly, if $|T|\geq 1$ and $\Pi_i.\Dec_{sk}\left(\Pi_i.\Cond\Enc_{pk}(c_i)\right) = m_3$ for all $i \in T$ and $\Pi_i.\Dec_{sk}\left(\Pi_i.\Cond\Enc_{pk}(c_i)\right) = \bot$ for all $i \not \in T$ then $\Dec_{sk}$ will output the correct message $m_3$. As before the probability that there exists $i \in \overline{T}$ such that $\Pi_i.\Dec_{sk}\left(\Pi_i.\Cond\Enc_{pk}(c_i)\right) \neq \bot$ is at most $\sum_{i=1}^k \epsilon'_i(\lambda) = \epsilon'(\lambda)$. Similarly, the probability that there exists $j \in T$ such that $\Pi_i.\Dec_{sk}\left(\Pi_i.\Cond\Enc_{pk}(c_i)\right) \neq m_3$ is at most $\sum_{j=1}^k \epsilon_i(\lambda)$. 
+
+Thus, we have $\Pr\left[\Dec_{sk}\left(\Cond\Enc_{pk}\left( \Enc_{pk}(m_1) ,m_2,m_3 \right)\right) \neq m_3 \right] \leq \sum_{i=1}^k \left( \epsilon_i'(\lambda)+\epsilon_i(\lambda)\right) = \epsilon(\lambda)$.
+
+
+
+\end{proofof}

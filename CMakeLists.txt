@@ -87,10 +87,13 @@ ENABLE_TESTING()
 add_subdirectory(test) #//TODO: we need to add the test directory
 
 file(COPY PWDvsTyposDataSet DESTINATION test )
+file(COPY GeneratePlotsPdfs DESTINATION . )
+
 #file(COPY TestScript.py DESTINATION test )
 file(COPY TestScript.sh DESTINATION test  FILE_PERMISSIONS OWNER_EXECUTE OWNER_WRITE OWNER_READ)
 
 file(COPY FixingTestInstallCryptoPP.sh  DESTINATION . FILE_PERMISSIONS OWNER_EXECUTE OWNER_WRITE OWNER_READ)
+file(COPY Generatepdf.sh  DESTINATION GeneratePlotsPdfs FILE_PERMISSIONS OWNER_EXECUTE OWNER_WRITE OWNER_READ)
 #set(SCRIPT_PATH "${CMAKE_BINARY_DIR}/test/TestScript.sh")
 
 

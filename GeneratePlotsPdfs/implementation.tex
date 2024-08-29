@@ -1,0 +1,100 @@
+% !TEX root = main.tex
+
+
+
+% \input{CondEncPerfEval} 
+% \input{CondEncPerfEval(old)} 
+
+\begin{table*}\fontsize{9}{10}\selectfont
+	\caption{Conditional Encryption: Computation Time and Ciphertext Size for providing 80-bit security when $n =32$ }\tablelab{CondEncEmp}
+	
+	\makebox[\textwidth]{\begin{tabular}{|p{ 2in}|ll|ll|c|}
+		\hline
+		&    \multicolumn{2}{c|}{ $\Enc$}                   &         \multicolumn{2}{c|}{ $\Cond\Enc$}   &   $\Cond\Dec$  \\ \hline
+  
+		{\bf Predicate:}  & \multicolumn{1}{l|}{Time  (ms)} & $|c|$ &  \multicolumn{1}{l|}{Time  (ms)} & $|c|$ & Time  (ms)   \\ \hline
+		
+	EdDist One & \multicolumn{1}{l|}{$ \replaced{108.68}{134.115} $} & $8.27$ & \multicolumn{1}{l|}{\replaced{406.842}{$508.08$}} & $16.29$ & $ \replaced{104.31}{174.59} $  \\ \hline
+		
+		 HamDist ($\ell=1, n =32$)	& \multicolumn{1}{l|}{ \replaced{85.582}{71.695} } & \replaced{$8.01$}{$80.01$} & \multicolumn{1}{l|}{ \replaced{412.424}{313.38} } & \replaced{$8.04$}{$80.04$} &  \replaced{85.644}{54.756}   \\ \hline
+
+    HamDist ($\ell=1, n =32$) OPT	& \multicolumn{1}{l|}{\replaced{92.384}{67.01} } & \replaced{$8.01$}{$80.01$} & \multicolumn{1}{l|}{ \replaced{445.714}{297.95 }} & \replaced{$8.04$}{$80.04$} &  \replaced{263.626}{$50$}   \\ \hline
+   
+   HamDist ($\ell=2, n =32$) 	& \multicolumn{1}{l|}{\replaced{93.88}{$ 70.12 $}} & \replaced{$8.01$}{$80.01$} & \multicolumn{1}{l|}{\replaced{445.8}{$ 307.055$}} & \replaced{$8.04$}{$80.04$} & \replaced{347.953}{$ 137.655 $}  \\ \hline
+
+   HamDist ($\ell=2, n =32$) OPT 	& \multicolumn{1}{l|}{\replaced{98.0633}{$ 71.725 $}} & \replaced{$8.01$}{$80.01$} & \multicolumn{1}{l|}{\replaced{475.58}{$ 312.78 $}} & \replaced{$8.04$}{$80.04$} & \replaced{264.273}{$ 63.44 $}  \\ \hline
+
+   HamDist ($\ell=3, n =32$) 	& \multicolumn{1}{l|}{\replaced{90.1867}{$70.145 $}} & \replaced{$8.01$}{$80.01$} & \multicolumn{1}{l|}{\replaced{433.63}{$ 306.855 $}} & \replaced{$8.04$}{$80.04$} & \replaced{2268.54}{$ 890.545 $}  \\ \hline
+   
+   HamDist ($\ell=3, n =32$) OPT	& \multicolumn{1}{l|}{\replaced{105.98}{$ 70.5 $}} & \replaced{$8.01$}{$80.01$} & \multicolumn{1}{l|}{\replaced{498.75}{$ 308.94 $}} & \replaced{$8.04$}{$80.04$} & \replaced{254.61}{$ 86.285 $}  \\ \hline
+
+   HamDist ($\ell=4, n =32$)	& \multicolumn{1}{l|}{\replaced{97.52}{$ 70.375 $}} & \replaced{$8.01$}{$80.01$} & \multicolumn{1}{l|}{\replaced{461.79}{$ 307.655 $}} & \replaced{$8.04$}{$80.04$} & \replaced{14664.8}{$ 5759.22 $}  \\ \hline
+
+   HamDist ($\ell=4, n =32$) OPT	& \multicolumn{1}{l|}{\replaced{98.77}{$ 73.855 $}} & \replaced{$8.01$}{$80.01$} & \multicolumn{1}{l|}{\replaced{466.457}{$ 320.97 $}} & \replaced{$8.04$}{$80.04$} & \replaced{205.69}{$ 97.665 $}  \\ \hline
+
+   CAPSLOCK on	& \multicolumn{1}{l|}{\replaced{3.0025}{$ 2.025 $}} & $0.27$ & \multicolumn{1}{l|}{\replaced{13.26}{$ 8.825 $}} & $0.29$ & $ 1.01 $  \\ \hline
+		
+   OR*& \multicolumn{1}{l|}{$ 201.15 $} & $16.54$ & \multicolumn{1}{l|}{$ 900.945 $} & $24.64$ & $ 360 $  \\ \hline
+		
+ \multicolumn{6}{p{4in}}{ $|c|=$ Ciphertext size (KB)} \\
+		
+  \multicolumn{6}{p{4in}}{* OR = EditDistOne or HamDistTwo or CAPSLOCKon}   \\
+	
+    \multicolumn{6}{p{4in}}{** $ P_i $ is the predicate and we define our CondCrypto over this predicate for $i = \{1, 2, 3, 4\}$, which implies 4 different predicates. }   \\
+
+    \multicolumn{6}{p{5in}}{*** For hamming distance (HamDist), $\ell$ represents the threshold value and $n= 32$ is the padding size. Also, OPT means using optimized decryption algorithm.} 
+	\end{tabular}}
+\end{table*}
+
+
+ \input{CondEncPerfEval} 
+ 
+
+\begin{table*} \fontsize{8.5}{7}\selectfont
+	\caption{TypTop: Computation and Storage Overhead with/without Conditional Encryption. Here we considered 80-bit level of security when $n =32$.}\tablelab{CondTypComp}
+	\makebox[\textwidth]{
+	\begin{tabular}{|p{1.3 in}|p{.5 in}|p{.5 in}p{.5 in}|p{.5 in}p{.5 in}|p{.5 in}|}
+		\hline
+		&  &    \multicolumn{2}{c|}{ Correct login}                   &         \multicolumn{2}{c|}{ Incorrect login}   & \\ \hline
+		& Init& \multicolumn{1}{l|}{Auth Delay } & Total Running Time & \multicolumn{1}{l|}{Auth Delay  } & Total Running Time & Storage (KB)  \\ \hline
+		
+	Typtop \cite{CCS:CWPCR17} 	& 171.95 (ms) & \multicolumn{1}{l|}{26.41 (ms)} & 53.384 (ms) & \multicolumn{1}{l|}{156.556 (ms) } & 158.71 (ms)  & 1  \\ \hline
+	
+	CondTyptop & 6.771 (s) & \multicolumn{1}{l|}{25.7 (ms)} & 11.203 (s) &  \multicolumn{1}{l|}{160.3 (ms)} & 0.617 (\replaced{s}{ms})  & 246  \\ \hline
+	
+	CondTyptop (Optimized)	&  7.13 (s)& \multicolumn{1}{l|}{24.12 (ms)} & 8.690 (s) & \multicolumn{1}{l|}{160.33  (ms)} & 0.629 \added{(s)} & 246 \\ \hline
+	
+	Typtop (\replaced{mhf}{slow hash}) \cite{CCS:CWPCR17}	& 5.738 (s) & \multicolumn{1}{l|}{0.943 (s)} & 0.784 (s)  & \multicolumn{1}{l|}{5.644 (s)} & 5.856(s)  & 1\\ \hline
+	
+	CondTyptop(mhf)	& 19.672 (s) & \multicolumn{1}{l|}{0.933 (s)} &  16.558 (s)& \multicolumn{1}{l|}{5.446 (s)} & 6.162 (s) & 246  \\ \hline
+	
+	CondTyptop(mhf/opt)	& 14.456 & \multicolumn{1}{l|}{0.729 (s)} & 10.995 & \multicolumn{1}{l|}{4.376(s)} & 5.87 (s) & 246 \\ \hline
+	
+	\multicolumn{7}{l}{* CondTyptop is the modified typtop scheme when conditional encryption is used.}   \\
+	\end{tabular}}
+\end{table*}
+
+
+\subsubsection{\added{Discussion}} \added{We can use conditional encryption to strengthen the security guarantees of TypTop without increasing authentication delay for users. The usage of conditional encryption does increase offline computation and storage requirements, but the overhead is still manageable. The reason why the offline computation is higher after a correct login attempt is because this allows us to recover the secret decryption key and then decrypt all of the conditional ciphertexts in our waitlist so that we can consider adding them to our cache of acceptable typos. It is worth noting that the TypTop system maintains the invariant that there are always $10$ (conditional) ciphertexts in the waitlist. The invariant, which is maintained by seeding the waitlist with dummy ciphertexts, ensures that an attacker cannot infer the number of incorrect login attempts. If we don't maintain this invariant then an attacker who breaches the authentication server would learn the total number of incorrect login attempts that were submitted since the last correct login. Our modified implementation of TypTop maintains the same invariant. However, such leakage should arguably not be viewed as problematic since it does not reveal anything about incorrect login attempts or the user's password. In this case we could reduce offline computation (and storage) of TypTop by only placing conditional ciphertexts in the waitlist when there is an incorrect login attempt i.e., if there were no incorrect login attempts since the last correct login attempt then there would be no offline work to decrypt the conditional ciphertexts in the waitlist because the waitlist would be empty!    }
+
+%To make our comparison more precise, in \tableref{CondTypComp} we considered two different logins which are correct login and incorrect login attempts. Then, for each case, we defined two phases which are including Decision (the server notifies the user whether s/he granted access or not-Auth Delay) and Post-Processing. In this case we can provide a better overview over the user patient and the cost may impost to the server costs. 
+
+% We should point out that in the case of correct/incorrect loging the server immediately accept/reject the user access, and the user's patient is not effected by the post-processing phase. Basically, it can be done after the decision to update the cache of valid typos by adding new valid typos after processing waiting list (in the case of correct login) or update the waiting list by adding a new conditional encryption ciphertext to the waiting list. 
+
+
+%We should highlight that in our implementation of CondTypTop, we use conditional encryption over the Typo Predicate described in \secref{sec:TypPredicate}. As a reminder, we considered three predicates Hamming Distance at most Two, Edit Distance one, and CAPSCLOCK related errors.  As we already mentioned, according to the Chatterjee et al. \cite{CCS:CWPCR17} conducted empirical study of password typos, the Typo predicate fits nearly 78\% of legitimate typos. So we decided to implement our construction to make sure that the most common typos are supported by our conditional encryption scheme for typo predicate when we use it to implement CondTypTop. 
+
+ 
+
+
+
+%\hassan{We need to describe the procedure that we selected the random  password from the rockyou data set. The idea is that we picked a random password and then initialized the system with that password. Then based on the typo distribution obtained in cheetarjee paper we generated a random typo. Then we login with this incorrect password $W$ times (where w is the size of waiting list.) we recorded the the execution times of each steps.  For this case, we check to make sure the resulting typo is not already added to the cache of valid typos. }
+
+
+%\begin{itemize}
+%	\item $ \Init $: Let  $ W $ be the waiting list of potential typo password which is initially filled with random elements from $ \Pwd $ and $ T $ be list of legitimate typos satisfying the underlying small distance policy. 
+%\end{itemize}
+
+
+
+

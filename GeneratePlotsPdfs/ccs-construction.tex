@@ -1,0 +1,360 @@
+% !TEX root = main-FHETypTop.tex
+\section{Construction for Hamming Distance at most one char} \constlab{HamDisOne}
+
+\jeremiah{Describe as a Conditional Encryption Scheme for $\mathcal{M} = \Sigma^n$, Seperate construction for typo vaults using conditional encryption scheme (will make presentation much more modular). Prove security using security of conditional encryption i.e., if conditional encryption is perfectly secure then we provide perfect typo privacy otherwise $(\eps' ,t' )$-typo privacy} 
+\begin{itemize}
+	\item  $ (U, \sigma_u)\gets \mathsf{RegisterNewUser} (u, pwd_u) $: In the registration phase, using the public key variant of a homomorphic encryption scheme (in this paper we use Pailier \cite{EC:Paillier99}), the server compute public key/secret key pair $ (pk_u, sk_u)\gets \mathsf{KeyGen}_{\mathsf{HE}}(1^{\lambda}) $. The value of $ sk_u $ is encrypted using a symmetric encryption with the secret key which is derived from the user's password and its corresponding salt, say $ (pwd_u, salt_u) $ using some deterministic key derivation functions like $ KDF $. The symmetric secret key is $ K_u := KDF (pwd_u, salt_u) $. We require that the underlying PHE scheme support additive property and multiplication of plaintext with ciphertext. In this regard, Pailier cryptosystem is a suitable choice. After assigning the public and secret keys, the server encrypts the user's password using the public key, i.e., $ c_{sk} = Enc_{K_u} (sk_u) $. In addition, we need to store the encrypted version of the password. More specifically, suppose that each password is containing at most $ n = 30 $ characters and we firs pad the password fix its length, and then encrypt each character separately. Let the padded password be $ pwd'_u=pwd_u||0^{n-|pwd_u|}= x_1, \dots, x_n $ and for all $ 1\leq j\leq n  $ we have $ c_j = Enc_{pk_u} (x_j) $. Finally,  the server stores tuple $ (u, pk_u, salt_u, c_{sk}, c_1, \dots, c_n)$.
+	
+	
+%	  In addition, to encrypt the passwords in the registration phase, we just consider the process of encrypting char by char which means that we first apply the padding, and then encrypt all characters of the passwords individually. Therefore, for each password we have 30 separate ciphertexts. 
+	 
+	\item $ (\sigma_u, (\mathsf{rjct, acpt}))\gets\mathsf{Login}(pwd, \sigma_u) $: First of all, the system parses the input state $ \sigma_u = (u, pk_u, salt_u, c_{sk}, c_1, \dots, c_n)  $ \jeremiah{The input state might include more information than this...other recorded typos etc... we can certainly extract this from the state though}.  In this algorithm, two possible scenario can be considered which are logging with correct or incorrect passwords. We recall that ciphertexts of original password's characters $ c_1, \dots, c_n $ are already stored in the server. In the case that the user selects the correct password $pwd = pwd_u $ (which is chosen and registered in the sign up phase), the login will be successful and the output is $ \mathsf{acpt} $ and $ \sigma_u $ remains unchanged. So, the server first computes $ K = KDF(pwd, salt_u) $ and then the user is authorized if $ \bot \neq  Dec_{K} (c_{sk})$ \jeremiah{Need to mention authenticated encryption here...} 
+%	After that for all $ 1\leq j \leq n$ computes $x_j =  Dec_{sk} (c_j) $ and reconstruct the corresponding password, say $ pwd^* $ and compares it with input password, $ pwd $. If $ pwd^* == pwd $ the user is authorized and the output is $ \mathsf{acpt} $. 
+
+\jeremiah{If we are maintaining a cache of acceptable typos we can check these passwords as well. However, this is orthogonal to our system}
+	
+	If the attempt related to the original password fails, the server checks other typos of the password which were previously added to the cache (of course if there exists any).  If the current password has hamming distance of at most one and previously was added to the cache, then the server outputs $\mathsf{acpt} $. More specifically, similar to the previous case the server uses $ K_{pwd} = KDF(pwd, salt_u)$ (which is already computed). Then the server decrypts the ciphertexts of the previous passwords with typos at most one hamming distance and output $ \mathsf{acpt} $ if there exists ciphertext $ C_{sk^*} \in \sigma_u$ such that $ \bot \neq  Dec_{K_{pwd}} (C_{sk^*}) $. If the server lacks such ciphertext, login is failed and the it outputs $ \mathsf{rjct} $. Now, the server needs to encrypt $ pwd $ and stores it in the waiting list for future login to decide transferring it to the cache or discarding it. Intuitively, if the hamming distance is higher than one, then the server will obliviously encrypt a completely random value; otherwise, the resulting ciphertext is encryption of the password with typo, and after a log in with the correct password, the server can extract it.  The point is that in the correct login, if the typo is more than one hamming distance, then the decryption algorithm results in a truly random value and independent to the password with typo. In what follows, we will describe how the server will encrypt the wrong password $ pwd $ using the already stored values $ c_1, \dots, c_n $. Suppose, $ pwd' = pwd|| 0^{n-|pwd|} = x'_1, \dots, x'_n $. Now we will compute the $ n $ new ciphertexts. So $ \forall 1\leq j \leq n $ the server computes $ c''_j $ as follows and stores them in the waiting list. 
+	 
+	 \begin{enumerate}
+	 	\item $ c'_j = Enc_{pk_u} (x'_j \times 256^j) $
+	 	\item Sample $ R_j $ uniformly random. 
+	 	\item $ c''_j = c'_j + R_j\sum_{i\neq j} (c_i' - c_i) $
+	 \end{enumerate}
+%	 \begin{eqnarray}
+%	 %c_j = Enc_{pk}(R_j \sum_{i \neq j} (pwd'[i]-pwd[i])\times 256^i)\nonumber\\
+%	 %c_j = Enc_{pk}(R \sum_{i \neq j} (pwd'[i]-pwd[i])*256^i)\nonumber\\
+%	 c'_j = Enc_{pk}(pwd''[j]+R_j * \sum_{i \neq j} (pwd'[i]-pwd[i])*256^i)\nonumber
+%	 %=Enc_{pk}(\sum_{i \neq j} (pwd'[i]-pwd[i])*256^i) 
+%	 \end{eqnarray}
+	 After computing the values of $ c''_j $, the server just discards the values of $ c'_j $ and $ R_j $ and just stores $ c''_j $. \jeremiah{The notation is a bit confusing here. If this is login attempt $t$ then we would store $c_{t,j}''$ for each $j \leq n$ and append to current state} 
+
+\jeremiah{We don't have to detail below how updating of typo cache works. Just not that we can recover all of the nearby typos and then apply whatever policy we want.}
+	 
+	 The next step in updating the data inside the cache, when the users uses the correct password $ pwd_u $ in the next log in, the server uses $ pwd_u $, and decides about previous password with typos. For this aim, the server uses $ pwd_u $ and extract the symmetric key $ sk_u = KDF(pwd_u, salt_u) $ and decrypts all the values of $ c''_j $ stored in the waiting list of the previous login, i.e., $ x''_j = Dec_{sk_u} (c''_j)$. Now, we have two cases. If the hamming distance is more than $ 1 $, then all the values of $ x''_j $ are out of the range $ \{0,255\}$ which determines the range of valid characters. So, in this case, the server cannot reconstruct the password as the result is a true random value. The second case is the hamming distance of exactly one. In this case, at least one ciphertext will not be random and will be in the range of $ \{0,255\} $, say $ x''_k $. Now we can conclude that the $ k $th char is changed and flipped to $ x''_k $ and all other chars for $ j\neq k $ are the same as the original password. Let the extracted password with typo be $ pwd'_u $. Now we just require to derive a symmetric key $ sk'_u = KDF(pwd'_u, salt_u) $ and encrypt $ pwd'_u $ i.e., $ c_{pwd'_u} = Enc_{sk'_u} (pwd'_u)$ and finally adds it to cache\footnote{Now, in future logins, if the user mistakenly uses $ pwd'_u $, he can also log in to his/her account and the result of login is $ \mathsf{acpt} $. }. 
+	
+%	 As a high level overview of this part, we need to apply a function like $ F(.)$ on the encryption of the original password which is previously stored ($ C = \mathsf{Enc}_{pk}(pwd) $)  and $ C' $. The output of the $ F $ is the encryption of the $ pwd' $ if the Hamming distance is at most one, and a random value otherwise. We suppose that the server allocate to different types of memory for the wrong passwords which are waiting list and cache. Let the resulting ciphertext store in the waiting list. So, based on our design, this ciphertext may or may not be added in the cache, after login with the correct original password.  We note that, in the case that $ pwd' $ is previously added, the server use it to decrypt the messages which are stored in the cache memory. If the server found a valid  decryption, then the logging will be successful. 
+	
+%	Now, will provides the detail of the encryption procedure which is done by the server during login with a wrong password. For this aim, we need to use a homomorphic encryption scheme which encrypts the password as described in the Preliminaries. The idea is that passwords with hamming distance of at most one character, we will store it at the cache, otherwise, a random number is stored. 
+	
+%	Based on the setting of system, let $ s = \mathsf{KDF}(pwd, \lambda) $, in which $ \mathsf{KDF} $ is a secure key derivation function which takes as input the password $ pwd $ and the security parameter $ \lambda $, and generates a secret key $ s $ for a symmetric encryption scheme like AES $ (\mathsf{Enc}_s, sk)$ where $ (sk, pk)\gets \mathsf{KeyGen}(\lambda)) $.
+	
+We remark that in TypTop \cite{CCS:CWPCR17},  the server also stores $ \mathsf{Enc}_{pk}(pwd') $ whenever the user types in the wrong password. However, we want to avoid storing $ \mathsf{Enc}_{pk}(pwd') $ unless the hamming distance between $ pwd $ and $ pwd' $ is at most one.
+	
+
+	
+%	 For all $ 1\leq j\leq n $ we compute $ C_j $ and store them in the waiting list. Now it can be easily shown that in the case that the $ pwd' $ has at most hamming distance of $ 1 $, the characters specif
+	
+%	\item $ \mathsf{CacheUpdate} $: As we described in the previous step, in the case the user choose a wrong password, a new ciphertext will be added to the waiting list. Now, suppose that the user selects the original one, i.e., $ pwd $ and the login is successful. In this case, the server will decrypt the ciphertexts in the waiting list using the secrete key which is derived from the correct passwords. Then, the server compares the resulting password $ pwd' $ with $ pwd $ and based on the considered metric, it decides to add $ pwd' $ in the cache or not. Now, we can observe that the secret key $ sk $ is extracted. Therefore, the server will use $ pwd' $ to encrypt $ sk $ using the underlying symmetric key encryption scheme to store it in the cache. Now, we can see that, in the future logins, if the user pick $ pwd' $, he is also able to login.  
+	\jeremiah{I would omit and make this a separate discussion on handling password updates...}
+	\item $ (u, \sigma_u')\gets \mathsf{PwdUpdate} (pwd'_u, pwd_u, u, \sigma_u)$ Here, we consider the case that the user update the $ pwd $ after a while. Typically, the servers need to store the previous old passwords. So, in this case, the server allocate a set of old passwords and once the user plans to log in with and old password, the server can detect it. Then if the password is belonging to the set of old passwords, them the encryption of password will be added to the waiting list, otherwise a random number will be stored. In the next step, once the user logs in with the correct password, then the server decrypt the ciphertext in the waiting list and can realize if an old password is used or not. In the construction part we describe our suggested scheme with more details.  
+\end{itemize}
+
+%\jeremiah{Please update to separate the definition. Also add security definitions. One can probably be copied from TypTop while the other is the simulation based one we talked about}
+
+%\subsection{Preliminaries}
+%Before we start to describe the details of the constructions, we suppose the each password is containing at most 30 characters. In addition, to encrypt the passwords in the registration phase, we just consider the process of encrypting char by char which means that we first apply the padding and then encrypt all characters of the passwords individually. Therefore, for each password we have 30 separate ciphertexts. 
+
+%\subsection{Typos with Hamming distance lower than one char}
+%In this part we will discuss how to store the passwords which have hamming distance of at most one. For this aim, we need to use a homomorphic encryption scheme which encrypts the password as described in the Preliminaries. The idea is that passwords with hamming distance of at most one character, we will store it at the cache, otherwise, a random number is stored. 
+
+%Based on the setting of system, let $ s = \mathsf{KDF}(pwd, \lambda) $, in which $ \mathsf{KDF} $ is a secure key derivation function which takes as input the password $ pwd $ and the security parameter $ \lambda $, and generates a secret key $ s $ for a symmetric encryption scheme like AES $ (\mathsf{Enc}_s, sk)$ where $ (sk, pk)\gets \mathsf{KeyGen}(\lambda)) $.
+%
+%In TypTop \cite{typtop},  the server also stores $ \mathsf{Enc}_{pk}(pwd') $ whenever the user types in the wrong password. However, we want to avoid storing $ \mathsf{Enc}_pk(pwd') $ unless edit distance between $ pwd $ and $ pwd' $ is $ \leq 1 $. We define $ P(pwd, pwd') $ which  takes as inputs the passwords and computes their edit distance. 
+%
+%\begin{eqnarray}
+%%c_j = Enc_{pk}(R_j \sum_{i \neq j} (pwd'[i]-pwd[i])\times 256^i)\nonumber\\
+%%c_j = Enc_{pk}(R \sum_{i \neq j} (pwd'[i]-pwd[i])*256^i)\nonumber\\
+%c_j = Enc_{pk}(pwd'[j]+R_j * \sum_{i \neq j} (pwd'[i]-pwd[i])*256^i)\nonumber
+%%=Enc_{pk}(\sum_{i \neq j} (pwd'[i]-pwd[i])*256^i) 
+%\end{eqnarray}
+%We claim that the above equation can be computed as we use the Pailier cryptosystem. For all $ 1\leq j\leq n $ we compute $ C_j $ and store them in the waiting list. Now it can be easily shown that in the case that the $ pwd' $ has at most hamming distance of $ 1 $, the characters specified by $ pwd' $ can be extracted. 
+
+\subsection{Correctness}
+\jeremiah{Make sure we argue correctness with respect to both valid logins and correct typo caching} \hassan{Modifying new definition for correctness. Need also argue that we are able to extract the typos with small distances after a valid login using the original or valid passwords}. 
+Now we will show that our proposed scheme works correctly. 
+First of all we point out that because of PHE Pailier cryptosystem and its  addition property, the resulting ciphertext $ c''_j $ computed in the login phase can be rewritten as follows:
+\begin{eqnarray}\label{c''_j}
+%c_j = Enc_{pk}(R_j \sum_{i \neq j} (pwd'[i]-pwd[i])\times 256^i)\nonumber\\
+%c_j = Enc_{pk}(R \sum_{i \neq j} (pwd'[i]-pwd[i])*256^i)\nonumber\\
+c''_j = Enc_{pk}(pwd''[j]+R_j  \sum_{i \neq j} (pwd''[i]-pwd'_u[i])*256^i) 
+%=Enc_{pk}(\sum_{i \neq j} (pwd'[i]-pwd[i])*256^i) 
+\end{eqnarray}
+
+In the case that there is no typo, we just need to the decrypt all $ c''_j $ for $ 1\leq j\leq n $ and we can observe that all resulting messaged are in the range of $ \{0, 255\} $ (the range defined for the chars)\footnote{If we compare the resulting chars, we can see that all of them are equal with the original password $ pwd_u $}. Now, suppose that the hamming distance is exactly one, and we need to reconstruct that misspelled password and store its encrypted version for future logins. We argue that the if the hamming distance is higher than one, then we cannot reconstruct the misspelled password and the result is a  true random value which leaks no information about the it. To show how reconstruct the password, we suppose that typo is occurred at the $ j $-th place of the password. So we can pars the ciphertexts and decrypt them. So we have: 
+
+\begin{align}
+c''_1 &= Enc_{pk}(pwd''[1]+R_1 * \sum_{i \neq 1} (pwd''[i]-pwd'_u[i])*256^i) =Enc_{pk}(pwd''[1]+R_1 * (pwd''[j]-pwd'_u[j])*256^j) \nonumber\\
+%&\dots\nonumber\\
+c''_j &= Enc_{pk}(pwd''[j]+R_j * \sum_{i \neq j} (pwd''[i]-pwd'_u[i])*256^i) =Enc_{pk}(pwd''[j])\nonumber\\
+%&\dots\nonumber\\
+c''_n &= Enc_{pk}(pwd''[n]+R_n * \sum_{i \neq n} (pwd''[i]-pwd'_u[i])*256^i) =Enc_{pk}(pwd''[n]+R_n * (pwd''[j]-pwd'_u[j])*256^j) \nonumber
+\end{align}
+
+We point out that the server does not know in advance what is the value of $ j $. But, when we decrypt all of the above ciphertexts, we can see that for all $ k \neq j $ the result is a random number $ x^*_k  =pwd''[k] + R_k\times (pwd''[k] - pwd'_u[k]) $ which is a random number out of the range $ \{0, 255\} $. In addition, we have just one item which is in the range of valid character, i.e., $ \{0,255\} $, and in fact here is the place that char is flipped and we can see what char is different from the original password. As we already mentioned, here also we can see the reason why if the we have more that one typo, all of the above ciphertext are related to true random number out of the range of valid chars. In fact, this is the reason that inside the summation in Equation \eqref{c''_j} we apply multiplying with $ 255^i $ to make sure in the case that there is typo, the resulting number is out of the range defined for chars. 
+
+%\hassan{Needs the professor confirmation on this discussion}  As the random number is a big value rather that the typical numbers considered for the character we know and we can distinguish between the chars or random numbers. So, after the decryption if we find a single value in the normal character range, we can realize that this is the place that typo happened.  So, this is the reasons we multiply the values with $ 256^i $ to make sure that the resulting value is not in the typical range. In the case just one single case has this property, we can conclude that this is the value of $ j $ and nicely we can use this information as we have extracted the place of typo and the character which is misspelled. We argue that in the case we have more than one typo, we can see that for all the mentioned equations, after the decryption, we have just random number out of the range of typical char which perfectly hides the misspelled chars as we required for the security of our scheme. 
+
+% Now for all possible values of $ 1\leq j \leq n $ we shape the above equations supposing that $ pwd'[j] $ can be extracted by decryption using the secret key extracted from the original password in the next log in. We note that for other places where $ i\neq j $ we have $ pwd[i] = pwd'[i] $ (from our assumption that we have at most one hamming distance). Then we need to solve the equations to find the value of $ R_1, \dots, R_n $. In this case we can see that we have $ n-1 $ linear equations and $ n-1 $ variables. 
+
+
+\subsection{Typo privacy proof}
+
+\jeremiah{Generalize construction to any partially homomorphic encryptions scheme. Key assumption is that message space is $\mathbb{Z}_N$ where $N=pq$ is the product of two primes and $ \min(p,q) > |\Sigma|^{n+1} $. First observation is that if $\Sigma = \{0,\ldots, k-1\}$ for some integer $k$ and  $m_1,\ldots, m_n, m_1',\ldots, m_n' \in  \Sigma$ and  $ \min(p,q) > |\Sigma|^{n+1} $ and $N=pq$ then for any $j \leq n$ we have $\mathtt{gcd}\left(N, \sum_{i \neq j} (m_i-m_i') |\Sigma|^i\right) = 1$. Note we typically use capital $\Sigma$ for alphabet). Second observation is that when $R_j$ is picked uniformly at random from $\mathbb{Z}_N$ and $\mathtt{gcd}(N, x)=1$ then for all $y \in \mathbb{Z}_N$ we have $\Pr[R_j x = y] =\frac{1}{N}$ i.e., $R_j x$ is also distributed uniformly at random.}
+In this part we need to prove that the proposed scheme is providing Typo privacy as the security requirement defined in \defref{typodef}.
+
+	
+%\hassan{We have an issue in applying the future described reduction. The point is that \B should be able to simulate a valid value of $ \sigma_u$  and of course in the initial step, \B have to compute $ c_{sk} = Enc_{K_u}(sk) $ such that $ sk $ is the secret key of the CPA secure PHE scheme. The problem  is that when \B takes part in the CPA game, she does not know $ sk $ to compute $ c_{sk} = Enc_{K_u}(sk) $ as we have supposed that the adversary access to this value. One idea would be defining a new hybrid and the only difference is replacing $ c_{sk} $ with true random number from the ciphertext space.  So  to prove that these hybrids are indistinguishable we can reduce to the RoR security (or equivalent/similar definition to RoR). Then we can simply apply our main reduction on the resulting hybrid. Now it seems the the current security proof works and can rely on the reduction to the CPA security. The main challenge is that, in our security definition, the adversary knows the value of passwords!!! }
+
+%\begin{lemma}[{Ciphertext Re-randomization}] \lemlab{cxt-rernd}
+%Let $ |\sigma| $ be the size of set of all possible alphabet need to be encrypted, and PHE be the Paillier cryptosystem with parameters $ N = pq $ where $ \min(p,q) > |\sigma|^{n+1} $ ($ n $ is the maximum size of the password) provides multiplicative inverse in the ciphertext space and $ c_1 \in Z_{N^2}^* $ (resp. $ c_2 \in Z_{N^2}^* $) be a ciphertext corresponding to $ m_1\in Z^*_N $ (resp. $ m_2\in Z^*_N $).  Then, decryption of two ciphertexts $ c_1^R \cdot c_2^{-R} $ and $ C_1C_2^R $ are  just a uniform random element in $ Z^*_N $ where $ R \in_RZ^*_N $. 
+%
+%
+%%Suppose $ \mathcal{D}_1$ be distribution $ c_1^{R} $ and $ \mathcal{D}_2 $ be distribution $ c_2^{R} $ in which $ R \in_R Z^*_N $ is a random element from plaintext space. Then two distributions $ \mathcal{D}_1$ and $ \mathcal{D}_1$ are identical.
+%\end{lemma}
+%
+%Proof of this lemma is presented in \appref{appx:cxt-rernd}. 
+
+\begin{theorem}[Perfect typo privacy]\thmlab{typoprf}
+Let $ \Pi = (\RNU, \Lgin, \PwdUp)  $ be scheme described in \constref{HamDisOne} and PHE be Paillier cryptosystem satisfying ciphertext re-randomization according to \lemref{cxt-rernd}. Then, for all adversary running in all time $ t $ and all sequence of login of size $ q $ described in \figref{fig:Exp:TypoPrivacy}, construction $ \Pi $ is $(t, q, 0) $-typo private. 
+\end{theorem}
+
+The proof of this theorem is presented in \appref{thm:typoprf}. 
+		
+		
+%		\item \textbf{Subcase 2}: The hamming distance of $ pwd'_i $ is equal or lower  than one and we have $ 1 = \mathsf{SmallDistance}(\mathsf{Hmng}, \mathsf{dist}(), 1, pwd'_i, pwd_u )  $. So, if the hamming distance is exactly one. So let $ k_1 $ be the index that $ pwd'_i[k_1]\neq pwd_u[k_1] $. So, for $ j\neq k_1 $ the value of $ R'_{i,j} $ can be computed as follows: 
+%		
+%		 \begin{align}
+%		 & Enc_{pk}(pwd_i'[j] ) + R'_{i,j }(Enc_{pk}(pwd_i'[k_1]) - c_{k_1}) =  c'_{0, i, j}  + R_{i,j} \sum _{j\neq k} (c'_{0, i, k} - c_k)\nonumber\\
+%		 & R'_{i,j} = \dfrac{ c'_{0, i, j} -  Enc_{pk}(pwd_i'[j] )   +  R_{i,j} X }{(Enc_{pk}(pwd_i'[k_1]) - c_{k_1}) }
+%		 \end{align}
+%		 
+%		 The above equation is for the worst case if the randomness used in the encryption of $ pwd'_i[k] $ and $ pwd_u[k] $ for $ k\neq k_1 $ is the same (for other randomness the value of summation is remaining non-zero and we can find the value $ R'_{i,j} $ similar to the previous subcase).  
+%		Here similar to previous subcase and with the same reason, we have $X= \sum _{j\neq k} (c'_{0, i, k} - c_k) $ and its value is non-zero. 
+%		
+%		Now we need to find the value of $ R'_{i,j} $ for the case that $ j= k_1 $ (and similarly for the worst case that the same randomness is used in encryption of $ pwd'_i[k] $ and $ pwd_u[k] $ for $ k\neq k_1 $ ). So we have the following condition: 
+%		
+%		\begin{align}
+%		& Enc_{pk}(pwd_i'[j] ) + R'_{i,j }\sum_{j\neq k} (Enc_{pk}(pwd_i'[k]) - c_k)  =  c'_{0, i, j}  + R_{i,j} \sum _{j\neq k} (c'_{0, i, k} - c_k)\nonumber\\
+%		& Enc_{pk}(pwd_i'[j] ) + R'_{i,j } \times 0  =  c'_{0, i, j}  + R_{i,j} \sum _{j\neq k} (c'_{0, i, k} - c_k)\nonumber
+%%		& R'_{i,j} = \dfrac{ c'_{0, i, j} -  Enc_{pk}(pwd_i'[j] )   +  R_{i,j} X }{(Enc_{pk}(pwd_i'[k_1]) - c_{k_1}) }
+%		\end{align}
+%		So here we can see that in this worst case it is not possible for the challenge to find the value of $ R'_{i,j} $ as the value of $ \sum_{j\neq k} (Enc_{pk}(pwd_i'[k]) - c_k)  $ could be zero. So the thing that the challenger needs to do is simply encrypts $ pwd'_i[k] $ for $ k\neq k_1 $ and if the resulting ciphertext is equal to $ c_{k} $ reencrypt it with another randomness.  So, simply this condition could be handle by this action and \C still is able to find a valid $ R'_{i,j} $. 
+%		
+%		Finally, we in the case that $ pwd'_i ==pwd_u $, wit the same argument discussed before, we need to make sure that for all indexes, different randomness should be considered to encrypt $ pwd'_i[j] $ to avoid $ X' =\sum_{j\neq k} (Enc_{pk}(pwd_i'[k]) - c_k) $ become zero (as to compute $ R'_{i,j} $ we need $ X $ has multiplicative inverse). 
+% 		\hassan{It seems that this subcase is problematic My idea is that we need to suppose that for encrypting Enc(pwd'i) we need to make sure that the challenger uses different randomness in the encryption }
+%		\end{itemize}
+	
+	
+%	Therefore, there exists indexes like $ k $ such that $ pwd'_i[k] \neq pwd_i[k] $. So, we need to find $ R'_{i,j} $ such that the following equation is holding. We recall that, want to find $ R'_{i,j} $ which will results a ciphertext of the password belonging to $ PwdV_1 $ which is exactly equal with the encryption $ pwd_i $ from $ PwdV_0 $. So we have: 
+	
+%	in which $ Enc_{pk}(pwd_i'[j] ) = c'_{0, i, j}   $ and we have just one typo. So we have: 
+%	\begin{align}
+%	& R'_{i,j }(Enc_{pk}(pwd_i'[k]) - c_k)_{j\neq k}=  R_{i,j}  (c'_{0, i, k} - c_k)_{j\neq k}  \nonumber
+%	\end{align}
+
+%Based on the above cases, we generally can conclude that to find $ R'_{i,j} $ we can enforce the following equation and we have: 
+%%	In the above equation all the values are know, except $ R'_{i,j} $. Therefore, we can find the value of $ R'_{i,j} $ as follows: 
+%	\begin{align}
+%	R'_{i,j} = \dfrac{ c'_{0, i, j} -  Enc_{pk}(pwd_i'[j] )   +  R_{i,j} \sum _{j\neq k} (c'_{0, i, k} - c_k) }{\sum_{j\neq k} (Enc_{pk}(pwd_i'[k]) - c_k) }
+%	\end{align}
+
+
+\subsection{Offline indistinguishability}
+In this part, we will show that \constref{HamDisOne} provides the offline indistinguishability. To prove this property, we use the hybrid argument technique and prove that all the intermediate games are computationally equivalent. The basic idea is that we try to reduce the offline indistinguishability, i.e., \defref{OffDisDef}, to \defref{OffGusDef}. The intermediate games are defined previously in \secref{??} along with their differences. In this section, we provide lemmas that shows the relations between these hybrids, and finally in \thmref{??} we prove the advantage of all PPT adversary in offline indistinguishability is lower than the its advantage in the offline guessing attack.  
+
+
+\subsubsection{Plain offline distinguishing}
+We note that the definition of $ \overline{\mathsf{offline-distinguishing}} $ is exactly similar to \defref{OffDisDef}, while the only difference is that we use $ \mathsf{PlainLog}_{\Pi}  $ defined in \figref{fig:PLogin} instead of standard login. Therefor, the same as \defref{OffDisDef}, \C selects username $ u $ and  password $ pwd_u $ and runs $ (U, \sigma_0)\gets \RNU(u, pwd_u, ) $. But in this game, \C will compute $(\PCache, \sigma_q) \gets  \mathsf{PlainLog}_{\Pi}(u, L, \mathsf{tpDist}, \mathsf{tgtDist}) $ where $ L = (pwd_u, pwd_1, \dots, pwd_q) \gets \mathcal{T} $ to extract the plaintext cache $ \PCache $ and the final state $ \sigma_q $. In addition to standard $ \mathsf{offline-distinguishing} $, \C also encrypts all the passwords and typos included in the \PCache, according to the way that described in \constref{HamDisOne}. The rest of the game is equal to $ \mathsf{offline-distinguishing} $. 
+
+ 
+
+\begin{lemma}\lemlab{plainIND}
+	Suppose $ \mathcal{T} $ is a sequence of login transcript generator of size $ q $, and construction $ \Pi = (\RNU, \Lgin, \PwdUp) $ is the scheme described in \constref{HamDisOne}. Let $ \Pi $ be implemented using PBE\footnote{ Remember to define PBE in preliminaries.}  scheme $ \PBE [\SH, \SE]$ where \SH is the random oracle and \SE is a symmetric encryption scheme satisfying robustness defined in \defref{robse}. Then for adversary \A running in time $ t $, and making at most $ Q $ queries to $ \SH $, there exists the adversaries \A' and \B such that 
+	
+	\begin{align}
+	Adv_{\Pi, \mathcal{T}}^{\mathsf{offline-distinguishing}} (\A)\leq Adv_{\Pi, \mathcal{T}}^{\overline{\mathsf{offline-distinguishing}}} (\A') + Adv_{\SE}^{\mathsf{rob}}(\B) + \dfrac{(w(q+1) + 1)^2}{2^{\mathcal{K}-1}} 
+	\end{align}
+	
+	Here, $ w $ is the size of cache, the key size of \SE is $ \mathcal{K} $ where \SE uses the $ \mathcal{K} $-bit output of \SH, the execution time of \A' and \B is approximately is equal to  $ t'\approx t $ and $ q $ is the login sequence size.
+\end{lemma}
+
+As the final step to proof of security, we now state our main theorem which proves that adversary success in the offline distinguishing attack is upper bounded by the advantage of PPT adversary to win the offline-guessing attack. The proof of \lemref{plainIND} is available in \appref{ApxPlainIND}.
+
+ \begin{theorem} \thmlab{INDtoGues}
+ 	Suppose $ \mathcal{T} $ is a sequence of login transcript generator of size $ q $, and construction $ \Pi = (\RNU, \Lgin, \PwdUp) $ is the scheme described in \constref{HamDisOne} ans is associate to $ \mathsf{PlainLog} $ described in \figref{fig:PLogin}. Let $ \Pi $ be implemented using PBE\footnote{ Remember to define PBE in preliminaries.} scheme $ \PBE [\SH, \SE]$ where \SH is the random oracle and \SE is a symmetric encryption scheme satisfying robustness defined in \defref{robse}. Then for all PPT adversary \A running in time $ t $, and making at most $ Q $ queries to $ \SH $, there exists the adversaries \A', \B, $ \B_1 $  and $ \B_2 $ such that: 
+ 	\begin{align}
+ 	Adv_{\Pi, \mathcal{T}}^{\mathsf{offline-distinguishing}} & \leq Adv_{\Pi, \mathcal{T}}^{\mathsf{offline-guessing}}(\A', Q) + Adv_{\SE}^{\mathsf{mkror}}(\B, t)  + \dfrac{(w + 1)^2}{2^{l_{salt}}}  \nonumber\\
+ 	& + Adv_{\SE}^{\mathsf{rob}}(\B_1) + Adv_{PKE}^{\mathsf{ror}}(\B_2) + \dfrac{(w(q+1) + 1)^2}{2^{\mathcal{K}-1}} 
+ 	\end{align} 
+ \end{theorem}
+ 
+ As a complementary discussion, we need to make sure that Paillier PH scheme that we used provides  $ \mathsf{ROR}_{\mathsf{PKE}} $ security in the context of public key encryption. So for this aim, in \thmref{PaillierROR}, we proves that if Paillier is a CPA secure scheme, then it provide the $ \mathsf{ROR} $ security as well. 
+ \begin{lemma}[ROR security of Paillier]\lemlab{PaillierROR}
+ 	Let $ \Pi $ be the Paillier cryptosystem with$ (t,Q) $-CPA security and \A be the adversary running in time $ t $ and have access to at most $ Q $ queries to the encryption algorithm. Then we can show that $ \Pi $ also provides the $ \mathsf{ROR^{\mathcal{A}}}_{\Pi} $ against all adversaries running in time $ t'\approx t $ and having access to $ Q $ encryption oracles provided in the $ \mathsf{ROR}_{PKE} $ game. 
+ \end{lemma}
+ 
+ \subsubsection{Proof of \lemref{PaillierROR}}\seclab{ApxPlainIND} 
+ \begin{proof}
+ 	To prove this lemma, we try to describe a reduction by designing an adversary like \B who violates the CPA security of $ \Pi $. So as the contradicting assumption we first suppose that $ \Pi $ is not providing $ \mathsf{ROR}_{\Pi} $  security and there exists an adversary like \A who breaks the $ \mathsf{ROR}_{\Pi} $ security. Then we will generate algorithm \B to break the CPA security of Paillier. 
+ 	
+ 	According to the CPA security, \B needs to select two challenge messages.Based on the reduction, we know that \B tries to simulates \A. So \A picks the $ m_j $ and sends it to \B (as the challenger for the $ \mathsf{ROR}_{\Pi} $ security. ). Now, \B needs to pick the challenge messages for the CPA challenge phase. For this aim, it sets $ m^{j}_0 = m_j $ and selects $ m^j_1 $ uniformly at random. For the $ j $-th query from \A, \B submits $ (m^{j}_0, m^{j}_1) $ to receive the challenge ciphertext, and forwards it to the \B as the response to her query.  let $ b $ be the random coin chosen in the CPA security game. So based on the described reduction, we can see that if $ b=0 $, then \B received the samples from $ Enc(pk, m_j) $ as the ciphertext. Otherwise, when $ b=1 $ \B is given a ciphertexts which are distributed randomly sampled from $ \mathcal{C}_{\eps}(pk) $. We note that, the distribution $ \mathcal{C}_{\eps}(pk)  $ outputs fresh random ciphertexts which are independent of public key $ pk $ and the queried message $ m_j $. Therefore,  $ \mathcal{C}_{\eps}(pk) $ outputs $ Enc(pk, m) $ where  $ m $ is chosen uniformly at random.  
+  \end{proof}
+ 
+%\hassan{We may need to discuss that CPA security if Paillier will results in the ROR security for Paillier. Remember to add this discussion) }
+
+%\begin{theorem}[Typo privacy]\thmlab{typoprf}
+%Given a $ (t,q, \eps) $\footnote{$ q $ is the maximum number of queries  to the encryption oracle of the PHE scheme}-CPA secure public key partial homomorphic encryption (PHE) scheme, \constref{HamDisOne} is $ (t', \dfrac{q}{n}, \eps) $-typo private defined in \defref{typodef}, where $ t = t' - \O{poly (\lambda)} $. 
+%\end{theorem}
+
+
+% there exists a ppt simulator $ \mathsf{Sim} $ who can generate $ (\sigma'_{u, t}, d') = \mathsf{Sim}(pwd_1, \dots, pwd_t, \sigma_u) $ which is computationally indistinguishable from $ (\sigma_{u,t}, d) = \mathsf{Login} (u, \sigma_{u,t-1}, pwd_t) $ where $ \sigma_{u,0}  = \sigma_u$ (We recall that $\sigma_u = \mathsf{AddNewUser}(u, pwd_u) $ which is set in the initialization phase of the security game defined in \defref{typodef}). 
+
+%\begin{proofof}{\thmref{typoprf}}
+%We prove this theorem by using proof by contradiction technique. So, we first suppose that \constref{HamDisOne} is not providing typo privacy and there exists a 
+%PPT adversary like \A who can distinguish between $ \sigma^{(0)}_{u,q} $ and $ \sigma^{(1)}_{u,q} $ with non negligible advantage. Let the advantage of \A to win typo privacy game be the  non-negligible function $ Adv^{\mathsf{typo-privacy}}_{\A} \geq \eps(\lambda) $. Then by exploiting \A, we will design an adversary \B who can violate the CPA security of the underlying public key PHE scheme.
+%
+%Now, the adversary \B needs to select two message vectors, and sends them to the challenger of CPA security.  For this aim, she acts as follows. First of all, \B receives $ pwd_u $ from \A and runs $ \mathsf{init} $ phase of the typo privacy game described in \defref{typodef} and returns the resulting $ \sigma_u $ to \A. Then, \A selects the password vector $ (pwd_1, \cdots, pwd_q) $, and sends it to \B which is in fact the challenger of \defref{typrdef}. Now, \B needs to simulate $ \mathsf{Challenge} $ to compute $ \sigma^{b}_{u,q} $ and sends it to \A. Here $ b $ is the value chosen by the challenge CPA security and \B does not know its value and tries to use \A's ability to guess the value of $ b $. So, \B first sets two message vectors $ M_0 $ and $ M_1 $ as follows. 
+%
+%For the first vector, she considers the original password vector received from \A. Without loss of generality and making the prove more simpler, suppose that all passwords are described by $ n $ characters. The first message vector will be a vector of size $ q\times n $ as follows:
+%
+%\begin{align}
+%m_{i,j}  = pwd_j[i] + R_{i,j} \sum_{k\neq i}(pwd_j[k] - pwd_u[k]) 256 ^k, s.t. R_{i,j}\in_R\mathcal{M} \nonumber
+%\end{align}
+%So, \B sets $ M_0 =(m_{1,1}, \cdots, m_{i,j}, \cdots, m_{q,n})   $. Then, she sets the second message vector bases on the password vector $ pwd'_1, \dots, pwd'_t $ where we have $ pwd'_j = pwd_j $ if and only if $ \mathsf{True} = \mathsf{SmallDistance}(pwd_i, pwd_u) $, otherwise, $ pwd'_j $ is chosen uniformly at random by \B. After that, \B does exactly the same as previous step for generating $ M_0 $. So, we have: 
+%\begin{align}
+%m'_{i,j}  = pwd'_j[i] + R'_{i,j} \sum_{k\neq i}(pwd'_j[k] - pwd_u[k]) 256 ^k, s.t. R_{i,j}\in_R\mathcal{M} \nonumber
+%\end{align}
+%And \B sets $ M_1 =  (m'_{1,1}, \cdots, m'_{i,j}, \cdots, m'_{q,n})  $. Now, \B sends the two message vectors $ M_0 $ and $ M_1$ to the challenger of CPA security. The challenger drops a random coin $ b\in_R\{0,1\} $ and encrypts elements of $ M_b $, one-by-one. Then, it returns back the ciphertext vector corresponding to messages included in $ M_b $. Then, according to the $ \mathsf{Login} $ algorithm, \B  sets the final $ \sigma^*_{u,q} $ using the ciphertext vector received from the challenger. More specifically, \B simply updates 
+%
+%
+% Then, forwards $ \sigma^*_{u,q} $ to \A who can guess the value of $ b $ with advantage of at least $ \eps(\lambda) $. Based on the contradicting assumption we recall that $ \eps(\lambda) $ is non-negligible. So, \B forwards \A's response to the challenger. In this case, the advantage of \B in violating the CPA security is equal to \A's advantage in winning in typo privacy game. 
+%
+%
+% So, if \A says $ \sigma_{u,q} $ is simulated, the $ \mathcal{B} $ outputs $ b' = 0 $ as her guess on the value of $ b $; otherwise, $ \mathcal{B} $ outputs $ b'=1 $. So, we can see that in this case, $ \mathcal{B} $ has violated the CPA security of the underlying PHE scheme which contradicts with our assumption that we use a CPA secure PHE scheme. 
+%
+%\end{proofof}
+
+\section{Other supported typos}
+In this section we will discuss about other typos which can be supported by \constref{HamDisOne}. These typos are including Edit distance of at most one and  Caps lock related mistakes. 
+
+  
+As we discussed, \constref{HamDisOne} can be considered for the hamming distance of at most one. We can also handle the edit distance of at most one. We can describe our solution in terms of two main cases. The first case is for one char addition, and the second case is one char deletion. Then, we describe the way to support the Caps lock related errors. Finally, we conclude this section by discussing managing old passwords. 
+
+
+We point that, using secret sharing we can handle more edit distances. But the interesting feature is that, in this case the complexity will be of $ O(n) $ which is an interesting result. In addition we can also use FHE scheme which may cause high computational overhead. However, one interesting question is that in the case that we use MHF, how much is the imposes cost. In the case that it is significantly lower than MHF computation, we may support mor types of edit distance easily by employing FHE. 
+
+
+\subsection{Case 1: One char insertion}
+Here we suppose that $ pwd' $ is the original $ pwd  $ with one inserted character. For this aim, we define the $ f_i(pwd') $ which encodes the encryption of $ pwd' $ when the $ i $th password is dropped. In this case $ f_i(pwd') = f(pwd) $ if and only if $ pdw' $ obtained by inserting extra character at location $ i $. So for this aim in to support this typo, after the login when the server realized that this is a typo, it will encrypt $ n $ possible passwords by eliminating one char. So for each one the server computes $ Enc_{pk}(R'(f_i(pwd') - f(pwd)) + pwd') $. Now, we can see, that the original password can be extracted if we have at most one insertion. 
+
+\subsection{Case 2: One char deletion}
+For this case, simply the server computes $ n $ possible password which are resulted from one char elimination of the original password. More formally, let $ pwd $ be the original password.  Then we define $ \mathsf{Delete}(pwd)  = \{pwd': pwd' = pwd'_{-i} \}$ which is the set of passwords obtained by deleting one character of $ pwd $ i.e., $ pwd_{-i} $ for all $ 1\leq i\leq n $. Now, in the time of registration, the server needs to add $ c = Enc_{pk}(pwd') $ for all $ pwd'\in \mathsf{Delete}(pwd) $ to the corresponding cache.
+
+
+
+
+\subsection{Caps lock}
+In this case, we simply define the $ \mathsf{ToUpper} $ function which is basically an operation which transfer all the characters of passwords to their equivalent char when the ``Caps Lock" key is on. Let the original password be $ pwd $. So to support these types of error, the server would compute $ c_{upper} = Enc_{pk} (\mathsf{ToUpper}(pwd)) $. Then in the time of login, when non of the typos are not working, the server may suppose that the typo is relate to caps lock type. Let the caps lock typo password be $ pwd' $. So the server computes $ c = R (Enc_{pk} (\mathsf{ToUpper}(pwd')  - c_{upper}) + Enc_{pk} (pwd) ) $. Then in the future login, if the user uses the correct password $ pwd $ (or its valid typos which are previously added to the cache) then the server can decrypt $ c $. If $ Dec_{sk} (c) \neq \bot$ then the resulting password will be added to the cache to support caps lock typos. 
+
+\subsection{Detecting old passwords}
+For this case, suppose we have a set of old passwords. All of the passwords in this set are encoded to a field element. Then we generate a polynomial which is multiplication of all $ (x-Encode (pwd)_i) $ such that $ pwd_i\in \mathsf{OLD} $. Now, using Pailier we encrypt all the coefficients of the polynomial. By homomorphic feature of the Pailier we can compute $ Enc(R'\times P(Encode(pwd'))) $ in which $ P(x) = \prod _{\forall pwd_i\in \mathsf{OLD} }(x-Encode(pwd_i)) $. In the latest equation, $ R' $ is a random number. We know that Paillier support addition and plaintext multiplication with ciphertext. We should highlight that the coefficients of $ P(x) = \sum_{i} a_ix^i $ are encrypted and stored in the cache. So we have $c_i =  Enc_{pk}(a_i) $. In the time of login, when all the typos in the cache tested and the login results was reject, the server may think that this is an old password and needs to detect it. For this aim the server computes $ p =Encode(pwd') $ where $ pwd $ is the input password during login, and then for each $ c_i $ it computes $ c'_i =  R'(p)^i c_i $. We note that $ R' \dot (p)^i $ is a plaintext multiplied with the ciphertext $ c_i $. In addition, the server computes $ c_{pwd'} = Enc(pwd') $, and as the final step computes $ c^* = c_{pwd'} + \sum c'_i$ which is equal to $ c_{pwd'} + R'(Enc_{pk} (P(Encode(pwd')))) $. 
+
+
+Now we can see that if the $ pwd' $ is an old password, then $ Enc_{pk}(R' P(p)) $ is equal $ Enc_{pk}(0) $ and the resulting ciphertext is the encryption of actual input password, i.e., $ c_{pwd'} = Enc_{pk}(pwd') $ where $ Dec_{sk}(c_{pwd'}) \neq \bot $. Otherwise, the ciphertext will be added with a random number and the result of decryption is $ \bot $ which means the input password is not and old one. 
+
+\jeremiah{Discuss what fraction of typos we can handle with all of our rules and what is the overhead? Number of ciphertexts etc...}
+
+\section {Handling Typos with Secret Sharing} 
+{\color{blue} Add a brief Introduction here. }
+\jeremiah{NEed to argue correctness (both types ) and security (both types). Focus primarily on typo privacy...}
+\subsection{Arbitrary Hamming Distance}
+In this part we discuss the idea of using secret sharing to efficiently handle higher hamming distance. Similar previous ideas, here we also plan to use PHF scheme, while here we plan to be beneficiary of the secret sharing power. Therefore, the difference here is that we encode the original password as a field element and based on the threshold value which implies the target edit distance we use a suitable secrete sharing scheme. 
+
+More precisely, let the underlying secret sharing scheme be $ \Pi_{ss} =(\mathsf{Setup}, \mathsf{Share})$ where $ \mathsf{pp}\gets \mathsf{Setup}(^\lambda) $ is the secret sharing parameters and $ s_i \gets \mathsf{Share}(n, k, S, \mathsf{pp}) $ are the shares when the secret is $ S  $ and $ k $ out of $ n $ shares are required to reconstruct $ S $ from $ s_i $. 
+
+Now, given the password $ pwd' $ in the time of login, the server checks whether the password is valid or not. If not, then the server, encodes the password with typo to a private share, i.e., $ S = Encode(pwd') $ and then runs the secret sharing to extract the shares $ s_i = \mathsf{Share}(n, k, S, \mathsf{pp}) $. Similar to the idea we discussed earlier, the server stores $ c_i = Enc_{pk} (pwd[i])$ for all chars of the original password. Now, given $ c_i $, the server computes $ c'_i = Enc_{pk}(s_i) + R (Enc_{pk} (pwd'[i] - c_i)$. Now, in the time of correct login, we if $ pwd' $ is different with the original password in at most $ k $ chars, then the password can reconstruct the $ S $ and decodes it to $ pwd' = Decode(S) $ and then add this password to the cache for future logins. Otherwise, the reconstructed share is a true random number which does not reveal any information about $ pwd' $. 
+
+
+\subsection{Concrete instantiation using Paillier PHE}
+The idea is straight forward and we just need to replace the public key encryption algorithm with Paillier cryptosystem. We just need to discuss the security of the resulting scheme where we need to argue based on the underlying secret sharing, we still can provide the perfect typo privacy. 
+
+\begin{theorem}
+	{\color{blue} Here: Formal description of theorem for Perfect typo privacy using secret sharing}
+\end{theorem}
+
+Some notes and observation useful for the proof:
+
+\jeremiah{Describe Scheme more formally. When a user registers the password what to we do? Answer: Generate public keys/private key, salt $s_u$, and symmetric key $K = KDF(pwd_u,s_u)$ encrypt password character by character $c_i = Enc(pwd[i])$ using public key $pk_u$. Store: $(u, s_u, Enc_K(sk_u), c_1,\ldots, c_n)$. When a user logs in with an incorrect password $pwd'$ we (1) pick a secret $s$ and generate shares $s_1,\ldots, s_n$ (secret sharing should permit checking whether or not share is valid or not). Secret sharing should be $t= n-d$ out of $n$ so that we can recover if ther hamming distance is at most $d$, (2) compute $c_i' = Enc_{pk}(pwd[i]')$ for each $i$ and then use homomorphic properties to obtain $e_i$ encrypting $R_i \times (pwd[i]-pwd[i]']) + s_i$ for a random value $R_i$ and store vector $\vec{e} = (e_1,\ldots, e_n)$ in typo cache.  When user logs in with correct password we can recover $K$ and $sk_u$ and for each $\vec{e}$ in the typo cache we can decrypt each $e_i$ to obtain $R_i \times (pwd[i]-pwd[i]']) + s_i$ which is guaranteed to be $s_i$ when $pwd[i]-pwd[i]'=0$. Validate the shares $s_i$ and if we have $n-d$ (distance threshold $d$, notation?) valid shares then we can recover    }
+
+\hassan{Need to make it more formal}
+
+
+Let $ x= pwd[i], x’ = pwd’[i] $ then  $ c_x= g^x r^N \mod N^2  $   for random$  r \in Z_N^* $. Now, we compute $  c_{x-x’} = g^{-x’} c_x \mod N^2  $  and $ y_i = g^{s_i} c_{x-x’}^{R} = g^{s_i + R(x-x’)} r^{RN} \mod N^2  $ for random $ R $ picked uniformly from $ [0,N-1] $. 
+
+We re-randomize the resulting ciphertext to compute $ c_i = y_i r’^N =  g^{s_i + R(x-x’)} (r^R r’)^N \mod N^2 $ for random $ r’ $. 
+
+
+Now we have the following observations: 
+\begin{itemize}
+	\item $ gcd(r,n)=1, gcd(r^R,n)=1 $
+	
+	\item For any $ a \in Z_N^*  $and random $ z $ in $ Z_N^* $ the product az is distributed uniformly at random. Pf: for any y we have $  Pr[az=y] = Pr[z=ya^{-1}] = 1/|Z_N^*| $. 
+	
+	\item We may equivalently view $ c_i  $as a fresh encryption of $ s_i+R(x-x’) \mod  N $i.e., $ c_i = g^{s_i + R(x-x’)} (r’)^n  $ for a fresh $ r’ $ unrelated to $ s_i, x,x’ $, $ R $ etc… Thus, information theoretically $ c_i  $hides everything except the final message $ s_i+R(x-x’) $.
+	
+	\item If $ (x-x’) \in Z_{N^*} $ then then $ R(x-x’) \mod N $ is distributed uniformly at random in $ [0,N-1] $. Proof: for any y in $ [0,N-1]  $we have$  Pr[R(x-x’)=y]=Pr[R=y(x-x’)^{-1}] $. 
+	
+	\item If $ (x-x’) \in Z_{N^*} $ then$  s_i + R(x-x’) \mod N $ is distributed uniformly at random. Proof: for any $ y \in Z_N $ we have $ Pr[s_i+R(x-x’) = y \mod N] = Pr[R=(y-s_i)(x-x’)^{-1}] = 1/N $. 
+\end{itemize}
+
+Based on the above observations we need to ensure that secret shares $ s_i $’s are uniformly random in $ Z_N $ otherwise we can use $ c_i  $to infer whether or not  $  pwd[i]=pwd[i]’ $. 
+
+
+Suggested options: 
+
+\begin{itemize}
+	\item \textbf{Option 1:} Can use Shamir over $ Z_N $ and pretend like this is a field. Perfect typo privacy, but would have negligible chance of failure when reconstructing secrets.
+	
+	\item \textbf{Option 2:} Can use regular secret sharing over field $  Z_p $ with prime $ p << N $. Now given share $  S_i $ we pick random $ s_i < N $ s.t. $ s_i = S_i \mod p $. Distribution over $ S_i $ is very close to random. Probably easier to implement. Note: $ p $ does not have to be very big since we only need to encode$  t $ pairs $  (i,pwd[i]’). p > (n \Sigma)^t $.
+\end{itemize}
+
+\textbf{Packing Ciphertexts:}
+\hassan{Basic  idea: The basic idea is transferring a generated ciphertext to byte stream of char*  and then by some tokenizing method extract the original ciphertext vector}
+
+\subsection{Edit-Distance using secret sharing}
+\begin{itemize}
+	\item\textbf{ Case 1 (Easier):} $ pwd’ = pwd_{-i} $ for some $ i < n $
+	
+	Solution: store $ z_i = Enc(a_i) $ for each $ i<= n $ where $ a_i $ are coefficients of polynomial $ p(x) = \prod_i (x-pwd_{-i})  = \sum_j a_j x^j. $ Given $ z_i $’s can compute fresh-encryption of $ pwd’+R*p(pwd’)   $which is 0 if $ pwd’ = pwd_{-i} $ and random otherwise. 
+	
+	Note: If we can ensure that $  \sigma^n < \mathsf{smallest-factor}(N) $ then the scheme should provide perfect typo privacy. Since $  p(x) \in Z_N^*  $ for any $ x<\sigma^n  $and therefore $ p(x) $ has a multiplicative inverse $ 1/p(x) \mod N $. It follows that for any $  pwd’ $ and any $  y < N  $ we have $ Pr[pwd’+R*p(pwd’) = y ] = Pr[R=(y-pwd’)/p(pwd’)] $. 
+	
+\jeremiah{Above only handles pwd' which is obtained by delting one character from pwd. If we want to handle insertions (i.e., pwd is obtained by deleting one character from pwd') then we can store $Enc_{pk_u}(pwd^i)$ for $i = 1,\ldots n$ at registration and use this to homomorphically evaluate the polymial $P_{pwd'}(x)$ at $pwd$ where $P_{pwd'}(x) = \prod_i (x- pwd'_{-i}) = \sum_i a_i x_i$. In this case we know the coefficients $a_i$ of the polynomial and can use the stored ciphertexts to evaluate homomorphically}
+
+	\item \textbf{Case 2 (harder):} $ pwd = pwd’_{-i} $ for some $  i $. In this case we could define the multivariate polynomial $ p(x_1,…,x_n)= \prod_i (x_i – pwd) $, but expanding this polynomial has too many coefficients!
+	
+\end{itemize}
+
+
+\jeremiah{Discuss final construction which supports Hamming Dist < 2 and single character insertion/deletion + caps lock errors. How much overhead? Provide empirical analysis space/running time etc... Document system parameters precisely. Compare with TypoTop and also compare with MHF evaluation...[OPTIONAL]: Evaluate FHE to see if it is remotely practical.}
+
+%\section{Handling Arbitrary Deletion using Secret sharing}
+%In this part we will describe the situation that multiple deletion is happened and we can use secret sharing to efficiently extract the legitimate typos. For this aim, in the time of registration, the server also computes the encryption of polynomials which are extracted by $ P(x) = \prod (x-pwd[i])  =\sum_i a_ix^i$.  
+
+
+
+%Things to do: 
+%\begin{itemize}
+%	\item Checking the new  constructions of "Locality-sensitive hashing scheme based on p-stable distributions":  we need to be careful about the values of p1 and p2. We need to check and compare two different cases when different threshold for the edit distance is considered
+%	\item (More important):  Concentrate on the idea of secret sharing: it seems that we can improve the idea on c1 \dots cn, which allows us to increase the tolerance against higher number different missed spelling. 
+%	\item we need to double check the construction of the secret sharing and make sure that the resulting scheme is secure and practical. 
+%\end{itemize}
+%
+%
+%\begin{itemize}
+%	\item Urgent (Before the next meeting)
+%	\item Two Constructions: 
+%	\item 1) Edit distance $ <=1 $ 
+%	\item 2) Arbitrary Hamming Distance (using secret sharing)type up a complete description of the system login/registration/
+%	\item handling incorrect logins/password change etc...(for password change describe how we track old passwords)
+%\end{itemize}
