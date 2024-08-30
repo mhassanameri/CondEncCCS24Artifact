@@ -156,8 +156,7 @@ public:
                             paillier_prvkey_t* psk,
                             int threshold,
                             string &recovered,
-                            size_t _len,
-                            size_t ShareSize);
+                            size_t _len);
 //private:
 
 /*

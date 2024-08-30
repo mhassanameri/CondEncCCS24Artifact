@@ -281,10 +281,10 @@ int testCondEncEDist(int n_lambda,  int Num_tests, size_t _len)
     }
         string File1 = "EDOnedataL.dat";
         std::ofstream EDOnedataL(File1, std::ios_base::app | std::ios_base::out);
-        EDOnedataL << _len << "\t" << duration_Enc_ED1_Sum / Num_tests << ",\t"
-                   << duration_CondEnc_ED1_Sum / Num_tests << ",\t"
-                   << duration_CondDec_ED1_Sum / Num_tests << ",\t"
-                   << TradCtxSize_Sum/Num_tests << ",\t"
+        EDOnedataL << _len << "\t" << duration_Enc_ED1_Sum / Num_tests << "\t"
+                   << duration_CondEnc_ED1_Sum / Num_tests << "\t"
+                   << duration_CondDec_ED1_Sum / Num_tests << "\t"
+                   << TradCtxSize_Sum/Num_tests << "\t"
                    << CondCtxSize_Sum/Num_tests << "\n";
 
         CondEncEDatMost1.close();
@@ -336,6 +336,8 @@ int testCondEncHamDist(int n_lambda, int Num_tests, size_t _len, int MaxHam)
 
         msg = data[T].first;
         typo = data[T].second;
+        // msg = "PWDHan";
+        // typo = "PWDHaM";
         payload = CryptoSymWrapperFunctions::Wrapper_pad( typo, _len);
         cout << msg.size() << "\t" <<typo.size() << "\n";
         cout << msg << "\t" <<typo << "\n";
@@ -369,10 +371,10 @@ int testCondEncHamDist(int n_lambda, int Num_tests, size_t _len, int MaxHam)
         auto start_CondDec_HD = high_resolution_clock::now();
         string recovered_hdBytes;
         int CondDecOut  = 0;
-        CondDecOut = HamDistAtmostT::CondDec(pkobj._ppk, HD_ctx_typo_Bytes, pkobj._psk, Threshold, recovered_hdBytes, _len);
+        // CondDecOut = HamDistAtmostT::CondDec(pkobj._ppk, HD_ctx_typo_Bytes, pkobj._psk, Threshold, recovered_hdBytes, _len);
         // CondDecOut = HamDistAtmostT::CondDec_Optimized(pkobj._ppk, HD_ctx_typo_Bytes, pkobj._psk, Threshold, recovered_hdBytes, _len, SizeShare, msg.size());
-        // CondDecOut = HamDistAtmostT::CondDec_Optimized_UnknownMsgLength(pkobj._ppk, HD_ctx_typo_Bytes, pkobj._psk, Threshold, recovered_hdBytes, _len, SizeShare);
-        // CondDecOut = HamDistAtmostT::CondDec_NewOPT(pkobj._ppk, HD_ctx_typo_Bytes, pkobj._psk, Threshold, recovered_hdBytes, _len, SizeShare);
+        // CondDecOut = HamDistAtmostT::CondDec_Optimized_UnknownMsgLength(pkobj._ppk, HD_ctx_typo_Bytes, pkobj._psk, Threshold, recovered_hdBytes, _len);
+        CondDecOut = HamDistAtmostT::CondDec_NewOPT(pkobj._ppk, HD_ctx_typo_Bytes, pkobj._psk, Threshold, recovered_hdBytes, _len);
         // CondDecOut = HamDistAtmostT::CondDec_NonSmallFieldCheck(pkobj._ppk, HD_ctx_typo_Bytes, pkobj._psk, Threshold, recovered_hdBytes, _len, SizeShare);
         // CondDecOut = HamDistAtmostT::CondDec_2dif(pkobj._ppk, HD_ctx_typo_Bytes, pkobj._psk, Threshold, recovered_hdBytes, _len, SizeShare);
 
@@ -416,16 +418,16 @@ int testCondEncHamDist(int n_lambda, int Num_tests, size_t _len, int MaxHam)
 
     size_t MaxDist  = _len - Threshold;
 
-    HDdataT << MaxDist << ",\t"<< _len << ",\t" << duration_Enc_HD_Sum / Num_tests << ",\t"
-            << duration_CondEnc_HD_Sum / Num_tests << ",\t"
-            << duration_CondDec_HD_Sum / Num_tests << ",\t"
-            << TradCtxSize  << ",\t"
+    HDdataT << MaxDist << "\t"<< _len << "\t" << duration_Enc_HD_Sum / Num_tests << "\t"
+            << duration_CondEnc_HD_Sum / Num_tests << "\t"
+            << duration_CondDec_HD_Sum / Num_tests << "\t"
+            << TradCtxSize  << "\t"
             << CondCtxSize_HD_Sum /Num_tests  << "\n";
 
-    HDdataL << MaxDist << ",\t"<< _len << ",\t" << duration_Enc_HD_Sum / Num_tests << ",\t"
-            << duration_CondEnc_HD_Sum / Num_tests << ",\t"
-            << duration_CondDec_HD_Sum / Num_tests << ",\t"
-            << TradCtxSize << ",\t"
+    HDdataL << MaxDist << "\t"<< _len << "\t" << duration_Enc_HD_Sum / Num_tests << "\t"
+            << duration_CondEnc_HD_Sum / Num_tests << "\t"
+            << duration_CondDec_HD_Sum / Num_tests << "\t"
+            << TradCtxSize << "\t"
             << CondCtxSize_HD_Sum /Num_tests << "\n";
 
     CondEncHD.close();
@@ -473,8 +475,8 @@ int testCondEncHamDist_NonOPT(int n_lambda, int Num_tests, size_t _len, int MaxH
         msg = data[T].first;
         typo = data[T].second;
         payload = CryptoSymWrapperFunctions::Wrapper_pad( typo, _len);
-        cout << msg.size() << ",\t" <<typo.size() << "\n";
-        cout << msg << ",\t" <<typo << "\n";
+        cout << msg.size() << "\t" <<typo.size() << "\n";
+        cout << msg << "\t" <<typo << "\n";
 
         payload =  typo;
 
@@ -551,20 +553,20 @@ int testCondEncHamDist_NonOPT(int n_lambda, int Num_tests, size_t _len, int MaxH
 //            "[# of errors as the worst case: "<< NumOfErrs << " _len = " << _len << "and KeySize = " << n_lambda <<
 //            "****\n";
 
-    HDdataT << MaxDist << ",\t"<< _len << ",\t" << duration_Enc_HD_Sum / Num_tests << ",\t"
-            << duration_CondEnc_HD_Sum / Num_tests << ",\t"
-            << duration_CondDec_HD_Sum / Num_tests << ",\t"
-            << TradCtxSize  << ",\t"
+    HDdataT << MaxDist << "\t"<< _len << "\t" << duration_Enc_HD_Sum / Num_tests << "\t"
+            << duration_CondEnc_HD_Sum / Num_tests << "\t"
+            << duration_CondDec_HD_Sum / Num_tests << "\t"
+            << TradCtxSize  << "\t"
             << CondCtxSize_HD_Sum /Num_tests  << "\n";
 
 //    HDdataL << "The predicate is Hamming distance at most Threshold =" << _len - Threshold <<
 //            "[# of errors as the worst case: "<< NumOfErrs << " _len = " << _len << "and KeySize = " << n_lambda <<
 //            "****\n";
 
-    HDdataL << MaxDist << ",\t"<< _len << ",\t" << duration_Enc_HD_Sum / Num_tests << ",\t"
-            << duration_CondEnc_HD_Sum / Num_tests << ",\t"
-            << duration_CondDec_HD_Sum / Num_tests << ",\t"
-            << TradCtxSize << ",\t"
+    HDdataL << MaxDist << "\t"<< _len << "\t" << duration_Enc_HD_Sum / Num_tests << "\t"
+            << duration_CondEnc_HD_Sum / Num_tests << "\t"
+            << duration_CondDec_HD_Sum / Num_tests << "\t"
+            << TradCtxSize << "\t"
             << CondCtxSize_HD_Sum /Num_tests << "\n";
 
     CondEncHD.close();
@@ -710,10 +712,10 @@ int testCondEncOR(int n_lambda, int Num_tests, size_t _len, int MaxHam)
     string File1 = "ORdataL.dat";
     std::ofstream CondEncORpred(File1, std::ios_base::app | std::ios_base::out);
 
-    CondEncORpred << _len << ",\t" << duration_Enc_ED1_Sum / Num_tests << ",\t"
-               << duration_CondEnc_ED1_Sum / Num_tests << ",\t"
-               << duration_CondDec_ED1_Sum / Num_tests << ",\t"
-               << ORPrdrigCtxSize << ",\t"
+    CondEncORpred << _len << "\t" << duration_Enc_ED1_Sum / Num_tests << "\t"
+               << duration_CondEnc_ED1_Sum / Num_tests << "\t"
+               << duration_CondDec_ED1_Sum / Num_tests << "\t"
+               << ORPrdrigCtxSize << "\t"
                << CondEncOR_CtxSize_Sum/Num_tests << "\n";
 
     CondEncORpred.close();
@@ -840,10 +842,10 @@ int testCondEncCAPSLOCK(int n_lambda, int Num_tests, size_t _len)
     string File1 = "CAPSLKdataL.dat";
     std::ofstream CondEncORpred(File1, std::ios_base::app | std::ios_base::out);
 
-    CondEncORpred << _len << ",\t" << duration_Enc_Sum / Num_tests << ",\t"
-                  << duration_CondEnc_Sum / Num_tests << ",\t"
-                  << duration_CondDec_Sum / Num_tests << ",\t"
-                  << CAPSLocOrigCtxSize << ",\t"
+    CondEncORpred << _len << "\t" << duration_Enc_Sum / Num_tests << "\t"
+                  << duration_CondEnc_Sum / Num_tests << "\t"
+                  << duration_CondDec_Sum / Num_tests << "\t"
+                  << CAPSLocOrigCtxSize << "\t"
                   << CondEncCPSLKCtxSize_Sum /Num_tests << "\n";
 
     cout << "CAPSLOCK Error predicate is finished L =" <<_len << "\n";
@@ -859,25 +861,25 @@ int PlotFig1a(int NumTest_SmallM, int NumTest_64, int NumTest_128)
 {
     for (int i = 1; i<5; i++)
     {
-        cout << "OPT HamDist at most  " + to_string(i)  + "_len= 8" << endl;
-        testCondEncHamDist(1024, NumTest_SmallM , 8,i);
-        cout << "OPT HamDist at most  " + to_string(i)  + "_len= 16" << endl;
-        testCondEncHamDist(1024, NumTest_SmallM , 16,i);
-        cout << "OPT HamDist at most  " + to_string(i)  + "_len= 32" << endl;
+        // cout << "OPT HamDist at most  " + to_string(i)  + "_len= 8" << endl;
+        // testCondEncHamDist(1024, NumTest_SmallM , 8,i);
+        // cout << "OPT HamDist at most  " + to_string(i)  + "_len= 16" << endl;
+        // testCondEncHamDist(1024, NumTest_SmallM , 16,i);
+        // cout << "OPT HamDist at most  " + to_string(i)  + "_len= 32" << endl;
         testCondEncHamDist(1024, NumTest_SmallM , 32,i);
-        cout << "OPT HamDist at most  " + to_string(i)  + "_len= 64" << endl;
-        testCondEncHamDist(2048,  NumTest_64 , 64,i);
+        // cout << "OPT HamDist at most  " + to_string(i)  + "_len= 64" << endl;
+        // testCondEncHamDist(2048,  NumTest_64 , 64,i);
         // cout << "OPT HamDist at most  " + to_string(i)  + "_len= 128" << endl;
         // testCondEncHamDist(3072,  NumTest_128 , 128,i);
 
-        cout << "No_OPT HamDist at most  " + to_string(i)  + "_len= 8" << endl;
-        testCondEncHamDist_NonOPT(1024, NumTest_SmallM, 8,i);
-        cout << "No_OPT HamDist at most  " + to_string(i)  + "_len= 16" << endl;
-        testCondEncHamDist_NonOPT(1024, NumTest_SmallM, 16,i);
-        cout << "No_OPT HamDist at most  " + to_string(i)  + "_len= 32" << endl;
-        testCondEncHamDist_NonOPT(1024, NumTest_SmallM, 32,i);
-        cout << "No_OPT HamDist at most  " + to_string(i)  + "_len= 64" << endl;
-        testCondEncHamDist_NonOPT(2048, NumTest_64, 64,  i);
+        // cout << "No_OPT HamDist at most  " + to_string(i)  + "_len= 8" << endl;
+        // testCondEncHamDist_NonOPT(1024, NumTest_SmallM, 8,i);
+        // cout << "No_OPT HamDist at most  " + to_string(i)  + "_len= 16" << endl;
+        // testCondEncHamDist_NonOPT(1024, NumTest_SmallM, 16,i);
+        // cout << "No_OPT HamDist at most  " + to_string(i)  + "_len= 32" << endl;
+        // testCondEncHamDist_NonOPT(1024, NumTest_SmallM, 32,i);
+        // cout << "No_OPT HamDist at most  " + to_string(i)  + "_len= 64" << endl;
+        // testCondEncHamDist_NonOPT(2048, NumTest_64, 64,  i);
         // cout << "No_OPT HamDist at most  " + to_string(i)  + "_len= 128" << endl;
         // testCondEncHamDist_NonOPT(3072, NumTest_128, 128,  i);
 

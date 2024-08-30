@@ -30,38 +30,38 @@
 		%legend pos = north west
 		]
 		
-		%\pgfplotstableread{../../test/CondEnc/HDdataL8_T.dat}{\table}
+		%\pgfplotstableread[col sep= space]{../../test/CondEnc/HDdataL8_T.dat}{\table}
 		%\addplot[red, mark = *] table [x = {T}, y = {CondDec}] {\table};
 		
-		\pgfplotstableread{../test/CondEnc/HDdataL_T1.dat}{\table}
+		\pgfplotstableread[col sep= space]{../test/CondEnc/HDdataL_T1.dat}{\table}
 		\addplot[red, mark = square*] table [x = {L}, y = {CondDec}] {\table};
 		\label{T1}
   
-        \pgfplotstableread{../test/CondEnc/OPT_HDdataL_T1.dat}{\table}
+        \pgfplotstableread[col sep= space]{../test/CondEnc/OPT_HDdataL_T1.dat}{\table}
 		\addplot[blue, mark = square*] table [x = {L}, y = {CondDec}] {\table};
 		\label{OPTT1}
 		
-		\pgfplotstableread{../test/CondEnc/HDdataL_T2.dat}{\table}
+		\pgfplotstableread[col sep= space]{../test/CondEnc/HDdataL_T2.dat}{\table}
 		\addplot[red, mark = triangle*] table [x = {L}, y = {CondDec}] {\table};
 		\label{T2}
 
-        \pgfplotstableread{../test/CondEnc/OPT_HDdataL_T2.dat}{\table}
+        \pgfplotstableread[col sep= space]{../test/CondEnc/OPT_HDdataL_T2.dat}{\table}
 		\addplot[blue, mark = triangle*] table [x = {L}, y = {CondDec}] {\table};
 		\label{OPTT2}
 		
-		\pgfplotstableread{../test/CondEnc/HDdataL_T3.dat}{\table}
+		\pgfplotstableread[col sep= space]{../test/CondEnc/HDdataL_T3.dat}{\table}
 		\addplot[red, mark = *] table [x = {L}, y = {CondDec}] {\table};
 		\label{T3}
 
-        \pgfplotstableread{../test/CondEnc/OPT_HDdataL_T3.dat}{\table}
+        \pgfplotstableread[col sep= space]{../test/CondEnc/OPT_HDdataL_T3.dat}{\table}
 		\addplot[blue, mark = *] table [x = {L}, y = {CondDec}] {\table};
 		\label{OPTT3}
 		
-		\pgfplotstableread{../test/CondEnc/HDdataL_T4.dat}{\table}
+		\pgfplotstableread[col sep= space]{../test/CondEnc/HDdataL_T4.dat}{\table}
 		\addplot[red, mark = square*,  mark options={fill=white} ] table [x = {L}, y = {CondDec}] {\table};
 		\label{T4}
 
-        \pgfplotstableread{../test/CondEnc/OPT_HDdataL_T4.dat}{\table}
+        \pgfplotstableread[col sep= space]{../test/CondEnc/OPT_HDdataL_T4.dat}{\table}
 		\addplot[blue, mark = square*,  mark options={fill=white} ] table [x = {L}, y = {CondDec}] {\table};
 		\label{OPTT4}
 
@@ -97,44 +97,44 @@
 	%legend pos = north west
 	]
 	
-	\pgfplotstableread{../test/CondEnc/HDdataL8_T.dat}{\table}
+	\pgfplotstableread[col sep= space]{../test/CondEnc/HDdataL8_T.dat}{\table}
 	\addplot[red, mark = *] table [x = {T}, y = {CondDec}] {\table};
 	\label{L8}
 
-    \pgfplotstableread{../test/CondEnc/OPT_HDdataL8_T.dat}{\table}
+    \pgfplotstableread[col sep= space]{../test/CondEnc/OPT_HDdataL8_T.dat}{\table}
 	\addplot[blue, mark = *] table [x = {T}, y = {CondDec}] {\table};
 	\label{OPTL8}
 	
-	\pgfplotstableread{../test/CondEnc/HDdataL16_T.dat}{\table}
+	\pgfplotstableread[col sep= space]{../test/CondEnc/HDdataL16_T.dat}{\table}
 	\addplot[red, mark = square*] table [x = {T}, y = {CondDec}] {\table};
 	\label{L16}
  
- \pgfplotstableread{../test/CondEnc/OPT_HDdataL16_T.dat}{\table}
+ \pgfplotstableread[col sep= space]{../test/CondEnc/OPT_HDdataL16_T.dat}{\table}
 	\addplot[blue, mark = square*] table [x = {T}, y = {CondDec}] {\table};
 	\label{OPTL16}
 	
-	\pgfplotstableread{../test/CondEnc/HDdataL32_T.dat}{\table}
+	\pgfplotstableread[col sep= space]{../test/CondEnc/HDdataL32_T.dat}{\table}
 	\addplot[red, mark = triangle*] table [x = {T}, y = {CondDec}] {\table};
 	\label{L32}
 
-    \pgfplotstableread{../test/CondEnc/OPT_HDdataL32_T.dat}{\table}
+    \pgfplotstableread[col sep= space]{../test/CondEnc/OPT_HDdataL32_T.dat}{\table}
 	\addplot[blue, mark = triangle*] table [x = {T}, y = {CondDec}] {\table};
 	\label{OPTL32}
  
 	
-	\pgfplotstableread{../test/CondEnc/HDdataL64_T.dat}{\table}
+	\pgfplotstableread[col sep= space]{../test/CondEnc/HDdataL64_T.dat}{\table}
 	\addplot[red, mark = *] table [x = {T}, y = {CondDec}] {\table};
 	\label{L64}
 
-    \pgfplotstableread{../test/CondEnc/OPT_HDdataL64_T.dat}{\table}
+    \pgfplotstableread[col sep= space]{../test/CondEnc/OPT_HDdataL64_T.dat}{\table}
 	\addplot[blue, mark = *] table [x = {T}, y = {CondDec}] {\table};
 	\label{OPTL64}
 	
-	\pgfplotstableread{../test/CondEnc/HDdataL128_T.dat}{\table}
+	\pgfplotstableread[col sep= space]{../test/CondEnc/HDdataL128_T.dat}{\table}
 	\addplot[red, mark = square*,  mark options={fill=white} ] table [x = {T}, y = {CondDec}] {\table};
 	\label{L128}
 
-    \pgfplotstableread{../test/CondEnc/OPT_HDdataL128_T.dat}{\table}
+    \pgfplotstableread[col sep= space]{../test/CondEnc/OPT_HDdataL128_T.dat}{\table}
 	\addplot[blue, mark = square*,  mark options={fill=white} ] table [x = {T}, y = {CondDec}] {\table};
 	\label{OPTL128}
 
@@ -173,37 +173,37 @@
 	%legend pos = north west
 	]
 	
-	%\pgfplotstableread{ ../test/CondEnc/HDdataL8_T.dat}{\table}
+	%\pgfplotstableread[col sep= space]{ ../test/CondEnc/HDdataL8_T.dat}{\table}
 	%\addplot[red, mark = *] table [x = {T}, y = {CondDec}] {\table};
 	
-	\pgfplotstableread{../test/CondEnc/HDdataL_T1.dat}{\table}
+	\pgfplotstableread[col sep= space]{../test/CondEnc/HDdataL_T1.dat}{\table}
 	\addplot[red, mark = square*] table [x = {L}, y = {Enc}] {\table};
 	\label{p1}
 	
-	\pgfplotstableread{../test/CondEnc/HDdataL_T2.dat}{\table}
+	\pgfplotstableread[col sep= space]{../test/CondEnc/HDdataL_T2.dat}{\table}
 	\addplot[red, mark = triangle*] table [x = {L}, y = {Enc}] {\table};
 	\label{p2}
 	
-	\pgfplotstableread{../test/CondEnc/HDdataL_T3.dat}{\table}
+	\pgfplotstableread[col sep= space]{../test/CondEnc/HDdataL_T3.dat}{\table}
 	\addplot[red, mark = *] table [x = {L}, y = {Enc}] {\table};
 		\label{p3}
-	\pgfplotstableread{../test/CondEnc/HDdataL_T4.dat}{\table}
+	\pgfplotstableread[col sep= space]{../test/CondEnc/HDdataL_T4.dat}{\table}
 	\addplot[red, mark = square*,  mark options={fill=white} ] table [x = {L}, y = {Enc}] {\table};
 		\label{p4}
 	
-	\pgfplotstableread{../test/CondEnc/HDdataL_T1.dat}{\table}
+	\pgfplotstableread[col sep= space]{../test/CondEnc/HDdataL_T1.dat}{\table}
 	\addplot[blue, mark = square*] table [x = {L}, y = {CondEnc}] {\table};
 	\label{p5}
 	
-	\pgfplotstableread{../test/CondEnc/HDdataL_T2.dat}{\table}
+	\pgfplotstableread[col sep= space]{../test/CondEnc/HDdataL_T2.dat}{\table}
 	\addplot[blue, mark = triangle*] table [x = {L}, y = {CondEnc}] {\table};
 	\label{p6}
 	
-	\pgfplotstableread{../test/CondEnc/HDdataL_T3.dat}{\table}
+	\pgfplotstableread[col sep= space]{../test/CondEnc/HDdataL_T3.dat}{\table}
 	\addplot[blue, mark = *] table [x = {L}, y = {CondEnc}] {\table};
 	\label{p7}
 	
-	\pgfplotstableread{../test/CondEnc/HDdataL_T4.dat}{\table}
+	\pgfplotstableread[col sep= space]{../test/CondEnc/HDdataL_T4.dat}{\table}
 	\addplot[blue, mark = square*,  mark options={fill=white} ] table [x = {L}, y = {CondEnc}] {\table};
 	\label{p8}
 
@@ -243,14 +243,14 @@
 	]
 	
 
-	\pgfplotstableread{../test/CondEnc/EDOnedataL.dat}{\table}
+	\pgfplotstableread[col sep= space]{../test/CondEnc/EDOnedataL.dat}{\table}
 	\addplot[red, mark = square*] table [x = {L}, y = {Enc}] {\table};
 	\label{TradEnc}
-	\pgfplotstableread{../test/CondEnc/EDOnedataL.dat}{\table}
+	\pgfplotstableread[col sep= space]{../test/CondEnc/EDOnedataL.dat}{\table}
 	\addplot[black, mark = triangle*] table [x = {L}, y = {CondEnc}] {\table};
 	\label{CEnc}
 
-	\pgfplotstableread{../test/CondEnc/EDOnedataL.dat}{\table}
+	\pgfplotstableread[col sep= space]{../test/CondEnc/EDOnedataL.dat}{\table}
 	\addplot[green, mark = *] table [x = {L}, y = {CondDec}] {\table};
 	\label{CDec}
 
@@ -284,15 +284,15 @@
 	]
 	
 	
-	\pgfplotstableread{../test/CondEnc/CAPSLKdataL.dat}{\table}
+	\pgfplotstableread[col sep= space]{../test/CondEnc/CAPSLKdataL.dat}{\table}
 	\addplot[red, mark = square*] table [x = {L}, y = {Enc}] {\table};
 	\label{TradEncCAPS}
 	
-	\pgfplotstableread{../test/CondEnc/CAPSLKdataL.dat}{\table}
+	\pgfplotstableread[col sep= space]{../test/CondEnc/CAPSLKdataL.dat}{\table}
 	\addplot[black, mark = triangle*] table [x = {L}, y = {CondEnc}] {\table};
 	\label{CEncCAPS}
 	
-	\pgfplotstableread{../test/CondEnc/CAPSLKdataL.dat}{\table}
+	\pgfplotstableread[col sep= space]{../test/CondEnc/CAPSLKdataL.dat}{\table}
 	\addplot[green, mark = *] table [x = {L}, y = {CondDec}] {\table};
 	\label{CDecCAPS}
 	
@@ -324,15 +324,15 @@
 	%legend pos = north west
 	]
 	
-	\pgfplotstableread{../test/CondEnc/ORdataL.dat}{\table}
+	\pgfplotstableread[col sep= space]{../test/CondEnc/ORdataL.dat}{\table}
 	\addplot[red, mark = square*] table [x = {L}, y = {Enc}] {\table};
 	\label{TradEncOR}
 	
-	\pgfplotstableread{../test/CondEnc/ORdataL.dat}{\table}
+	\pgfplotstableread[col sep= space]{../test/CondEnc/ORdataL.dat}{\table}
 	\addplot[black, mark = triangle*] table [x = {L}, y = {CondEnc}] {\table};
 	\label{CEncOR}
 	
-	\pgfplotstableread{../test/CondEnc/ORdataL.dat}{\table}
+	\pgfplotstableread[col sep= space]{../test/CondEnc/ORdataL.dat}{\table}
 	\addplot[green, mark = *] table [x = {L}, y = {CondDec}] {\table};
 	\label{CDecOR}
 	
@@ -372,11 +372,11 @@
 	%legend pos = north west
 	]
 	
-	\pgfplotstableread{../test/CondEnc/ORdataL.dat}{\table}
+	\pgfplotstableread[col sep= space]{../test/CondEnc/ORdataL.dat}{\table}
 	\addplot[green, mark = square*] table [x = {L}, y = {CtxtSize}] {\table};
 	\label{TradEncOR_size}
 	
-	\pgfplotstableread{../test/CondEnc/ORdataL.dat}{\table}
+	\pgfplotstableread[col sep= space]{../test/CondEnc/ORdataL.dat}{\table}
 	\addplot[red, mark = triangle*] table [x = {L}, y = {CondCtxtSize}] {\table};
 	\label{CEncOR_size}
 	
@@ -413,38 +413,38 @@
 	%legend pos = north west
 	]
 	
-%	\pgfplotstableread{ ../test/CondEnc/HDdataL_T2.dat}{\table}
+%	\pgfplotstableread[col sep= space]{ ../test/CondEnc/HDdataL_T2.dat}{\table}
 %	\addplot[blue, mark = triangle*] table [x = {L}, y = {CtxtSize}] {\table};
 %	\label{TradHamDis_size}
 	
-	\pgfplotstableread{../test/CondEnc/HDdataL_T1.dat}{\table}
+	\pgfplotstableread[col sep= space]{../test/CondEnc/HDdataL_T1.dat}{\table}
 	\addplot[red,  mark = triangle*] table [x = {L}, y = {CtxtSize}] {\table};
 	\label{HamDis_size_T1_Enc}
 	
-	\pgfplotstableread{../test/CondEnc/HDdataL_T1.dat}{\table}
+	\pgfplotstableread[col sep= space]{../test/CondEnc/HDdataL_T1.dat}{\table}
 	\addplot[blue,   mark = square*, mark options={fill=white}] table [x = {L}, y = {CondCtxtSize}] {\table};
 	\label{HamDis_size_T1}
 	
-	\pgfplotstableread{../test/CondEnc/HDdataL_T2.dat}{\table}
+	\pgfplotstableread[col sep= space]{../test/CondEnc/HDdataL_T2.dat}{\table}
 	\addplot[blue,  mark = square*, mark options={fill=white}] table [x = {L}, y = {CondCtxtSize}] {\table};
 	\label{HamDis_size_T2}
-	\pgfplotstableread{../test/CondEnc/HDdataL_T2.dat}{\table}
+	\pgfplotstableread[col sep= space]{../test/CondEnc/HDdataL_T2.dat}{\table}
 	\addplot[red,mark = triangle* ] table [x = {L}, y = {CtxtSize}] {\table};
 	\label{HamDis_size_T2_Enc}
 	
-	\pgfplotstableread{../test/CondEnc/HDdataL_T3.dat}{\table}
+	\pgfplotstableread[col sep= space]{../test/CondEnc/HDdataL_T3.dat}{\table}
 	\addplot[blue,  mark = square*, mark options={fill=white}] table [x = {L}, y = {CondCtxtSize}] {\table};
 	\label{HamDis_size_T3}
 	
-	\pgfplotstableread{../test/CondEnc/HDdataL_T3.dat}{\table}
+	\pgfplotstableread[col sep= space]{../test/CondEnc/HDdataL_T3.dat}{\table}
 	\addplot[red, mark = triangle*] table [x = {L}, y = {CtxtSize}] {\table};
 	\label{HamDis_size_T3_Enc}
 	
-	\pgfplotstableread{../test/CondEnc/HDdataL_T4.dat}{\table}
+	\pgfplotstableread[col sep= space]{../test/CondEnc/HDdataL_T4.dat}{\table}
 	\addplot[blue,mark = square*, mark options={fill=white}] table [x = {L}, y = {CondCtxtSize}] {\table};
 	\label{HamDis_size_T4}
 	
-	\pgfplotstableread{../test/CondEnc/HDdataL_T4.dat}{\table}
+	\pgfplotstableread[col sep= space]{../test/CondEnc/HDdataL_T4.dat}{\table}
 	\addplot[red,  mark = triangle*] table [x = {L}, y = {CtxtSize}] {\table};
 	\label{HamDis_size_T4_Enc}
 	
@@ -484,35 +484,35 @@
 	%legend pos = north west
 	]
 	
-	\pgfplotstableread{../test/CondEnc/AllCtxtSize.dat}{\table}
+	\pgfplotstableread[col sep= space]{../test/CondEnc/AllCtxtSize.dat}{\table}
 	\addplot[red,  mark = triangle*, mark options={fill=white}] table [x = {L}, y = {CtxtSizeOR}] {\table};
 	\label{OR_Enc}
 	
-	\pgfplotstableread{../test/CondEnc/AllCtxtSize.dat}{\table}
+	\pgfplotstableread[col sep= space]{../test/CondEnc/AllCtxtSize.dat}{\table}
 	\addplot[blue,  mark = triangle*, mark options={fill=white}] table [x = {L}, y = {CondCtxtSizeOR}] {\table};
 	\label{OR_CEnc}
 	
-	\pgfplotstableread{../test/CondEnc/AllCtxtSize.dat}{\table}
+	\pgfplotstableread[col sep= space]{../test/CondEnc/AllCtxtSize.dat}{\table}
 	\addplot[red,  mark = square*, mark options={fill=white}] table [x = {L}, y = {CtxtSizeHD}] {\table};
 	\label{HD_Enc}
 	
-	\pgfplotstableread{../test/CondEnc/AllCtxtSize.dat}{\table}
+	\pgfplotstableread[col sep= space]{../test/CondEnc/AllCtxtSize.dat}{\table}
 	\addplot[blue,  mark = square*, mark options={fill=white}] table [x = {L}, y = {CondCtxtSizeHD}] {\table};
 	\label{HD_CEnc}
 	
-	\pgfplotstableread{../test/CondEnc/AllCtxtSize.dat}{\table}
+	\pgfplotstableread[col sep= space]{../test/CondEnc/AllCtxtSize.dat}{\table}
 	\addplot[yellow,  mark = *,] table [x = {L}, y = {CtxtSizeED}] {\table};
 	\label{ED_Enc}
 	
-	\pgfplotstableread{../test/CondEnc/AllCtxtSize.dat}{\table}
+	\pgfplotstableread[col sep= space]{../test/CondEnc/AllCtxtSize.dat}{\table}
 	\addplot[yellow,  mark = *, mark options={fill=white}] table [x = {L}, y = {CondCtxtSizeED}] {\table};
 	\label{ED_CEnc}
 	
-	\pgfplotstableread{../test/CondEnc/AllCtxtSize.dat}{\table}
+	\pgfplotstableread[col sep= space]{../test/CondEnc/AllCtxtSize.dat}{\table}
 	\addplot[green,  mark = triangle*] table [x = {L}, y = {CtxtSizeCAPS}] {\table};
 	\label{CAPS_Enc}
 	
-	\pgfplotstableread{../test/CondEnc/AllCtxtSize.dat}{\table}
+	\pgfplotstableread[col sep= space]{../test/CondEnc/AllCtxtSize.dat}{\table}
 	\addplot[orange,  mark =triangle*] table [x = {L}, y = {CondCtxtSizeCAPS}] {\table};
 	\label{CAPS_CEnc}
 	

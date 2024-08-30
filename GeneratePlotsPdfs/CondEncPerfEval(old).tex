@@ -1,669 +1,78 @@
-% !TEX root =main.tex
-%\begin {figure*}%[!hbtp]
-%\begin{tikzpicture}
-%\begin{axis}[
-%xmin = 0, xmax = 5,
-%ymin = 0, ymax = 10000000,
-%ymode=log,
-%xtick distance = 1,
-%ytick distance = 1000,
-%ylabel= Time (msec),
-%xlabel=The maximum allowed hamming distance,
-%grid = both,
-%minor tick num = 1,
-%major grid style = {lightgray},
-%minor grid style = {lightgray!25},
-%width = \linewidth,
-%height = 0.75\textwidth,
-%legend cell align = {left},
-%legend pos = north west
-%]
-%
-%%\pgfplotstableread{../Evaluation/CondEnc/HDdataL8_T.dat}{\table}
-%%\addplot[red, mark = *] table [x = {T}, y = {CondDec}] {\table};
-%
-%\pgfplotstableread{../Evaluation/CondEnc/HDdataL16_T.dat}{\table}
-%\addplot[red, mark =triangle*] table [x = {T}, y = {CondDec}] {\table};
-%
-%\pgfplotstableread{../Evaluation/CondEnc/HDdataL32_T.dat}{\table}
-%\addplot[red, mark = square*] table [x = {T}, y = {CondDec}] {\table};
-%
-%\pgfplotstableread{../Evaluation/CondEnc/HDdataL64_T.dat}{\table}
-%\addplot[red, mark = *] table [x = {T}, y = {CondDec}] {\table};
-%
-%\pgfplotstableread{../Evaluation/CondEnc/HDdataL128_T.dat}{\table}
-%\addplot[red, mark =square*, mark options={fill=white}] table [x = {T}, y = {CondDec}] {\table};
-%
-%
-%\pgfplotstableread{../Evaluation/CondEnc/HDdataL16_T.dat}{\table}
-%\addplot[blue, mark =triangle*] table [x = {T}, y = {CondEnc}] {\table};
-%
-%\pgfplotstableread{../Evaluation/CondEnc/HDdataL32_T.dat}{\table}
-%\addplot[blue, mark = square*] table [x = {T}, y = {CondEnc}] {\table};
-%
-%\pgfplotstableread{../Evaluation/CondEnc/HDdataL64_T.dat}{\table}
-%\addplot[blue, mark = *] table [x = {T}, y = {CondEnc}] {\table};
-%
-%\pgfplotstableread{../Evaluation/CondEnc/HDdataL128_T.dat}{\table}
-%\addplot[blue, mark  =square*, mark options={fill=white}] table [x = {T}, y = {CondEnc}] {\table};
-%
-%
-%\pgfplotstableread{../Evaluation/CondEnc/HDdataL16_T.dat}{\table}
-%\addplot[darkgreen, mark =triangle*] table [x = {T}, y = {Enc}] {\table};
-%
-%\pgfplotstableread{../Evaluation/CondEnc/HDdataL32_T.dat}{\table}
-%\addplot[darkgreen, mark = square*] table [x = {T}, y = {Enc}] {\table};
-%
-%\pgfplotstableread{../Evaluation/CondEnc/HDdataL64_T.dat}{\table}
-%\addplot[darkgreen, mark = *] table [x = {T}, y = {Enc}] {\table};
-%
-%\pgfplotstableread{../Evaluation/CondEnc/HDdataL128_T.dat}{\table}
-%\addplot[darkgreen, mark  =square*, mark options={fill=white}] table [x = {T}, y = {Enc}] {\table};
-%
-%
-%
-%
-%\legend{
-%	Predicate: HD\_CondDec L=16,
-%	Predicate: HD\_CondDec L=32, 
-%	Predicate: HD\_CondDec L=64, 
-%	Predicate: HD\_CondDec L=128, 
-%	Predicate: HD\_CondEnc L=16,
-%	Predicate: HD\_CondEnc L=32, 
-%	Predicate: HD\_CondEnc L=64, 
-%	Predicate: HD\_CondEnc L=128, 
-%}
-%\end{axis}
-%\end{tikzpicture} 
-%
-%\end{figure*}
-%
-%\begin {figure*}%[!hbtp]
-%\begin{tikzpicture}
-%\begin{axis}[
-%xmin = 0, xmax = 140,
-%ymin = 0, ymax = 10000000,
-%ymode=log,
-%xtick distance = 10,
-%ytick distance = 1000,
-%xlabel = The input length,
-%ylabel = Time (msec),
-%grid = both,
-%minor tick num = 1,
-%major grid style = {lightgray},
-%minor grid style = {lightgray!25},
-%width = \linewidth,
-%height = 0.75\textwidth,
-%legend cell align = {left},
-%legend pos = north west
-%]
-%
-%%\pgfplotstableread{../Evaluation/CondEnc/HDdataL8_T.dat}{\table}
-%%\addplot[red, mark = *] table [x = {T}, y = {CondDec}] {\table};
-%
-%\pgfplotstableread{../Evaluation/CondEnc/HDdataL_T1.dat}{\table}
-%\addplot[red, mark = square*] table [x = {L}, y = {CondDec}] {\table};
-%
-%\pgfplotstableread{../Evaluation/CondEnc/HDdataL_T2.dat}{\table}
-%\addplot[red, mark = triangle*] table [x = {L}, y = {CondDec}] {\table};
-%
-%\pgfplotstableread{../Evaluation/CondEnc/HDdataL_T3.dat}{\table}
-%\addplot[red, mark = *] table [x = {L}, y = {CondDec}] {\table};
-%
-%\pgfplotstableread{../Evaluation/CondEnc/HDdataL_T4.dat}{\table}
-%\addplot[red, mark = square*,  mark options={fill=white} ] table [x = {L}, y = {CondDec}] {\table};
-%
-%\pgfplotstableread{../Evaluation/CondEnc/HDdataL_T1.dat}{\table}
-%\addplot[blue, mark = square*] table [x = {L}, y = {CondEnc}] {\table};
-%
-%\pgfplotstableread{../Evaluation/CondEnc/HDdataL_T2.dat}{\table}
-%\addplot[blue, mark = triangle*] table [x = {L}, y = {CondEnc}] {\table};
-%
-%\pgfplotstableread{../Evaluation/CondEnc/HDdataL_T3.dat}{\table}
-%\addplot[blue, mark = *] table [x = {L}, y = {CondEnc}] {\table};
-%
-%\pgfplotstableread{../Evaluation/CondEnc/HDdataL_T4.dat}{\table}
-%\addplot[blue, mark = square*,  mark options={fill=white} ] table [x = {L}, y = {CondEnc}] {\table};
-%
-%
-%\legend{
-%	Predicate: HD\_CondDec T=1,
-%	Predicate: HD\_CondDec T=2, 
-%	Predicate: HD\_CondDec T=3, 
-%	Predicate: HD\_CondDec T=4, 
-%	Predicate: HD\_CondEnc T=1,
-%	Predicate: HD\_CondEnc T=2, 
-%	Predicate: HD\_CondEnc T=3, 
-%	Predicate: HD\_CondEnc T=4, 
-%}
-%\end{axis}
-%\end{tikzpicture} 
-%
-%\end{figure*}
-\begin{table*}
-\begin{figure}
-
-\captionsetup{justification=raggedright}
-\ffigbox[\textwidth]{%
-\begin{subfloatrow}[3]
-\hspace{-0.3\textwidth}\ffigbox[\FBwidth]{\caption{CDec Time for HamDist}
-		\label{CondDecHD}
-		\figlab{fig:HDdifT}}
-  {
-  \resizebox{6cm}{!}{\begin{tikzpicture}
-		\begin{axis}[
-		xmin = 0, xmax = 140,
-		ymin = 0, ymax = 100000000000,
-		ymode=log,
-		xtick distance = 32,
-		ytick distance = 1000,
-		xlabel = The input length,
-		ylabel =Time  (msec),
-		grid = both,
-		minor tick num = 1,
-		major grid style = {lightgray},
-		minor grid style = {lightgray!25},
-		width = 1.1\textwidth,
-		height = .9\textwidth,
-		%legend cell align = {left},
-		legend style={at={(0.1,-0.4)},anchor=north}
-		%legend pos = north west
-		]
-		
-		%\pgfplotstableread{../Evaluation/CondEnc/HDdataL8_T.dat}{\table}
-		%\addplot[red, mark = *] table [x = {T}, y = {CondDec}] {\table};
-		
-		\pgfplotstableread{Evaluation/CondEnc/HDdataL_T1.dat}{\table}
-		\addplot[red, mark = square*] table [x = {L}, y = {CondDec}] {\table};
-		\label{T1}
-  
-        \pgfplotstableread{Evaluation/CondEnc/OPT_HDdataL_T1.dat}{\table}
-		\addplot[blue, mark = square*] table [x = {L}, y = {CondDec}] {\table};
-		\label{OPTT1}
-		
-		\pgfplotstableread{Evaluation/CondEnc/HDdataL_T2.dat}{\table}
-		\addplot[red, mark = triangle*] table [x = {L}, y = {CondDec}] {\table};
-		\label{T2}
-
-        \pgfplotstableread{Evaluation/CondEnc/OPT_HDdataL_T2.dat}{\table}
-		\addplot[blue, mark = triangle*] table [x = {L}, y = {CondDec}] {\table};
-		\label{OPTT2}
-		
-		\pgfplotstableread{Evaluation/CondEnc/HDdataL_T3.dat}{\table}
-		\addplot[red, mark = *] table [x = {L}, y = {CondDec}] {\table};
-		\label{T3}
-
-        \pgfplotstableread{Evaluation/CondEnc/OPT_HDdataL_T3.dat}{\table}
-		\addplot[blue, mark = *] table [x = {L}, y = {CondDec}] {\table};
-		\label{OPTT3}
-		
-		\pgfplotstableread{Evaluation/CondEnc/HDdataL_T4.dat}{\table}
-		\addplot[red, mark = square*,  mark options={fill=white} ] table [x = {L}, y = {CondDec}] {\table};
-		\label{T4}
-
-        \pgfplotstableread{Evaluation/CondEnc/OPT_HDdataL_T4.dat}{\table}
-		\addplot[blue, mark = square*,  mark options={fill=white} ] table [x = {L}, y = {CondDec}] {\table};
-		\label{OPTT4}
-
-		\end{axis}
-		
-			\node [draw,fill=white] at (rel axis cs: 0.8,.8) {\shortstack[l]{
-				T = 1 \ref{T1}, T = 1 \ref{OPTT1}   \\
-				T = 2 \ref{T2}, T = 2 \ref{OPTT2}  \\
-				T = 3 \ref{T3}, T = 3 \ref{OPTT3}  \\
-				T = 4 \ref{T4}, T = 4 \ref{OPTT4} }};
-		
-		\end{tikzpicture}}}
-\ffigbox[\FBwidth]{\caption{CDec Time for HamDist}\figlab{fig:HDdifL}\label{CondDecHD_T}}
-  {
-  \resizebox{6cm}{!}{\begin{tikzpicture}
-	\begin{axis}[
-	xmin = 0, xmax = 5,
-	ymin = 0, ymax = 10000000000,
-	ymode=log,
-	xtick distance = 1,
-	ytick distance = 1000,
-	xlabel = Max Haming Distance,
-	ylabel =Time  (msec),
-	grid = both,
-	minor tick num = 1,
-	major grid style = {lightgray},
-	minor grid style = {lightgray!25},
-	width = 1.1\textwidth,
-	height = .9\textwidth,
-	%legend cell align = {left},
-	legend style={at={(0.1,-0.25)},anchor=north}
-	%legend pos = north west
-	]
-	
-	\pgfplotstableread{Evaluation/CondEnc/HDdataL8_T.dat}{\table}
-	\addplot[red, mark = *] table [x = {T}, y = {CondDec}] {\table};
-	\label{L8}
-
-    \pgfplotstableread{Evaluation/CondEnc/OPT_HDdataL8_T.dat}{\table}
-	\addplot[blue, mark = *] table [x = {T}, y = {CondDec}] {\table};
-	\label{OPTL8}
-	
-	\pgfplotstableread{Evaluation/CondEnc/HDdataL16_T.dat}{\table}
-	\addplot[red, mark = square*] table [x = {T}, y = {CondDec}] {\table};
-	\label{L16}
- 
- \pgfplotstableread{Evaluation/CondEnc/OPT_HDdataL16_T.dat}{\table}
-	\addplot[blue, mark = square*] table [x = {T}, y = {CondDec}] {\table};
-	\label{OPTL16}
-	
-	\pgfplotstableread{Evaluation/CondEnc/HDdataL32_T.dat}{\table}
-	\addplot[red, mark = triangle*] table [x = {T}, y = {CondDec}] {\table};
-	\label{L32}
-
-    \pgfplotstableread{Evaluation/CondEnc/OPT_HDdataL32_T.dat}{\table}
-	\addplot[blue, mark = triangle*] table [x = {T}, y = {CondDec}] {\table};
-	\label{OPTL32}
- 
-	
-	\pgfplotstableread{Evaluation/CondEnc/HDdataL64_T.dat}{\table}
-	\addplot[red, mark = *] table [x = {T}, y = {CondDec}] {\table};
-	\label{L64}
-
-    \pgfplotstableread{Evaluation/CondEnc/OPT_HDdataL64_T.dat}{\table}
-	\addplot[blue, mark = *] table [x = {T}, y = {CondDec}] {\table};
-	\label{OPTL64}
-	
-	\pgfplotstableread{Evaluation/CondEnc/HDdataL128_T.dat}{\table}
-	\addplot[red, mark = square*,  mark options={fill=white} ] table [x = {T}, y = {CondDec}] {\table};
-	\label{L128}
-
-    \pgfplotstableread{Evaluation/CondEnc/OPT_HDdataL128_T.dat}{\table}
-	\addplot[blue, mark = square*,  mark options={fill=white} ] table [x = {T}, y = {CondDec}] {\table};
-	\label{OPTL128}
-
-	\end{axis}
-	
-	\node [draw,fill=white] at (rel axis cs: 0.25,.8) {\shortstack[l]{
-	       L = 8 \ref{L8}, L = 8 \ref{OPTL8}   \\
-	       L = 16 \ref{L16}, L = 16 \ref{OPTL16} \\
-		      L = 32 \ref{L32}, L = 32 \ref{OPTL32} \\
-        L = 64 \ref{L64}, L = 64 \ref{OPTL64}\\
-			L = 128 \ref{L128}, L = 128 \ref{OPTL128}
-		}};
-	
-	\end{tikzpicture}}}
-\ffigbox[\FBwidth]{\caption{CEnc and Enc for HamDist}
-	\figlab{fig:HDCtxtSize}}
-  {
-  \resizebox{6cm}{!}{\begin{tikzpicture}
-	\begin{axis}[
-	xmin = 0, xmax = 140,
-	ymin = 0, ymax = 30000,
-	ymode=log,
-	xtick distance = 16,
-	ytick distance = 10,
-	xlabel = The input length,
-	ylabel =Time  (msec),
-	grid = both,
-	minor tick num = 1,
-	major grid style = {lightgray},
-	minor grid style = {lightgray!25},
-	width = 1.1\textwidth,
-	height = .9\textwidth,
-	%legend cell align = {left},
-	legend style={at={(-2.3,-1.4)},anchor=north}
-	%legend pos = north west
-	]
-	
-	%\pgfplotstableread{ Evaluation/CondEnc/HDdataL8_T.dat}{\table}
-	%\addplot[red, mark = *] table [x = {T}, y = {CondDec}] {\table};
-	
-	\pgfplotstableread{Evaluation/CondEnc/HDdataL_T1.dat}{\table}
-	\addplot[red, mark = square*] table [x = {L}, y = {Enc}] {\table};
-	\label{p1}
-	
-	\pgfplotstableread{Evaluation/CondEnc/HDdataL_T2.dat}{\table}
-	\addplot[red, mark = triangle*] table [x = {L}, y = {Enc}] {\table};
-	\label{p2}
-	
-	\pgfplotstableread{Evaluation/CondEnc/HDdataL_T3.dat}{\table}
-	\addplot[red, mark = *] table [x = {L}, y = {Enc}] {\table};
-		\label{p3}
-	\pgfplotstableread{Evaluation/CondEnc/HDdataL_T4.dat}{\table}
-	\addplot[red, mark = square*,  mark options={fill=white} ] table [x = {L}, y = {Enc}] {\table};
-		\label{p4}
-	
-	\pgfplotstableread{Evaluation/CondEnc/HDdataL_T1.dat}{\table}
-	\addplot[blue, mark = square*] table [x = {L}, y = {CondEnc}] {\table};
-	\label{p5}
-	
-	\pgfplotstableread{Evaluation/CondEnc/HDdataL_T2.dat}{\table}
-	\addplot[blue, mark = triangle*] table [x = {L}, y = {CondEnc}] {\table};
-	\label{p6}
-	
-	\pgfplotstableread{Evaluation/CondEnc/HDdataL_T3.dat}{\table}
-	\addplot[blue, mark = *] table [x = {L}, y = {CondEnc}] {\table};
-	\label{p7}
-	
-	\pgfplotstableread{Evaluation/CondEnc/HDdataL_T4.dat}{\table}
-	\addplot[blue, mark = square*,  mark options={fill=white} ] table [x = {L}, y = {CondEnc}] {\table};
-	\label{p8}
-
-	
-	\end{axis}
-	
-	\node [draw,fill=white] at (rel axis cs: 0.35,0.8) {\shortstack[l]{
-		 T = 1: Enc \ref{p1}, CEnc \ref{p5}  \\
-		 T = 2: Enc	\ref{p2}, CEnc  \ref{p6}  \\
-		 T = 3: Enc \ref{p3}, CEnc \ref{p7}   \\
-		 T = 4: Enc	\ref{p4}, CEnc \ref{p8}  }};
-
-	\end{tikzpicture}}}
-\end{subfloatrow}
-
-\begin{subfloatrow}[3]
-\hspace{-0.3\textwidth}
-
-\ffigbox[\FBwidth]{\caption{CEnc ED One}\figlab{EDOne}}{\resizebox{6cm}{!}{
-\begin{tikzpicture}
-	\begin{axis}[
-	xmin = 0, xmax = 140,
-	ymin = 0, ymax = 100000,
-	ymode=log,
-	xtick distance = 16,
-	ytick distance = 10,
-	xlabel = The input length,
-	ylabel =Time  (msec),
-	grid = both,
-	minor tick num = 1,
-	major grid style = {lightgray},
-	minor grid style = {lightgray!25},
-	width = 1.1\textwidth,
-	height = .9\textwidth,
-	%legend cell align = {left},
-	legend style={at={(0.1,-0.4)},anchor=north}
-	%legend pos = north west
-	]
-	
-
-	\pgfplotstableread{Evaluation/CondEnc/EDOnedataL.dat}{\table}
-	\addplot[red, mark = square*] table [x = {L}, y = {Enc}] {\table};
-	\label{TradEnc}
-	\pgfplotstableread{Evaluation/CondEnc/EDOnedataL.dat}{\table}
-	\addplot[red, mark = triangle*] table [x = {L}, y = {CondEnc}] {\table};
-	\label{CEnc}
-
-	\pgfplotstableread{Evaluation/CondEnc/EDOnedataL.dat}{\table}
-	\addplot[red, mark = *] table [x = {L}, y = {CondDec}] {\table};
-	\label{CDec}
-
-	\end{axis}
-	\node [draw,fill=white] at (rel axis cs: .8,.05) {\shortstack[l]{
-			\ref{TradEnc} Enc \\
-			\ref{CEnc}  CEnc \\
-			\ref{CDec} CDec}};
-	\end{tikzpicture}}}
-
-\ffigbox[\FBwidth]{	\caption{CEnc CAPSLCK ON}\label{CPALCK}\figlab{fig:CAPSLOCK}}{\resizebox{6cm}{!}{
-\begin{tikzpicture}
-	\begin{axis}[
-	xmin = 0, xmax = 140,
-	ymin = 0, ymax = 500,
-	ymode=log,
-    % xmode= log, 
-	xtick distance = 16,
-	ytick distance = 10,
-	xlabel = The input length,
-	ylabel =Time  (msec),
-	grid = both,
-	minor tick num = 1,
-	major grid style = {lightgray},
-	minor grid style = {lightgray!25},
-	width = 1.1\textwidth,
-	height = .9\textwidth,
-	%legend cell align = {left},
-	legend style={at={(0.1,-0.4)},anchor=north}
-	%legend pos = north west
-	]
-	
-	
-	\pgfplotstableread{Evaluation/CondEnc/CAPSLKdataL.dat}{\table}
-	\addplot[red, mark = square*] table [x = {L}, y = {Enc}] {\table};
-	\label{TradEncCAPS}
-	
-	\pgfplotstableread{Evaluation/CondEnc/CAPSLKdataL.dat}{\table}
-	\addplot[red, mark = triangle*] table [x = {L}, y = {CondEnc}] {\table};
-	\label{CEncCAPS}
-	
-	\pgfplotstableread{Evaluation/CondEnc/CAPSLKdataL.dat}{\table}
-	\addplot[red, mark = *] table [x = {L}, y = {CondDec}] {\table};
-	\label{CDecCAPS}
-	
-	\end{axis}
-	\node [draw,fill=white] at (rel axis cs: .8,.25) {\shortstack[l]{
-			\ref{TradEncCAPS} Enc \\
-			\ref{CEncCAPS}  CEnc \\
-			\ref{CDecCAPS} CDec}};
-	\end{tikzpicture}}}
-
-\ffigbox[\FBwidth]{\caption{CEnc OR predicate}\label{OR}}{\resizebox{6cm}{!}{	
-\begin{tikzpicture}
-	\begin{axis}[
-	xmin = 0, xmax = 140,
-	ymin = 0, ymax = 55000,
-	ymode=log,
-	xtick distance = 16,
-	ytick distance = 10,
-	xlabel = The input length,
-	ylabel =Time  (msec),
-	grid = both,
-	minor tick num = 1,
-	major grid style = {lightgray},
-	minor grid style = {lightgray!25},
-	width = 1.1\textwidth,
-	height = .9\textwidth,
-	%legend cell align = {left},
-	legend style={at={(0.1,-0.4)},anchor=north}
-	%legend pos = north west
-	]
-	
-	\pgfplotstableread{Evaluation/CondEnc/ORdataL.dat}{\table}
-	\addplot[red, mark = square*] table [x = {L}, y = {Enc}] {\table};
-	\label{TradEncOR}
-	
-	\pgfplotstableread{Evaluation/CondEnc/ORdataL.dat}{\table}
-	\addplot[red, mark = triangle*] table [x = {L}, y = {CondEnc}] {\table};
-	\label{CEncOR}
-	
-	\pgfplotstableread{Evaluation/CondEnc/ORdataL.dat}{\table}
-	\addplot[red, mark = *] table [x = {L}, y = {CondDec}] {\table};
-	\label{CDecOR}
-	
-	
-	\end{axis}
-	\node [draw,fill=white] at (rel axis cs: 0.8,.0) {\shortstack[l]{
-			\ref{TradEncOR} Enc \\
-			\ref{CEncOR}  CEnc \\
-			\ref{CDecOR} CDec}};
-		
-	\end{tikzpicture}
-}}
-
-\end{subfloatrow}
-
-\begin{subfloatrow}[3]
-\hspace{-0.3\textwidth}
-
-\ffigbox[\FBwidth]{\caption{CEnc OR predicate, CTX size} \label{OR_CtxtSize}}{\resizebox{6cm}{!}{	
-\begin{tikzpicture}
-	\begin{axis}[
-	xmin = 0, xmax = 140,
-	ymin = 0, ymax = 310000,
-%	ymode=log,
-	xtick distance = 16,
-	ytick distance = 100000,
-	xlabel = The input length,
-	ylabel = Ciphertext Size (Bytes),
-	grid = both,
-	minor tick num = 1,
-	major grid style = {lightgray},
-	minor grid style = {lightgray!25},
-	width = 1.1\textwidth,
-	height = .9\textwidth,
-	%legend cell align = {left},
-	legend style={at={(0.1,-0.4)},anchor=north}
-	%legend pos = north west
-	]
-	
-	\pgfplotstableread{Evaluation/CondEnc/ORdataL.dat}{\table}
-	\addplot[red, mark = square*] table [x = {L}, y = {CtxtSize}] {\table};
-	\label{TradEncOR_size}
-	
-	\pgfplotstableread{Evaluation/CondEnc/ORdataL.dat}{\table}
-	\addplot[red, mark = triangle*] table [x = {L}, y = {CondCtxtSize}] {\table};
-	\label{CEncOR_size}
-	
-	
-	\end{axis}
-	
-	\node [draw,fill=white] at (rel axis cs: .8,.25) {\shortstack[l]{
-			\ref{TradEncOR_size} Enc \\
-			\ref{CEncOR_size}  CEnc }}; 
-
-	
-	\end{tikzpicture}
-}}
-
-
-\ffigbox[\FBwidth]{\caption{CEnc HamDist, CTX size} \label{HD_CTX Size}}{\resizebox{6cm}{!}{
-\begin{tikzpicture}
-	\begin{axis}[
-	xmin = 0, xmax = 140,
-	ymin = 0, ymax = 110000,
-%	ymode=log,
-	xtick distance = 16,
-	ytick distance = 20000,
-	xlabel = The input length,
-	ylabel = Ciphertext Size (Bytes),
-	grid = both,
-	minor tick num = 1,
-	major grid style = {lightgray},
-	minor grid style = {lightgray!25},
-	width = 1.1\textwidth,
-	height = .9\textwidth,
-	%legend cell align = {left},
-	legend style={at={(0.1,-0.4)},anchor=north}
-	%legend pos = north west
-	]
-	
-%	\pgfplotstableread{ Evaluation/CondEnc/HDdataL_T2.dat}{\table}
-%	\addplot[blue, mark = triangle*] table [x = {L}, y = {CtxtSize}] {\table};
-%	\label{TradHamDis_size}
-	
-	\pgfplotstableread{Evaluation/CondEnc/HDdataL_T1.dat}{\table}
-	\addplot[red,  mark = triangle*] table [x = {L}, y = {CtxtSize}] {\table};
-	\label{HamDis_size_T1_Enc}
-	
-	\pgfplotstableread{Evaluation/CondEnc/HDdataL_T1.dat}{\table}
-	\addplot[blue,   mark = square*, mark options={fill=white}] table [x = {L}, y = {CondCtxtSize}] {\table};
-	\label{HamDis_size_T1}
-	
-	\pgfplotstableread{Evaluation/CondEnc/HDdataL_T2.dat}{\table}
-	\addplot[blue,  mark = square*, mark options={fill=white}] table [x = {L}, y = {CondCtxtSize}] {\table};
-	\label{HamDis_size_T2}
-	\pgfplotstableread{Evaluation/CondEnc/HDdataL_T2.dat}{\table}
-	\addplot[red,mark = triangle* ] table [x = {L}, y = {CtxtSize}] {\table};
-	\label{HamDis_size_T2_Enc}
-	
-	\pgfplotstableread{Evaluation/CondEnc/HDdataL_T3.dat}{\table}
-	\addplot[blue,  mark = square*, mark options={fill=white}] table [x = {L}, y = {CondCtxtSize}] {\table};
-	\label{HamDis_size_T3}
-	
-	\pgfplotstableread{Evaluation/CondEnc/HDdataL_T3.dat}{\table}
-	\addplot[red, mark = triangle*] table [x = {L}, y = {CtxtSize}] {\table};
-	\label{HamDis_size_T3_Enc}
-	
-	\pgfplotstableread{Evaluation/CondEnc/HDdataL_T4.dat}{\table}
-	\addplot[blue,mark = square*, mark options={fill=white}] table [x = {L}, y = {CondCtxtSize}] {\table};
-	\label{HamDis_size_T4}
-	
-	\pgfplotstableread{Evaluation/CondEnc/HDdataL_T4.dat}{\table}
-	\addplot[red,  mark = triangle*] table [x = {L}, y = {CtxtSize}] {\table};
-	\label{HamDis_size_T4_Enc}
-	
-	
-	
-	\end{axis}
-	\node [draw,fill=white] at (rel axis cs: .45,.75) {\shortstack[l]{
-			T=1: CEnc \ref{HamDis_size_T1}, Enc \ref{HamDis_size_T1_Enc} \\
-			T=2: CEnc \ref{HamDis_size_T2}, Enc \ref{HamDis_size_T2_Enc} \\
-			T=3: CEnc \ref{HamDis_size_T3}, Enc \ref{HamDis_size_T3_Enc} \\
-			T=4: CEnc \ref{HamDis_size_T4}, Enc \ref{HamDis_size_T4_Enc}	}}; 
-%			\ref{HamDis_size}  CEnc }}; 
-	
-	
-	
-	\end{tikzpicture}}}
-
-
-\ffigbox[\FBwidth]{\caption{CEnc EDOne and CPSLCK, CTX size} \label{ED_CPSLCK_CTX Size}}{\resizebox{6cm}{!}{
-\begin{tikzpicture}
-	\begin{axis}[
-	xmin = 0, xmax = 140,
-	ymin = 0, ymax = 360000,
-	%ymode=log,
-	xtick distance = 16,
-	ytick distance = 100000,
-	xlabel = The input length,
-	ylabel = Ciphertext Size (Bytes),
-	grid = both,
-	minor tick num = 1,
-	major grid style = {lightgray},
-	minor grid style = {lightgray!25},
-	width = 1.1\textwidth,
-	height = .9\textwidth,
-	%legend cell align = {left},
-	legend style={at={(0.1,-0.4)},anchor=north}
-	%legend pos = north west
-	]
-	
-	\pgfplotstableread{Evaluation/CondEnc/AllCtxtSize.dat}{\table}
-	\addplot[red,  mark = triangle*, mark options={fill=white}] table [x = {L}, y = {CtxtSizeOR}] {\table};
-	\label{OR_Enc}
-	
-	\pgfplotstableread{Evaluation/CondEnc/AllCtxtSize.dat}{\table}
-	\addplot[blue,  mark = triangle*, mark options={fill=white}] table [x = {L}, y = {CondCtxtSizeOR}] {\table};
-	\label{OR_CEnc}
-	
-	\pgfplotstableread{Evaluation/CondEnc/AllCtxtSize.dat}{\table}
-	\addplot[red,  mark = square*, mark options={fill=white}] table [x = {L}, y = {CtxtSizeHD}] {\table};
-	\label{HD_Enc}
-	
-	\pgfplotstableread{Evaluation/CondEnc/AllCtxtSize.dat}{\table}
-	\addplot[blue,  mark = square*, mark options={fill=white}] table [x = {L}, y = {CondCtxtSizeHD}] {\table};
-	\label{HD_CEnc}
-	
-	\pgfplotstableread{Evaluation/CondEnc/AllCtxtSize.dat}{\table}
-	\addplot[yellow,  mark = *,] table [x = {L}, y = {CtxtSizeED}] {\table};
-	\label{ED_Enc}
-	
-	\pgfplotstableread{Evaluation/CondEnc/AllCtxtSize.dat}{\table}
-	\addplot[yellow,  mark = *, mark options={fill=white}] table [x = {L}, y = {CondCtxtSizeED}] {\table};
-	\label{ED_CEnc}
-	
-	\pgfplotstableread{Evaluation/CondEnc/AllCtxtSize.dat}{\table}
-	\addplot[green,  mark = triangle*] table [x = {L}, y = {CtxtSizeCAPS}] {\table};
-	\label{CAPS_Enc}
-	
-	\pgfplotstableread{Evaluation/CondEnc/AllCtxtSize.dat}{\table}
-	\addplot[orange,  mark =triangle*] table [x = {L}, y = {CondCtxtSizeCAPS}] {\table};
-	\label{CAPS_CEnc}
-	
-	\end{axis}
-		\node [draw,fill=white] at (rel axis cs: .2,.65) {\shortstack[l]{
-			OR: CEnc \ref{OR_CEnc}, Enc \ref{OR_Enc} \\
-			HD: CEnc \ref{HD_CEnc}, Enc \ref{HD_Enc} \\
-			ED: CEnc \ref{ED_CEnc}, Enc \ref{ED_CEnc} \\
-			CAPS: CEnc \ref{CAPS_CEnc}, Enc \ref{CAPS_Enc}	}}; 
-	\end{tikzpicture}}}
-
-\end{subfloatrow}} {\caption{Performance Evaluation for our proposed Conditional Encryption schemes under different, predicates, lengths and distances} \figlab{fig:FullEvalCondEnc}}
-
-\end{figure}
-\end{table*}
+\begin{figure*}
+	\begin{center}
+		\captionsetup{justification=raggedright}
+		\ffigbox{
+			\ffigbox{\caption{CDec Time for HamDist}
+				\label{CondDecHD}
+				\figlab{fig:HDdifT}}
+			{
+				\resizebox{6cm}{!}{\begin{tikzpicture}
+						\begin{axis}[
+							tick label style={font=\fontsize{30}{30}\selectfont},
+							width=6cm,
+							xmin = 0, xmax = 140,
+							ymin = 0, ymax = 100000000000,
+							ymode=log,
+							xtick distance = 32,
+							ytick distance = 1000,
+							xlabel =  {\fontsize{30}{30}\selectfont Input Length (n)},
+							ylabel = {\fontsize{30}{30}\selectfont Time  (msec)},
+							grid = both,
+							minor tick num = 1,
+							major grid style = {lightgray},
+							minor grid style = {lightgray!25},
+							width = 1.1\textwidth,
+							height = .9\textwidth,
+							%legend cell align = {left},
+							legend style={at={(0.1,-0.4)},anchor=north}
+							%legend pos = north west
+							]
+							
+							%\pgfplotstableread[col sep= space]{../../test/HDdataL8_T.dat}{\table}
+							%\addplot[red, mark = *] table [x = {T}, y = {CondDec}] {\table};
+							
+							\pgfplotstableread[col sep= space]{../test/HDdataL_T1.dat}{\table}
+							\addplot[red, mark = square*] table [x = {L}, y = {CondDec}] {\table};
+							\label{T1}
+							
+							\pgfplotstableread[col sep= space]{../test/OPT_HDdataL_T1.dat}{\table}
+							\addplot[blue, mark = square*] table [x = {L}, y = {CondDec}] {\table};
+							\label{OPTT1}
+							
+							\pgfplotstableread[col sep= space]{../test/HDdataL_T2.dat}{\table}
+							\addplot[red, mark = triangle*] table [x = {L}, y = {CondDec}] {\table};
+							\label{T2}
+							
+							\pgfplotstableread[col sep= space]{../test/OPT_HDdataL_T2.dat}{\table}
+							\addplot[blue, mark = triangle*] table [x = {L}, y = {CondDec}] {\table};
+							\label{OPTT2}
+							
+							\pgfplotstableread[col sep= space]{../test/HDdataL_T3.dat}{\table}
+							\addplot[red, mark = *] table [x = {L}, y = {CondDec}] {\table};
+							\label{T3}
+							
+							\pgfplotstableread[col sep= space]{../test/OPT_HDdataL_T3.dat}{\table}
+							\addplot[blue, mark = *] table [x = {L}, y = {CondDec}, ] {\table};
+							\label{OPTT3}
+							
+							\pgfplotstableread[col sep= space]{../test/HDdataL_T4.dat}{\table}
+							\addplot[red, mark = square*,  mark options={fill=white} ] table [x = {L}, y = {CondDec}] {\table};
+							\label{T4}
+							
+							\pgfplotstableread[col sep= space]{../test/OPT_HDdataL_T4.dat}{\table}
+							\addplot[blue, mark = square*,  mark options={fill=white} ] table [x = {L}, y = {CondDec}] {\table};
+							\label{OPTT4}
+							
+						\end{axis}
+						
+						\node [draw,fill=white] at (rel axis cs: .25,.8) {\shortstack[l]{
+								{\fontsize{30}{30}\selectfont $\ell = 1$ \ref{T1}, $\ell = 1$ \ref{OPTT1}}   \\
+								{\fontsize{30}{30}\selectfont $\ell = 2$ \ref{T2}, $\ell = 2$ \ref{OPTT2}}  \\
+								{\fontsize{30}{30}\selectfont $\ell = 3$ \ref{T3}, $\ell = 3$ \ref{OPTT3} } \\
+								{\fontsize{30}{30}\selectfont  $\ell =4$ \ref{T4}, $\ell = 4$ \ref{OPTT4}} \\
+								{\fontsize{30}{30} \selectfont {\color{red} orig}, \fontsize{30}{30} \selectfont {\color{blue} optimized} } } };
+						
+			\end{tikzpicture}}}
+		} {\caption{Performance Evaluation for our proposed Conditional Encryption schemes under different, predicates, lengths and distances} \figlab{fig:FullEvalCondEnc}}
+	\end{center}
+\end{figure*}

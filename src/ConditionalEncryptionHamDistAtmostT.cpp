@@ -497,6 +497,8 @@ string HamDistAtmostT::CondEnc(paillier_pubkey_t* ppk,
 
      string message = CryptoSymWrapperFunctions::Wrapper_pad(typo,_len); // pad(typo);  TODO: Double check if we need to make sure that we need pad here?
      string Zero_secret = "0";
+     // string Zero_secret = "0000";
+
 //    = "0000";
     // CryptoPP::StringSink ss_Zero_secret(Zero_secret);
     // auto ssZPutRslt = ss_Zero_secret.Put((const CryptoPP::byte*)"0000",  4, false);
@@ -1287,8 +1289,7 @@ int HamDistAtmostT::CondDec_Optimized_UnknownMsgLength(paillier_pubkey_t* ppk,
                         paillier_prvkey_t* psk,
                         int threshold,
                         string &recovered,
-                        size_t _len,
-                        size_t ShareSize)
+                        size_t _len)
 {
     int ret =0;
     string CtxAE;
@@ -1303,8 +1304,9 @@ int HamDistAtmostT::CondDec_Optimized_UnknownMsgLength(paillier_pubkey_t* ppk,
 
     mpz_t P_GF;
     mpz_init(P_GF);
-    size_t ShareStreamSizer = ShareSize;
-    int max_power_int = (ShareStreamSizer * 8) + 1;
+    size_t ShareSize = SSShareSize;
+
+    int max_power_int = (ShareSize * 8) + 1;
     mpz_ui_pow_ui(P_GF, 2, max_power_int);
     mpz_sub_ui(P_GF, P_GF, 1); // computing the value of P_GF based on the size of the input value.
     void* ByteDec;
