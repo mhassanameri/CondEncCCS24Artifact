@@ -4,10 +4,16 @@
 BINARY_PATH="./tests"
 
 
+# Running The Basic Tests after Installing
+#BasicTestArgument = "ArtifactCCS24BasicTests"
+echo -e "HamDistT\n10\1024\n32\n2" > BasicTestInputs.txt #More details on how the inputs are parsed will be added.
+###HamDist
+
+#$BINARY_PATH $BasicTestArgument
+
 # will generate and initialize the .dat files which store the performance evaluation
 #InitArgument= "GenerateBlankDatFiles"
 #$BINARY_PATH $InitArgument
-
 
 
 # This argument runs the test case which generates the data required to plotting the Figure 1 of the paper and

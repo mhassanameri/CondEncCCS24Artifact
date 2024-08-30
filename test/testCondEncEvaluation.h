@@ -146,6 +146,7 @@ int testCondEncOR(int n_lambda, int Num_tests, size_t _len, int MaxHam);
 int testCondEncCAPSLOCK(int n_lambda, int Num_tests, size_t _len);
 
 
+int BasicTestHamDistT(int Num_tests, int n_lambda, int _len, int MaxHam);
 
 
 
@@ -172,6 +173,31 @@ inline int DataForPlottingFigure1(string argv[] )
 }
 
 
+inline int BasicTest(string argv[] )
+{
+    if(argv[0] == "CAPSLOCK")
+    {
+        int CapsLockRslt = 0;
+        // BasicTestCapsLock();
+    }
+    else if(argv[0] == "EDOne")
+    {
+
+    }
+    else if (argv[0] == "HamDistT")
+    {
+        BasicTestHamDistT(std::stoi(argv[1]),  std::stoi(argv[2]),  std::stoi(argv[3]), std::stoi(argv[4]));
+    }
+    else if(argv[0] == "OR")
+    {
+
+    }
+    return 1;
+}
+
+
+
+
 
 /*
  * Executing this test case will generate and initialize the .dat files which store the performance evaluation
@@ -183,6 +209,19 @@ TEST_CASE("GenerateBlankDatFiles")
 
     int Result =0;
     Result  = GenerateBlankDataFilesToStorEvaluationResults(0);
+
+}
+
+TEST_CASE("ArtifactCCS24BasicTests")
+{
+    std::string input[5];
+    std::ifstream inputFile("BasicTestInputs.txt"); // Open the file "input.txt"
+    inputFile >> input[0]; //The first input indicates the intended Preidicate
+    inputFile >> input[1]; // Number or Basic Tests
+    inputFile >> input[2]; // The Public key Size
+    inputFile >> input[3]; // Max Ham distance for HamDistT
+
+    auto BasicTest(input);
 
 }
 
@@ -207,6 +246,7 @@ TEST_CASE("ArtifactCCS24")
 
 
     auto r = DataForPlottingFigure1(input);
+
 
 }
 

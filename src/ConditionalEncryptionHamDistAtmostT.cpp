@@ -1189,9 +1189,11 @@ int HamDistAtmostT::CondDec_NewOPT(paillier_pubkey_t* ppk,
      size_t max_num_typos =  _len-threshold;
      for(size_t k = max_num_typos - 1; k< _len-1; k++ )
      {
-         auto CondDecOut = HamDistAtmostT::CondDec_Optimized(ppk, typo_ctx, psk, threshold , recovered, _len, k);
+         int CondDecOut = 0;
+         CondDecOut = HamDistAtmostT::CondDec_Optimized(ppk, typo_ctx, psk, threshold , recovered, _len, k);
          if (CondDecOut == 1)
          {
+             cout << recovered << "\n";
              return ret =1;
          }
          cout << k <<"\t";
