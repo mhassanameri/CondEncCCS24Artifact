@@ -34,8 +34,8 @@
     bool fail = false;
      // string subsRcvr= recovered.substr(0, 1);
 
-    // fail = ("0000" == recovered);//for Optimized solution, TODO: make the non optimum without cancelling it
-    fail = ("0" == recovered.substr(0,1));//for Optimized soulution, TODO: make the non optimum without cancelling it
+    fail = ("0000" == recovered);//for Optimized solution, TODO: make the non optimum without cancelling it
+    // fail = ("0" == recovered.substr(0,1));//for Optimized soulution, TODO: make the non optimum without cancelling it
 
 //    fail  = true;
     return fail;
@@ -155,11 +155,12 @@ int HamDistAtmostT::generatesubsets(vector<string> &MainstrShares, vector<string
             string recoverTheMainSecret;
 
             cout <<  "Valid Shares Detected\n";
-            // bool ifCorrectShareVec;
-            // ifCorrectShareVec = HamDistAtmostT::RecoverSecretFromValidShares (MainstrShares, K, selected, recoverTheMainSecret );
-            // size_t key_size = recoverTheMainSecret.size();
-            // CryptoPP::StringSink ss_recoveredMainSecret(recoveredMainSecret);
-            // auto reMainSecrtSize = ss_recoveredMainSecret.Put((const CryptoPP::byte*)recoverTheMainSecret.data(),  recoverTheMainSecret.size(), false);
+            bool ifCorrectShareVec;
+            ifCorrectShareVec = HamDistAtmostT::RecoverSecretFromValidShares (MainstrShares, K, selected, recoverTheMainSecret );
+            size_t key_size = recoverTheMainSecret.size();
+            CryptoPP::StringSink ss_recoveredMainSecret(recoveredMainSecret);
+            auto reMainSecrtSize = ss_recoveredMainSecret.Put((const CryptoPP::byte*)recoverTheMainSecret.data(),  recoverTheMainSecret.size(), false);
+            auto AEReslt = CryptoSymWrapperFunctions::Wrapper_AuthDecrypt(recoverTheMainSecret, DecoddCtxAE,plaintext_rcv );
 
             return 1;
         }
@@ -434,6 +435,31 @@ paillier_plaintext_t* HamDistAtmostT::RandEncod(string &share, size_t ShareSize,
  }
 
 
+ int HamDistAtmostT::RegDec(paillier_pubkey_t* ppk, char ctx [], paillier_prvkey_t* psk,
+                            size_t _len, string &DecryptedMsg)
+ {
+     int ret =0;
+     paillier_plaintext_t* dec;
+     vector<paillier_ciphertext_t*> vctx(_len);
+     vctx = PaillerWrapperFunctions::Pail_Parse_Ctx_size(ppk, ctx);
+     string DecreyptedCharByCha;
+     for (int j = 0; j<_len; j++)
+     {
+         dec = paillier_dec(NULL, ppk, psk, vctx[j]);
+         DecreyptedCharByCha += paillier_plaintext_to_str_NegOrd(dec);
+         paillier_freeplaintext(dec);
+     }
+     DecryptedMsg = CryptoSymWrapperFunctions::Wrapper_unpad(DecreyptedCharByCha); //orig_typo TODO: make sure the correct input is added here perviously was orig_typo extract from encoded typo. It should be handled outside this fubnction
+
+    ret =1;
+
+    return 1;
+ }
+
+
+
+
+
 //unique_ptr<char []> HamDistAtmostT::CondEncBytes(paillier_pubkey_t* ppk,
 
 string HamDistAtmostT::CondEnc(paillier_pubkey_t* ppk,
@@ -496,8 +522,8 @@ string HamDistAtmostT::CondEnc(paillier_pubkey_t* ppk,
 
 
      string message = CryptoSymWrapperFunctions::Wrapper_pad(typo,_len); // pad(typo);  TODO: Double check if we need to make sure that we need pad here?
-     string Zero_secret = "0";
-     // string Zero_secret = "0000";
+     // string Zero_secret = "0";
+     string Zero_secret = "0000";
 
 //    = "0000";
     // CryptoPP::StringSink ss_Zero_secret(Zero_secret);

@@ -863,9 +863,9 @@ int PlotFig1a(int NumTest_SmallM, int NumTest_64, int NumTest_128)
     for (int i = 1; i<5; i++)
     {
         // cout << "OPT HamDist at most  " + to_string(i)  + "_len= 8" << endl;
-        // testCondEncHamDist(1024, NumTest_SmallM , 8,i);
+        testCondEncHamDist(1024, NumTest_SmallM , 8,i);
         // cout << "OPT HamDist at most  " + to_string(i)  + "_len= 16" << endl;
-        // testCondEncHamDist(1024, NumTest_SmallM , 16,i);
+        testCondEncHamDist(1024, NumTest_SmallM , 16,i);
         // cout << "OPT HamDist at most  " + to_string(i)  + "_len= 32" << endl;
         testCondEncHamDist(1024, NumTest_SmallM , 32,i);
         // cout << "OPT HamDist at most  " + to_string(i)  + "_len= 64" << endl;
@@ -874,11 +874,11 @@ int PlotFig1a(int NumTest_SmallM, int NumTest_64, int NumTest_128)
         // testCondEncHamDist(3072,  NumTest_128 , 128,i);
 
         // cout << "No_OPT HamDist at most  " + to_string(i)  + "_len= 8" << endl;
-        // testCondEncHamDist_NonOPT(1024, NumTest_SmallM, 8,i);
+        testCondEncHamDist_NonOPT(1024, NumTest_SmallM, 8,i);
         // cout << "No_OPT HamDist at most  " + to_string(i)  + "_len= 16" << endl;
-        // testCondEncHamDist_NonOPT(1024, NumTest_SmallM, 16,i);
+        testCondEncHamDist_NonOPT(1024, NumTest_SmallM, 16,i);
         // cout << "No_OPT HamDist at most  " + to_string(i)  + "_len= 32" << endl;
-        // testCondEncHamDist_NonOPT(1024, NumTest_SmallM, 32,i);
+        testCondEncHamDist_NonOPT(1024, NumTest_SmallM, 32,i);
         // cout << "No_OPT HamDist at most  " + to_string(i)  + "_len= 64" << endl;
         // testCondEncHamDist_NonOPT(2048, NumTest_64, 64,  i);
         // cout << "No_OPT HamDist at most  " + to_string(i)  + "_len= 128" << endl;
@@ -898,8 +898,6 @@ int BasicTestHamDistT(int Num_tests, int n_lambda, int _len, int MaxHam )
                                                             // {"3Subs", "xxxbs"},
                                                             // {"4SubsPW", "xxxxsPW"},
                                                             // {"fiveSub","55555ub"}};
-
-
 
     std::string filename = "PWDvsTyposDataSet/PWDvsTypoDataSetLessThan"+to_string(_len)+"HamDisHold"+to_string(MaxHam)+".txt";
     std::vector<std::pair<std::string, std::string>> data = LoadPWDvsTypoForTEST(filename);
@@ -921,13 +919,6 @@ int BasicTestHamDistT(int Num_tests, int n_lambda, int _len, int MaxHam )
     string typo;
 
     size_t NumOfErrs = _len - Threshold + 1;
-
-    ofstream CondEncHD;
-    CondEncHD.open("CondEncHDAtmostT.txt");
-
-    CondEncHD << "OPT The predicate is Hamming distance at most Threshold =" << _len - Threshold <<
-    "[# of errors as the worst case: "<< NumOfErrs << " _len = " << _len << "and KeySize = " << n_lambda <<
-    "****\n";
 
     for(int T = 0; T< Num_tests; T++)
     {
@@ -958,13 +949,20 @@ int BasicTestHamDistT(int Num_tests, int n_lambda, int _len, int MaxHam )
         auto stop_Enc_HD = high_resolution_clock::now();
         auto duration_Enc_HD = duration_cast<milliseconds>(stop_Enc_HD - start_Enc_HD);
 
+        int TestRegDec = 0;
+        string DecryptedMsg;
+        TestRegDec  = HamDistAtmostT::RegDec(pkobj._ppk, HD_Char_ORigCTx, pkobj._psk, _len, DecryptedMsg);
+        cout << "The original message: " << msg <<  " ana the decrypted message is: "<< DecryptedMsg << "\n";
+
+        assert(DecryptedMsg == msg);
+
 
         /*Running the Conditional Encryption*/
         auto start_CondEnc_HD = high_resolution_clock::now();
         auto ctx_final = HamDistAtmostT::CondEnc(pkobj._ppk, HD_Char_ORigCTx, typo, payload,_len, Threshold, HD_ctx_typo_Bytes);
         auto stop_CondEnc_HD = high_resolution_clock::now();
         auto duration_CondEnc_HD = duration_cast<milliseconds>(stop_CondEnc_HD - start_CondEnc_HD);
-        cout <<"successfull Cond encryption\n";
+        cout <<"successful Cond encryption\n";
         /*Running the Conditional Decryption */
         auto start_CondDec_HD = high_resolution_clock::now();
         string recovered_hdBytes;
@@ -983,17 +981,6 @@ int BasicTestHamDistT(int Num_tests, int n_lambda, int _len, int MaxHam )
         auto stop_CondDec_HD = high_resolution_clock::now();
         auto duration_CondDec_HD = duration_cast<milliseconds>(stop_CondDec_HD - start_CondDec_HD);
 
-        CondEncHD << "Enc.Time, CondEnc.Time, Cond.Dec.Time, Ctx.Size, CondCtx.Size, CondDecRslt: (" <<
-                   duration_Enc_HD.count()
-                   << ", " << duration_CondEnc_HD.count()
-                   << ", " << duration_CondDec_HD.count()
-                   << ", " << TradCtxSize
-                   << ", " << CondCtxSize
-                   << ", " << CondDecOut << " )\n";
-
-        duration_Enc_HD_Sum =  duration_Enc_HD_Sum + duration_Enc_HD.count();
-        duration_CondEnc_HD_Sum =  duration_CondEnc_HD_Sum + duration_CondEnc_HD.count();
-        duration_CondDec_HD_Sum =  duration_CondDec_HD_Sum + duration_CondDec_HD.count();
         cout <<T << "\n";
 
     }
@@ -1030,7 +1017,6 @@ int BasicTestHamDistT(int Num_tests, int n_lambda, int _len, int MaxHam )
             << TradCtxSize << "\t"
             << CondCtxSize_HD_Sum /Num_tests << "\n";
 
-    CondEncHD.close();
     paillier_freepubkey(pkobj._ppk);
     paillier_freeprvkey(pkobj._psk);
 

@@ -62,6 +62,21 @@ public:
 
 
 
+    /*
+     *
+     * This function takes as input the public key ppk, the regualar ciphertext ctx, and the secret key psk and
+     * the upper bound of the secret message size, and returns the plantext DecryptedMsg as the string. If the decryption
+     * is successful, then it also outputs 1;
+     *
+     */
+    static int RegDec(paillier_pubkey_t* ppk, char ctx [], paillier_prvkey_t* psk,
+                            size_t _len, string &DecryptedMsg);
+
+
+
+
+
+
     /* API Documentation
 	 * Algorithm description: Conditional Encryption algorithm which takes as input the traditional ctx and and then
      * based on the target predicate (hamming Distance two) generates the ciphertext using a secure secret sharing
@@ -157,6 +172,9 @@ public:
                             int threshold,
                             string &recovered,
                             size_t _len);
+
+
+
 //private:
 
 /*

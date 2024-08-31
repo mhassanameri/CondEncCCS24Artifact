@@ -136,7 +136,7 @@ int testCondEncOR(int n_lambda, int Num_tests, size_t _len, int MaxHam);
 
 /*
  * "testCondEncCAPSLOCK":
- * This function Evaluates Conditional Encryption preformance designed for the CAPSLOCK ON predicate.
+ * This function Evaluates Conditional Encryption performance designed for the CAPSLOCK ON predicate.
  * It takes as input:
  *  n_lambda: the public key size  [e.g., 1024, 2048, 3072 bits modulus]
  *  Num_tests: Number of times that we performed Conditional encryption (Enc, CondEnc, CondDec)
@@ -146,6 +146,21 @@ int testCondEncOR(int n_lambda, int Num_tests, size_t _len, int MaxHam);
 int testCondEncCAPSLOCK(int n_lambda, int Num_tests, size_t _len);
 
 
+
+/*
+ * "BasicTestHamDistT":
+ * This function tests th basic functionalities of the designed conditional encryption for Hamming Distance by defining
+ * sets of assertions. If the assertions is not holding, then there exists some issues on the installment and set up of
+ * the conditional encryption. This function takes as input:
+ *  Num_tests: number of times that we test the algorithms functionalities on different inputs (inputs are
+ *             PWDs form Chaterjee data sets which are filtered under some properties.
+ *  n_lambda: The desired public key size to achieve the target security level.
+ *  _len:     The upper bound on the size of the secret and control message.
+ *  MaxHam:   Just for Hamming distance) The maximum allowed hamming distance to make sure that the predicate is holding
+ * The output of this function if all the assertions are holding is 1. The output of each algorithm is print out in the
+ * terminal as well [the later can be optional].
+ *
+ */
 int BasicTestHamDistT(int Num_tests, int n_lambda, int _len, int MaxHam);
 
 
@@ -186,7 +201,7 @@ inline int BasicTest(string argv[] )
     }
     else if (argv[0] == "HamDistT")
     {
-        BasicTestHamDistT(std::stoi(argv[1]),  std::stoi(argv[2]),  std::stoi(argv[3]), std::stoi(argv[4]));
+         BasicTestHamDistT(std::stoi(argv[1]),  std::stoi(argv[2]),  std::stoi(argv[3]), std::stoi(argv[4]));
     }
     else if(argv[0] == "OR")
     {
@@ -216,12 +231,14 @@ TEST_CASE("ArtifactCCS24BasicTests")
 {
     std::string input[5];
     std::ifstream inputFile("BasicTestInputs.txt"); // Open the file "input.txt"
-    inputFile >> input[0]; //The first input indicates the intended Preidicate
+    inputFile >> input[0]; //The first input indicates the intended Predicate
     inputFile >> input[1]; // Number or Basic Tests
     inputFile >> input[2]; // The Public key Size
-    inputFile >> input[3]; // Max Ham distance for HamDistT
+    inputFile >> input[3]; // The maximum length of secre message: _len [e.g., 8, 16, 32, 64, 128]
+    inputFile >> input[4]; // Max Ham distance for HamDistT
+    cout << "Basic testing of CondEnc for Hamming distance params:" << input << "\n";
 
-    auto BasicTest(input);
+    auto t = BasicTest(input);
 
 }
 

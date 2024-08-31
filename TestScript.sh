@@ -5,22 +5,22 @@ BINARY_PATH="./tests"
 
 
 # Running The Basic Tests after Installing
-#BasicTestArgument = "ArtifactCCS24BasicTests"
-echo -e "HamDistT\n10\1024\n32\n2" > BasicTestInputs.txt #More details on how the inputs are parsed will be added.
-###HamDist
-
+#BasicTestArgument="ArtifactCCS24BasicTests"
+#echo -e "HamDistT\n10\n1024\n32\n2" > BasicTestInputs.txt #More details on how the inputs are parsed will be added.
+####HamDist
+#
 #$BINARY_PATH $BasicTestArgument
 
 # will generate and initialize the .dat files which store the performance evaluation
-#InitArgument= "GenerateBlankDatFiles"
-#$BINARY_PATH $InitArgument
+InitArgument="GenerateBlankDatFiles"
+$BINARY_PATH $InitArgument
 
 
 # This argument runs the test case which generates the data required to plotting the Figure 1 of the paper and
 # placing the associate data in the Table 1 of the paper.
 ARGUMENTS="ArtifactCCS24"
 
-echo  -e "PlotFig1a\n200\n5\n1\n" > input.txt  # Indicating the target figure to plot the options: [PlotFig1a, PlotFig1b, PlotFig1c, PlotFig1d, PlotFig1e, PlotFig1f, PlotFig1g, PlotFig1h, PlotFig1i]
+echo  -e "PlotFig1a\n50\n5\n1\n" > input.txt  # Indicating the target figure to plot the options: [PlotFig1a, PlotFig1b, PlotFig1c, PlotFig1d, PlotFig1e, PlotFig1f, PlotFig1g, PlotFig1h, PlotFig1i]
 #echo  -e "100\n" > input.txt        # Number or Tests on HamDist associated with messages of length at most 8, 16, 32 Characters
 #echo  -e "50\n" > input.txt         # Number or Tests on HamDist associated with messages of length at most 64 Characters
 #echo  -e "5\n" > input.txt          # Number or Tests on HamDist associated with messages of length at most 128  Characters
