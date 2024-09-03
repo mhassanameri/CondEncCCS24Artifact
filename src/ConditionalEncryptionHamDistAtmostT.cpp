@@ -32,10 +32,16 @@
         strSources[i]->PumpAll();
 
     bool fail = false;
-     // string subsRcvr= recovered.substr(0, 1);
+     // string subsRcvr= recovered.substr(0, 4);
 
-    fail = ("0000" == recovered);//for Optimized solution, TODO: make the non optimum without cancelling it
-    // fail = ("0" == recovered.substr(0,1));//for Optimized soulution, TODO: make the non optimum without cancelling it
+     const char* Zero_str = "0\000\000\000";
+     fail = (Zero_str[0] == recovered[0] && Zero_str[1] == recovered[1] && Zero_str[2] == recovered[2] && Zero_str[3] == recovered[3]);
+
+
+
+    // fail = ("0000" == recovered);//for Optimized solution, TODO: make the non optimum without cancelling it
+    // fail = ("0\000\000" == recovered.substr(0,3));//for Optimized soulution, TODO: make the non optimum without cancelling it
+
 
 //    fail  = true;
     return fail;
@@ -154,15 +160,20 @@ int HamDistAtmostT::generatesubsets(vector<string> &MainstrShares, vector<string
             Valid_selected = selected;
             string recoverTheMainSecret;
 
-            cout <<  "Valid Shares Detected\n";
             bool ifCorrectShareVec;
             ifCorrectShareVec = HamDistAtmostT::RecoverSecretFromValidShares (MainstrShares, K, selected, recoverTheMainSecret );
             size_t key_size = recoverTheMainSecret.size();
             CryptoPP::StringSink ss_recoveredMainSecret(recoveredMainSecret);
+            // cout << "";
             auto reMainSecrtSize = ss_recoveredMainSecret.Put((const CryptoPP::byte*)recoverTheMainSecret.data(),  recoverTheMainSecret.size(), false);
-            auto AEReslt = CryptoSymWrapperFunctions::Wrapper_AuthDecrypt(recoverTheMainSecret, DecoddCtxAE,plaintext_rcv );
+            bool AEReslt = false;
+            AEReslt = CryptoSymWrapperFunctions::Wrapper_AuthDecrypt(recoverTheMainSecret, DecoddCtxAE,plaintext_rcv );
+            if(AEReslt)
+            {
+                // cout << "The recovered payload is = " << plaintext_rcv << "\n";
+                return 1;
+            }
 
-            return 1;
         }
 //            for(auto i:selected)
 //                cout<<i<<" ";
@@ -204,6 +215,7 @@ int HamDistAtmostT::generatesubsets(vector<string> &MainstrShares, vector<string
 
         bool AEReslt;
 
+
         AEReslt = CryptoSymWrapperFunctions::Wrapper_AuthDecrypt(recoverTheMainSecret, DecoddCtxAE,plaintext_rcv );
 
         /*
@@ -211,7 +223,11 @@ int HamDistAtmostT::generatesubsets(vector<string> &MainstrShares, vector<string
          * true or not. If yes, we retun the resulting secret which is the typo. We need to use RecoverMainSecet
          * for doing so. We also need the value of the decoded ciphretext (STATE: Is done!)
          * */
-        if (AEReslt==true) return 1;
+        if (AEReslt==true)
+        {
+            return 1;
+        }
+
     }
     if(current==choices.size())
         return 0;
@@ -522,8 +538,8 @@ string HamDistAtmostT::CondEnc(paillier_pubkey_t* ppk,
 
 
      string message = CryptoSymWrapperFunctions::Wrapper_pad(typo,_len); // pad(typo);  TODO: Double check if we need to make sure that we need pad here?
-     // string Zero_secret = "0";
-     string Zero_secret = "0000";
+     string Zero_secret = "0";
+     // string Zero_secret = "0000";
 
 //    = "0000";
     // CryptoPP::StringSink ss_Zero_secret(Zero_secret);
@@ -1021,7 +1037,7 @@ int HamDistAtmostT::CondDec(paillier_pubkey_t* ppk,
     vector<int> Valid_selected;
     string MainRecoveredSecret;
     string plaintext_rcv;
-    int rsltRcVr;
+    int rsltRcVr =0;
 
     vector<int> v(_len);
     vector<int> ValidSelected(threshold);
@@ -1031,19 +1047,15 @@ int HamDistAtmostT::CondDec(paillier_pubkey_t* ppk,
 
 
 //    string ciphertext_rcv;
-    bool AEReslt;
+    // bool AEReslt;
 //    HamDistAtmostT::ToConstStringConvert(CtxAE2);
     /*I have modified the function for handling the following part*/
 
-    AEReslt = CryptoSymWrapperFunctions::Wrapper_AuthDecrypt(MainRecoveredSecret, CtxAE,plaintext_rcv );
+    // AEReslt = CryptoSymWrapperFunctions::Wrapper_AuthDecrypt(MainRecoveredSecret, CtxAE,plaintext_rcv );
 
-
-//    AEReslt = CryptoSymWrapperFunctions::Wrapper_AuthDecrypt(MainRecoverShare, CtxAE,recovered );
-
-//    AEReslt = CryptoSymWrapperFunctions::Wrapper_AuthDecrypt(MainRecoverShare, std::get<1>(ParsedCtxt),plaintext_rcv );
 
     mpz_clear(P_GF);
-    if (AEReslt == true)
+    if (rsltRcVr == 1)
     {
         recovered = plaintext_rcv;
         ret =1;
@@ -1062,7 +1074,7 @@ int HamDistAtmostT::CondDec(paillier_pubkey_t* ppk,
 //    paillier_freeplaintext(dec);
 
 
-    return rsltRcVr;
+    return ret;
 }
 
 int HamDistAtmostT::CondDec_2dif(paillier_pubkey_t* ppk,

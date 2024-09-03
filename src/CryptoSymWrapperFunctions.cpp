@@ -337,6 +337,7 @@ bool CryptoSymWrapperFunctions::Wrapper_AuthDecrypt(const string &k, const strin
     // Sanity checks
 //    cout << ctx.size() << " = " << iv.size() << " + "
 //         << enc.size() << " + " << mac.size() << endl;
+
     assert( iv.size() == AES::BLOCKSIZE );
     assert( mac.size() == MAC_SIZE_BYTES );
     assert( ctx.size() == iv.size() + enc.size() + mac.size() );

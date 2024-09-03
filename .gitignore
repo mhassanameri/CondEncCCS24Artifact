@@ -5,3 +5,8 @@
 /3rdparty/plog110
 /build
 
+GeneratePlotsPdfs/main.aux
+GeneratePlotsPdfs/main.log
+GeneratePlotsPdfs/main.out
+GeneratePlotsPdfs/main.pdf
+GeneratePlotsPdfs/main.synctex.gz

@@ -366,15 +366,15 @@ int testCondEncHamDist(int n_lambda, int Num_tests, size_t _len, int MaxHam)
         auto ctx_final = HamDistAtmostT::CondEnc(pkobj._ppk, HD_Char_ORigCTx, typo, payload,_len, Threshold, HD_ctx_typo_Bytes);
         auto stop_CondEnc_HD = high_resolution_clock::now();
         auto duration_CondEnc_HD = duration_cast<milliseconds>(stop_CondEnc_HD - start_CondEnc_HD);
-        cout <<"successfull Cond encryption\n";
+        // cout <<"successful Cond encryption\n";
         /*Running the Conditional Decryption */
         auto start_CondDec_HD = high_resolution_clock::now();
         string recovered_hdBytes;
         int CondDecOut  = 0;
-        // CondDecOut = HamDistAtmostT::CondDec(pkobj._ppk, HD_ctx_typo_Bytes, pkobj._psk, Threshold, recovered_hdBytes, _len);
+        CondDecOut = HamDistAtmostT::CondDec(pkobj._ppk, HD_ctx_typo_Bytes, pkobj._psk, Threshold, recovered_hdBytes, _len);
         // CondDecOut = HamDistAtmostT::CondDec_Optimized(pkobj._ppk, HD_ctx_typo_Bytes, pkobj._psk, Threshold, recovered_hdBytes, _len, SizeShare, msg.size());
         // CondDecOut = HamDistAtmostT::CondDec_Optimized_UnknownMsgLength(pkobj._ppk, HD_ctx_typo_Bytes, pkobj._psk, Threshold, recovered_hdBytes, _len);
-        CondDecOut = HamDistAtmostT::CondDec_NewOPT(pkobj._ppk, HD_ctx_typo_Bytes, pkobj._psk, Threshold, recovered_hdBytes, _len);
+        // CondDecOut = HamDistAtmostT::CondDec_NewOPT(pkobj._ppk, HD_ctx_typo_Bytes, pkobj._psk, Threshold, recovered_hdBytes, _len);
         assert(CondDecOut == -1);
         // CondDecOut = HamDistAtmostT::CondDec_NonSmallFieldCheck(pkobj._ppk, HD_ctx_typo_Bytes, pkobj._psk, Threshold, recovered_hdBytes, _len, SizeShare);
         // CondDecOut = HamDistAtmostT::CondDec_2dif(pkobj._ppk, HD_ctx_typo_Bytes, pkobj._psk, Threshold, recovered_hdBytes, _len, SizeShare);
@@ -503,7 +503,7 @@ int testCondEncHamDist_NonOPT(int n_lambda, int Num_tests, size_t _len, int MaxH
         auto ctx_final = HamDistAtmostT::CondEnc(pkobj._ppk, HD_Char_ORigCTx, typo, payload,_len, Threshold, HD_ctx_typo_Bytes);
         auto stop_CondEnc_HD = high_resolution_clock::now();
         auto duration_CondEnc_HD = duration_cast<milliseconds>(stop_CondEnc_HD - start_CondEnc_HD);
-        cout <<"successfull Cond encryption\n";
+        cout <<"successful Cond encryption\n";
         /*Running the Conditional Decryption */
         auto start_CondDec_HD = high_resolution_clock::now();
         string recovered_hdBytes;
@@ -863,10 +863,10 @@ int PlotFig1a(int NumTest_SmallM, int NumTest_64, int NumTest_128)
     for (int i = 1; i<5; i++)
     {
         // cout << "OPT HamDist at most  " + to_string(i)  + "_len= 8" << endl;
-        testCondEncHamDist(1024, NumTest_SmallM , 8,i);
+        // testCondEncHamDist(1024, NumTest_SmallM , 8,i);
         // cout << "OPT HamDist at most  " + to_string(i)  + "_len= 16" << endl;
-        testCondEncHamDist(1024, NumTest_SmallM , 16,i);
-        // cout << "OPT HamDist at most  " + to_string(i)  + "_len= 32" << endl;
+        // testCondEncHamDist(1024, NumTest_SmallM , 16,i);
+        cout << "OPT HamDist at most  " + to_string(i)  + " _len= 32" << endl;
         testCondEncHamDist(1024, NumTest_SmallM , 32,i);
         // cout << "OPT HamDist at most  " + to_string(i)  + "_len= 64" << endl;
         // testCondEncHamDist(2048,  NumTest_64 , 64,i);
@@ -874,10 +874,10 @@ int PlotFig1a(int NumTest_SmallM, int NumTest_64, int NumTest_128)
         // testCondEncHamDist(3072,  NumTest_128 , 128,i);
 
         // cout << "No_OPT HamDist at most  " + to_string(i)  + "_len= 8" << endl;
-        testCondEncHamDist_NonOPT(1024, NumTest_SmallM, 8,i);
+        // testCondEncHamDist_NonOPT(1024, NumTest_SmallM, 8,i);
         // cout << "No_OPT HamDist at most  " + to_string(i)  + "_len= 16" << endl;
-        testCondEncHamDist_NonOPT(1024, NumTest_SmallM, 16,i);
-        // cout << "No_OPT HamDist at most  " + to_string(i)  + "_len= 32" << endl;
+        // testCondEncHamDist_NonOPT(1024, NumTest_SmallM, 16,i);
+        cout << "No_OPT HamDist at most  " + to_string(i)  + " _len= 32" << endl;
         testCondEncHamDist_NonOPT(1024, NumTest_SmallM, 32,i);
         // cout << "No_OPT HamDist at most  " + to_string(i)  + "_len= 64" << endl;
         // testCondEncHamDist_NonOPT(2048, NumTest_64, 64,  i);
