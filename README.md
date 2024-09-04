@@ -22,8 +22,8 @@ To compile the project from source, you will need the following:
 * `Argon2` memory hard functions [Source](https://github.com/P-H-C/phc-winner-argon2) (inside the repository, requires manually building)
 
 
-## Compile/Build Conditional Encryption
-Clone the repository and create a build directory
+## Building the project
+Clone the repository
 ```bash
 $ git clone https://github.com/mhassanameri/CondEncCCS24Artifact.git
 $ cd CondEncCCS24Artifact
@@ -34,7 +34,7 @@ $ cd argon2/phcargon2
 $ make
 $ cd ../../
 ```
-Build the program
+Create a build directory and build the program
 ```bash
 $ mkdir build && cd build
 $ cmake ../
@@ -44,11 +44,11 @@ If the make command failed with errors related to `g_argvPathHint`, in the build
 ```bash
 $ ./test/tests
 ```
-to execute a basic tests to vefify that the Conditional Encryption executed correctly.
+to execute a basic tests to vefify that Conditional Encryption works correctly.
 
 ## More Tests
 
-More specifically, for the aim of this Artifact Evaluation, we provide the instruction how to generate the results demonstrated in the paper. We provide bash scripts which generates the ".dat" files, which can be used to generate the plots in latex.
+More specifically, for the aim of this Artifact Evaluation, we provide instructions on reproducing the results demonstrated in the paper. We provide bash scripts that create `.dat` files, which can be used to generate the plots in latex.
 
 ### Generate Figure 1a and 1b 
 After compiling the project, go to `build/test` and run `TestScript.sh`. For this script, we can modify the `input.txt` file to generate the desired output. The instruction on how to modify `input.txt` is commented in `TestScript.sh`. In the following, we will provide an examples on how to generate Figure 1a of the paper. 
