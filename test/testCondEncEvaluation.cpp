@@ -872,7 +872,7 @@ int PlotFig1a(int NumTest_SmallM, int NumTest_64, int NumTest_128)
         cout << "OPT amDist at most  " + to_string(i)  + "_len= 64" << endl;
         testCondEncHamDist(2048,  NumTest_64 , 64,i);
         cout << "OPT HamDist at most  " + to_string(i)  + "_len= 128" << endl;
-        // testCondEncHamDist(3072,  NumTest_128 , 128,i);
+        testCondEncHamDist(3072,  NumTest_128 , 128,i);
 
         cout << "No_OPT HamDist at most  " + to_string(i)  + "_len= 8" << endl;
         testCondEncHamDist_NonOPT(1024, NumTest_SmallM, 8,i);
@@ -882,8 +882,8 @@ int PlotFig1a(int NumTest_SmallM, int NumTest_64, int NumTest_128)
         testCondEncHamDist_NonOPT(1024, NumTest_SmallM, 32,i);
         cout << "No_OPT HamDist at most  " + to_string(i)  + "_len= 64" << endl;
         testCondEncHamDist_NonOPT(2048, NumTest_64, 64,  i);
-        // cout << "No_OPT HamDist at most  " + to_string(i)  + "_len= 128" << endl;
-        // testCondEncHamDist_NonOPT(3072, NumTest_128, 128,  i);
+        cout << "No_OPT HamDist at most  " + to_string(i)  + "_len= 128" << endl;
+        testCondEncHamDist_NonOPT(3072, NumTest_128, 128,  i);
 
     }
  return 1;
@@ -968,8 +968,8 @@ int BasicTestHamDistT(int Num_tests, int n_lambda, int _len, int MaxHam )
         auto start_CondDec_HD = high_resolution_clock::now();
         string recovered_hdBytes;
         int CondDecOut  = 0;
-        // CondDecOut = HamDistAtmostT::CondDec(pkobj._ppk, HD_ctx_typo_Bytes, pkobj._psk, Threshold, recovered_hdBytes, _len);
-        CondDecOut = HamDistAtmostT::CondDec_SmallGF256(pkobj._ppk, HD_ctx_typo_Bytes, pkobj._psk, Threshold, recovered_hdBytes, _len);
+        CondDecOut = HamDistAtmostT::CondDec(pkobj._ppk, HD_ctx_typo_Bytes, pkobj._psk, Threshold, recovered_hdBytes, _len);
+        // CondDecOut = HamDistAtmostT::CondDec_SmallGF256(pkobj._ppk, HD_ctx_typo_Bytes, pkobj._psk, Threshold, recovered_hdBytes, _len);
         // CondDecOut = HamDistAtmostT::CondDec_Optimized(pkobj._ppk, HD_ctx_typo_Bytes, pkobj._psk, Threshold, recovered_hdBytes, _len, SizeShare, msg.size());
         // CondDecOut = HamDistAtmostT::CondDec_Optimized_UnknownMsgLength(pkobj._ppk, HD_ctx_typo_Bytes, pkobj._psk, Threshold, recovered_hdBytes, _len);
         // CondDecOut = HamDistAtmostT::CondDec_NewOPT(pkobj._ppk, HD_ctx_typo_Bytes, pkobj._psk, Threshold, recovered_hdBytes, _len);

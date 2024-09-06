@@ -252,19 +252,7 @@ TEST_CASE("ArtifactCCS24")
     inputFile >> input[2]; // Number or Tests on HamDist associated with messages of length at most 64 Characters
     inputFile >> input[3]; // Number or Tests on HamDist associated with messages of length at most 128 Characters
 
-
-// std::cout << "Please enter your input [PlotFig1a, PlotFig1b]: ";
-    // std::cin >> input[0];
-    // std::cout << "Please enter n_lambda which indicates the public key size [1024, 2048, 3072]: ";
-    // std::cin >> input[1];
-    // std::cout << "Please enter Num_tests (for full text the value is 1000): ";
-    // std::cin >> input[2];
-    // std::cout << "Please enter maximum length of secret message (_len) [8, 16, 32, 64, 128]";
-
-
     auto r = DataForPlottingFigure1(input);
-
-
 }
 
 

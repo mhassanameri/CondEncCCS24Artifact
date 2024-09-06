@@ -280,15 +280,15 @@ int HamDistAtmostT::generatesubsets(vector<string> &MainstrShares, vector<string
         // vector<std::string> o[selected];
         //process subset
         bool pass;
-        auto start_checkShare = std::chrono::high_resolution_clock::now();
+        // auto start_checkShare = std::chrono::high_resolution_clock::now();
         // int _len = MainstrShares.size();
         pass = HamDistAtmostT::TestIfTheSahreAreValid(strShares, K, selected );//For the optimized solution
         // pass = HamDistAtmostT::TestIfTheSahreAreValid_GF256(strShares, K, selected , _len);
 
-        auto stop_CheckShare = std::chrono::high_resolution_clock::now();
+        // auto stop_CheckShare = std::chrono::high_resolution_clock::now();
 
-        auto duration_CondDec_HD = std::chrono::duration_cast<std::chrono::microseconds>(stop_CheckShare - start_checkShare);
-        cout  << "OPT Share Checking time: " << duration_CondDec_HD.count() << "\n";
+        // auto duration_CondDec_HD = std::chrono::duration_cast<std::chrono::microseconds>(stop_CheckShare - start_checkShare);
+        // cout  << "OPT Share Checking time: " << duration_CondDec_HD.count() << "\n";
         if (pass)
         {
 
@@ -1275,12 +1275,6 @@ int HamDistAtmostT::CondDec_SmallGF256(paillier_pubkey_t* ppk,
 
 
      pars_rslt = HamDistAtmostT::Pail_Parse_Ctx_size_AECtx2(ppk, typo_ctx, CtxAE, V_ctx_typo );
-//    std::string CtxAE;
-//    CtxAE = CtxAE2;
-//    memcpy(&CtxAE, &CtxAE2, 24);
-
-//    CtxAE2.clear();
-//    memcpy(&CtxAE, &CtxAE2[0], CtxAE2.size() );
 
      vector<string> strShares_Zero(_len);
      vector<string> strShares_Main(_len);
@@ -1306,18 +1300,13 @@ int HamDistAtmostT::CondDec_SmallGF256(paillier_pubkey_t* ppk,
         //Jsut now we need to export the mpz_t element to byte stream which are elements of the secret sharing scheme.
 
         vector<CryptoPP::byte> ab (ShareSize);
-//        vector<char> ab (ShareSize);
-//        string* ab = (string*) malloc(ShareSize);
-//        string s;
         ByteDec = paillier_plaintext_to_bytes_NegOrd(ShareSize, dec);
         memcpy(&ab[0],ByteDec, ShareSize);
 //        string s  = ab[0];
 //        ab = PaillerWrapperFunctions::mpz_to_vector(dec->m, ShareSize);
         string s(ab.begin(), ab.end());
         strShares_Main[j] =  s.substr (0,20);
-        // strShares_Zero[j] =  s.substr (20,8);
-         // strShares_Zero[j] =  s.substr (20,8);
-         strShares_Zero[j] =  s.substr (20, 3);
+        strShares_Zero[j] =  s.substr (20, 3);
 
 
          scheme GF256_SSscheme(_len,threshold);
@@ -1341,9 +1330,7 @@ int HamDistAtmostT::CondDec_SmallGF256(paillier_pubkey_t* ppk,
          }
 
         free(ByteDec);
-//        free(ab);
         paillier_freeplaintext(dec);
-//        paillier_freeciphertext(V_ctx_typo[j]);
 
 
 
@@ -1357,20 +1344,8 @@ int HamDistAtmostT::CondDec_SmallGF256(paillier_pubkey_t* ppk,
     vector<int> ValidSelected(threshold);
     v = HamDistAtmostT::GnereateVectorOfIntegeres(_len);
 
-
-    // rsltRcVr = HamDistAtmostT::generatesubsets(strShares_Main, strShares_Zero,  CtxAE, MainRecoveredSecret,
-                                           // plaintext_rcv, v,0,threshold, Valid_selected, ValidSelected);
-
     rsltRcVr = HamDistAtmostT::generatesubsets_GF256(strShares_Main, GF256_shares,  CtxAE, MainRecoveredSecret,
                                            plaintext_rcv, v,0,threshold, Valid_selected, ValidSelected, _len);
-
-//    string ciphertext_rcv;
-    // bool AEReslt;
-//    HamDistAtmostT::ToConstStringConvert(CtxAE2);
-    /*I have modified the function for handling the following part*/
-
-    // AEReslt = CryptoSymWrapperFunctions::Wrapper_AuthDecrypt(MainRecoveredSecret, CtxAE,plaintext_rcv );
-
 
     mpz_clear(P_GF);
     if (rsltRcVr == 1)
@@ -1384,14 +1359,6 @@ int HamDistAtmostT::CondDec_SmallGF256(paillier_pubkey_t* ppk,
         recovered = plaintext_rcv;
         ret = -1;
     }
-
-//    for (int i=0; i< _len; i++)
-//    {
-//        paillier_freeciphertext(V_ctx_typo[i]);
-//    }
-//    paillier_freeplaintext(dec);
-
-
     return ret;
 }
 
@@ -1411,13 +1378,6 @@ int HamDistAtmostT::CondDec(paillier_pubkey_t* ppk,
 
 
      pars_rslt = HamDistAtmostT::Pail_Parse_Ctx_size_AECtx2(ppk, typo_ctx, CtxAE, V_ctx_typo );
-//    std::string CtxAE;
-//    CtxAE = CtxAE2;
-//    memcpy(&CtxAE, &CtxAE2, 24);
-
-//    CtxAE2.clear();
-//    memcpy(&CtxAE, &CtxAE2[0], CtxAE2.size() );
-
      vector<string> strShares_Zero(_len);
      vector<string> strShares_Main(_len);
 
@@ -1440,27 +1400,17 @@ int HamDistAtmostT::CondDec(paillier_pubkey_t* ppk,
         //Jsut now we need to export the mpz_t element to byte stream which are elements of the secret sharing scheme.
 
         vector<CryptoPP::byte> ab (ShareSize);
-//        vector<char> ab (ShareSize);
-//        string* ab = (string*) malloc(ShareSize);
-//        string s;
         ByteDec = paillier_plaintext_to_bytes_NegOrd(ShareSize, dec);
         memcpy(&ab[0],ByteDec, ShareSize);
 //        string s  = ab[0];
 //        ab = PaillerWrapperFunctions::mpz_to_vector(dec->m, ShareSize);
         string s(ab.begin(), ab.end());
         strShares_Main[j] =  s.substr (0,20);
-        // strShares_Zero[j] =  s.substr (20,8);
-         // strShares_Zero[j] =  s.substr (20,8);
-         strShares_Zero[j] =  s.substr (20, 8);
+        strShares_Zero[j] =  s.substr (20, 8);
          }
 
         free(ByteDec);
-//        free(ab);
         paillier_freeplaintext(dec);
-//        paillier_freeciphertext(V_ctx_typo[j]);
-
-
-
 
     vector<int> Valid_selected;
     string MainRecoveredSecret;
@@ -1475,17 +1425,6 @@ int HamDistAtmostT::CondDec(paillier_pubkey_t* ppk,
     rsltRcVr = HamDistAtmostT::generatesubsets(strShares_Main, strShares_Zero,  CtxAE, MainRecoveredSecret,
                                            plaintext_rcv, v,0,threshold, Valid_selected, ValidSelected);
 
-    // rsltRcVr = HamDistAtmostT::generatesubsets_GF256(strShares_Main, GF256_shares,  CtxAE, MainRecoveredSecret,
-                                           // plaintext_rcv, v,0,threshold, Valid_selected, ValidSelected, _len);
-
-//    string ciphertext_rcv;
-    // bool AEReslt;
-//    HamDistAtmostT::ToConstStringConvert(CtxAE2);
-    /*I have modified the function for handling the following part*/
-
-    // AEReslt = CryptoSymWrapperFunctions::Wrapper_AuthDecrypt(MainRecoveredSecret, CtxAE,plaintext_rcv );
-
-
     mpz_clear(P_GF);
     if (rsltRcVr == 1)
     {
@@ -1498,14 +1437,6 @@ int HamDistAtmostT::CondDec(paillier_pubkey_t* ppk,
         recovered = plaintext_rcv;
         ret = -1;
     }
-
-//    for (int i=0; i< _len; i++)
-//    {
-//        paillier_freeciphertext(V_ctx_typo[i]);
-//    }
-//    paillier_freeplaintext(dec);
-
-
     return ret;
 }
 

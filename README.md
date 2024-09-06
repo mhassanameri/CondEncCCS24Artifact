@@ -44,9 +44,10 @@ If the make command failed with errors related to `g_argvPathHint`, in the build
 ```bash
 $ ./test/tests
 ```
-to execute a basic tests to vefify that Conditional Encryption works correctly.
+to execute a tests to verify that implementations of all Conditional Encryption schemes associated with the predicates: Hamming Distance at most T, Edit distance at most one, CAPSLOCK_ON, and OR_of_CAPSLOCK_HamDist2_EditDist1 are working correctly.
 
-## More Tests
+
+## More details on Tests
 
 More specifically, for the aim of this Artifact Evaluation, we provide instructions on reproducing the results demonstrated in the paper. We provide bash scripts that create `.dat` files, which can be used to generate the plots in latex.
 
