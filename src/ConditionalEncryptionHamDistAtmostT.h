@@ -28,10 +28,20 @@ using CryptoPP::PKCS5_PBKDF2_HMAC;
 #include "hmac.h"
 using CryptoPP::HMAC;
 
+#include <chrono>
+#include <iostream>
+#include <random>
+#include "../ShamirSS/src/GF256.h"
+#include "../ShamirSS/src/shamir.h"
+using namespace GF256;
+using namespace shamir;
+
 #include "base64.h"
+
 using CryptoPP::Base64URLEncoder;
 using CryptoPP::Base64URLDecoder;
 const size_t SSShareSize = 28; //Indicating the secret sharing size;
+const int Small_fieldSize = 8;
 /*
  * Class description:
  *          Conditional Encryption for Hamming Distance Two Predicate Using Shamir Secret Sharing
@@ -136,6 +146,14 @@ public:
                         string &recovered,
                         size_t _len);
 
+
+    static int CondDec_SmallGF256(paillier_pubkey_t* ppk,
+                               char typo_ctx [],
+                               paillier_prvkey_t* psk,
+                               int threshold,
+                               string &recovered,
+                               size_t _len);
+
     static int CondDec_NonSmallFieldCheck(paillier_pubkey_t* ppk,
                         char typo_ctx [],
                         paillier_prvkey_t* psk,
@@ -203,6 +221,9 @@ public:
     static bool TestIfTheSahreAreValid (vector<string> &strShares,
                                         int threshold, vector<int> &selected);
 
+    static bool TestIfTheSahreAreValid_GF256 (shares* strShares,
+                                        int threshold, vector<int> &selected, int _len);
+
     static tuple<vector<paillier_ciphertext_t*>, string> Pail_Parse_Ctx_size_AECtx(paillier_pubkey_t* ppk,
                                                               char* ctx);
 
@@ -236,7 +257,10 @@ public:
                         int current, int K, vector<int> selected=vector<int>(),
                         vector<int> Valid_selected = vector<int>());
 
-
+   static int generatesubsets_GF256(vector<string> &MainstrShares,shares* strShares,
+                     const string& DecoddCtxAE, string &recoveredMainSecret, string &plaintext_rcv, vector<int> choices,
+                     int current, int K, vector<int> selected,
+                     vector<int> Valid_selected, int _len);
     /*
      * The folowing function, recursively extract all possible combinatiobs of n choose threshold in the
      * optimized way that we described.
@@ -294,6 +318,7 @@ public:
     static vector<int> GnereateVectorOfIntegeres (int _len);
     static paillier_plaintext_t* RandEncod(string& share, size_t ShareSize, mpz_t N_p_floor, mpz_t P_GF);
     static paillier_plaintext_t* RandDecod(string& share, size_t ShareSize, mpz_t N_p_floor, mpz_t P_GF);
+
 
 };
 

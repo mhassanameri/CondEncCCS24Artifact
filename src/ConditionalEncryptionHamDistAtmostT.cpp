@@ -1,11 +1,11 @@
 //
 // Created by mameriek on 9/10/21.
 //
-
+#include<chrono>
 #include "ConditionalEncryptionHamDistAtmostT.h"
 
-
- bool HamDistAtmostT::TestIfTheSahreAreValid (vector<string> &strShares, int threshold, vector<int> &selected)
+/*Small shared size of 8*/
+bool HamDistAtmostT::TestIfTheSahreAreValid (vector<string> &strShares, int threshold, vector<int> &selected)
 {
     string channel;
     const unsigned int CHID_LENGTH = 4;
@@ -32,10 +32,11 @@
         strSources[i]->PumpAll();
 
     bool fail = false;
-     // string subsRcvr= recovered.substr(0, 4);
+    // string subsRcvr= recovered.substr(0, 4);
 
-     const char* Zero_str = "0\000\000\000";
-     fail = (Zero_str[0] == recovered[0] && Zero_str[1] == recovered[1] && Zero_str[2] == recovered[2] && Zero_str[3] == recovered[3]);
+    const char* Zero_str = "0\000\000\000";
+    fail = (Zero_str[0] == recovered[0] && Zero_str[1] == recovered[1] && Zero_str[2] == recovered[2] && Zero_str[3] == recovered[3]);
+    // fail = (Zero_str[0] == recovered[0] );
 
 
 
@@ -43,9 +44,75 @@
     // fail = ("0\000\000" == recovered.substr(0,3));//for Optimized soulution, TODO: make the non optimum without cancelling it
 
 
-//    fail  = true;
+    //    fail  = true;
     return fail;
 }
+
+
+
+bool HamDistAtmostT::TestIfTheSahreAreValid_GF256 (shares* strShares, int threshold, vector<int> &selected, int _len)
+{
+
+
+    scheme GF256_SSscheme(_len,threshold);
+    shares* GF256_shares = new shares(threshold);
+    for(int i= 0; i< threshold; i++) {
+        for(auto val:(*strShares)[selected[i]]) {
+            (*GF256_shares)[i].push_back(val);
+        }
+    }
+
+    string recovered = GF256_SSscheme.getSecret(GF256_shares);
+
+    bool fail = false;
+    fail = (recovered == "0");
+    //    fail  = true;
+    return fail;
+}
+
+
+
+//  bool HamDistAtmostT::TestIfTheSahreAreValid (vector<string> &strShares, int threshold, vector<int> &selected)
+// {
+//     string channel;
+//     const unsigned int CHID_LENGTH = 4;
+//     string recovered;
+//     CryptoPP::SecretRecovery recovery(threshold, new StringSink(recovered), false);
+//
+//     CryptoPP::vector_member_ptrs<StringSource> strSources(threshold);
+//     channel.resize(CHID_LENGTH);
+//     for (unsigned int i=0; i<threshold; i++)
+//     {
+//         strSources[i].reset(new StringSource(strShares[selected[i]], false));
+//         strSources[i]->Pump(CHID_LENGTH);
+//         strSources[i]->Get((CryptoPP::byte*)&channel[0], CHID_LENGTH);
+//         strSources[i]->Attach(new CryptoPP::ChannelSwitch(recovery, channel));
+//     }
+//
+//     while (strSources[0]->Pump(256))
+//     {
+//         for (unsigned int i=1; i<threshold; i++)
+//             strSources[i]->Pump(256);
+//     }
+//
+//     for (unsigned int i=0; i<threshold; i++)
+//         strSources[i]->PumpAll();
+//
+//     bool fail = false;
+//      // string subsRcvr= recovered.substr(0, 4);
+//
+//      const char* Zero_str = "0\000\000\000";
+//      fail = (Zero_str[0] == recovered[0] && Zero_str[1] == recovered[1] && Zero_str[2] == recovered[2] && Zero_str[3] == recovered[3]);
+//
+//
+//
+//     // fail = ("0000" == recovered);//for Optimized solution, TODO: make the non optimum without cancelling it
+//     // fail = ("0\000\000" == recovered.substr(0,3));//for Optimized soulution, TODO: make the non optimum without cancelling it
+//
+//
+// //    fail  = true;
+//     return fail;
+// }
 
 
   void HamDistAtmostT::makeCombiUtil(vector<vector<int> >& ans,
@@ -140,6 +207,67 @@ cout << "";
 //}
 
 
+int HamDistAtmostT::generatesubsets_GF256(vector<string> &MainstrShares,shares* strShares,
+                    const string& DecoddCtxAE, string &recoveredMainSecret, string &plaintext_rcv, vector<int> choices,
+                    int current, int K, vector<int> selected,
+                    vector<int> Valid_selected, int _len) {
+
+//    const string CTXT_AE = DecoddCtxAE;
+    if(choices.size()-current<K-selected.size())
+        return 0;
+    if(selected.size()==K){
+        // vector<std::string> o[selected];
+        //process subset
+        bool pass;
+        // auto start_checkShare = std::chrono::high_resolution_clock::now();
+        pass = HamDistAtmostT::TestIfTheSahreAreValid_GF256(strShares, K, selected , _len);
+
+        // auto stop_CheckShare = std::chrono::high_resolution_clock::now();
+
+        // auto duration_CondDec_HD = std::chrono::duration_cast<std::chrono::microseconds>(stop_CheckShare - start_checkShare);
+        // cout  << "OPT Share Checking time: " << duration_CondDec_HD.count() << "\n";
+        if (pass)
+        {
+
+
+            Valid_selected = selected;
+            string recoverTheMainSecret;
+
+            bool ifCorrectShareVec;
+            ifCorrectShareVec = HamDistAtmostT::RecoverSecretFromValidShares (MainstrShares, K, selected, recoverTheMainSecret );
+            size_t key_size = recoverTheMainSecret.size();
+            CryptoPP::StringSink ss_recoveredMainSecret(recoveredMainSecret);
+            cout << "";
+            auto reMainSecrtSize = ss_recoveredMainSecret.Put((const CryptoPP::byte*)recoverTheMainSecret.data(),  recoverTheMainSecret.size(), false);
+            bool AEReslt = false;
+            AEReslt = CryptoSymWrapperFunctions::Wrapper_AuthDecrypt(recoverTheMainSecret, DecoddCtxAE,plaintext_rcv );
+
+
+            if(AEReslt)
+            {
+                // cout << "The recovered payload is = " << plaintext_rcv << "\n";
+                return 1;
+            }
+
+        }
+        return 0;
+    }
+    if(current==choices.size())
+        return 0;
+
+    selected.push_back(choices[current]);
+    if (HamDistAtmostT::generatesubsets_GF256(MainstrShares, strShares, DecoddCtxAE, recoveredMainSecret, plaintext_rcv,
+                        choices,current+1,K,selected,  Valid_selected, _len) == 1) return 1;
+    selected.pop_back();
+    if (HamDistAtmostT::generatesubsets_GF256(MainstrShares, strShares, DecoddCtxAE, recoveredMainSecret, plaintext_rcv,
+                        choices,current+1,K,selected, Valid_selected, _len) == 1) return 1;
+
+    return 0;
+}
+
+
+
+
 int HamDistAtmostT::generatesubsets(vector<string> &MainstrShares, vector<string> &strShares,
                     const string& DecoddCtxAE, string &recoveredMainSecret, string &plaintext_rcv, vector<int> choices,
                     int current, int K, vector<int> selected,
@@ -152,10 +280,18 @@ int HamDistAtmostT::generatesubsets(vector<string> &MainstrShares, vector<string
         // vector<std::string> o[selected];
         //process subset
         bool pass;
-
+        auto start_checkShare = std::chrono::high_resolution_clock::now();
+        // int _len = MainstrShares.size();
         pass = HamDistAtmostT::TestIfTheSahreAreValid(strShares, K, selected );//For the optimized solution
+        // pass = HamDistAtmostT::TestIfTheSahreAreValid_GF256(strShares, K, selected , _len);
+
+        auto stop_CheckShare = std::chrono::high_resolution_clock::now();
+
+        auto duration_CondDec_HD = std::chrono::duration_cast<std::chrono::microseconds>(stop_CheckShare - start_checkShare);
+        cout  << "OPT Share Checking time: " << duration_CondDec_HD.count() << "\n";
         if (pass)
         {
+
 
             Valid_selected = selected;
             string recoverTheMainSecret;
@@ -164,10 +300,12 @@ int HamDistAtmostT::generatesubsets(vector<string> &MainstrShares, vector<string
             ifCorrectShareVec = HamDistAtmostT::RecoverSecretFromValidShares (MainstrShares, K, selected, recoverTheMainSecret );
             size_t key_size = recoverTheMainSecret.size();
             CryptoPP::StringSink ss_recoveredMainSecret(recoveredMainSecret);
-            // cout << "";
+            cout << "Hi\n";
             auto reMainSecrtSize = ss_recoveredMainSecret.Put((const CryptoPP::byte*)recoverTheMainSecret.data(),  recoverTheMainSecret.size(), false);
             bool AEReslt = false;
             AEReslt = CryptoSymWrapperFunctions::Wrapper_AuthDecrypt(recoverTheMainSecret, DecoddCtxAE,plaintext_rcv );
+
+
             if(AEReslt)
             {
                 // cout << "The recovered payload is = " << plaintext_rcv << "\n";
@@ -204,8 +342,11 @@ int HamDistAtmostT::generatesubsets(vector<string> &MainstrShares, vector<string
         return 0;
     if(selected.size()==K){
 
+        // auto start_checkShare = std::chrono::high_resolution_clock::now();
+
         Valid_selected = selected;
         string recoverTheMainSecret;
+
         bool SSRecoverRsl = HamDistAtmostT::RecoverSecretFromValidShares (MainstrShares, K, selected, recoverTheMainSecret );
 
         size_t key_size = recoverTheMainSecret.size();
@@ -217,7 +358,10 @@ int HamDistAtmostT::generatesubsets(vector<string> &MainstrShares, vector<string
 
 
         AEReslt = CryptoSymWrapperFunctions::Wrapper_AuthDecrypt(recoverTheMainSecret, DecoddCtxAE,plaintext_rcv );
+        // auto stop_CheckShare = std::chrono::high_resolution_clock::now();
 
+        // auto duration_CondDec_HD = std::chrono::duration_cast<std::chrono::microseconds>(stop_CheckShare - start_checkShare);
+        // cout  << "Non_OPT Share Checking time: " << duration_CondDec_HD.count() << "\n";
         /*
          * TODO: Here based on the Jeremiah Suggestion, we need to check if the authenticated decryption outputs
          * true or not. If yes, we retun the resulting secret which is the typo. We need to use RecoverMainSecet
@@ -475,9 +619,6 @@ paillier_plaintext_t* HamDistAtmostT::RandEncod(string &share, size_t ShareSize,
 
 
 
-
-//unique_ptr<char []> HamDistAtmostT::CondEncBytes(paillier_pubkey_t* ppk,
-
 string HamDistAtmostT::CondEnc(paillier_pubkey_t* ppk,
                                char RlPwd_ctx_pull[],
                                string& typo,
@@ -539,37 +680,6 @@ string HamDistAtmostT::CondEnc(paillier_pubkey_t* ppk,
 
      string message = CryptoSymWrapperFunctions::Wrapper_pad(typo,_len); // pad(typo);  TODO: Double check if we need to make sure that we need pad here?
      string Zero_secret = "0";
-     // string Zero_secret = "0000";
-
-//    = "0000";
-    // CryptoPP::StringSink ss_Zero_secret(Zero_secret);
-    // auto ssZPutRslt = ss_Zero_secret.Put((const CryptoPP::byte*)"0000",  4, false);
-    // ss_Zero_secret.Put((const CryptoPP::byte*)"0",  1, false);
-
-
-
-//    CryptoSymWrapperFunctions::Wrapper_AuthEncrypt(b, payload, EncrypteKey);
-
-
-
-//    CryptoSymWrapperFunctions::Wrapper_AuthEncrypt(b, typo, EncrypteKey[0]);//TODO: we need to consider the payload for this part as we need to extrac it baed on our applications.
-//    std::string ctxt_final_AE;
-//    ctxt_final_AE = EncrypteKey;
-//    memcpy(&ctxt_final_AE, &EncrypteKey, 24);
-//    memcpy(&CtxtAEStr, ctx_final + 3 * sizeof(size_t), 24);
-
-
-
-
-    //    auto& strAE = EncrypteKey;
-//    std::string sAE(std::begin(strAE), std::end(strAE));
-//    size_t EnKEySize1 = sizeof(EncrypteKey);
-//    size_t EnKEySize2 = sizeof(sAE);
-
-//    assert (sizeof(EncrypteKey) == 4 * AECtxSize);
-
-//        string EncodedCtxt = CryptoSymWrapperFunctions::Wrapper_b64encode(EncrypteKey); //Encodes the ciphertext to string of chares in base64.
-
 
     CryptoPP::ChannelSwitch *channelSwitch;
     channelSwitch = NULLPTR;
@@ -616,33 +726,37 @@ string HamDistAtmostT::CondEnc(paillier_pubkey_t* ppk,
     // ********** Create and assigns the Shares for the zero part
     for (unsigned int i = 0; i < shares; i++) {
         strSinks_Zero[i].reset(new CryptoPP::StringSink(strShares_Zero[i]));
+        // channel_Zero = CryptoPP::WordToString<uint16_t>(i);
         channel_Zero = CryptoPP::WordToString<word32>(i);
         strSinks_Zero[i]->Put((CryptoPP::byte*) channel_Zero.data(), CHID_LENGTH);
+        // strSinks_Zero[i]->Put((CryptoPP::byte*) channel_Zero.data(), 1);
         channelSwitch_Zero->AddRoute(channel_Zero, *strSinks_Zero[i], DEFAULT_CHANNEL); //CryptoPP::BufferedTransformation::NULL_CHANNEL
     }
     source_Zero.PumpAll();
 
-    /*Transferring the shares to another aux array for feeding it to the encryption fuacntion*/
+/*New Share of 0*/
+    // shamir::init();//to initialise the library functions.Must be used to use the library.
+    // scheme GF256SS(static_cast<int>(_len),threshold); //creating a scheme with 8 shares and 5 threshold.
+    // shamir::shares* GF256_shares = GF256SS.createShares("0");
+
+
 
     for(unsigned int j=0; j<shares; j++ )
     {
-//        string aux = strShares[j] + strShares_Zero[j];
-//        auto& str = aux;
-//        string s(begin(str), end(str));
-//        strShares_for_Enc[j] = s;
 
+        // std::string str_GF256_shares;
+        // for(auto val:(*GF256_shares)[j]) {
+        //     str_GF256_shares = std::to_string(static_cast<unsigned int>(val.y.num));
+        // }
         CryptoPP::StringSink ss(strShares_for_Enc[j] );
         ss.Put((const CryptoPP::byte*)(strShares[j] + strShares_Zero[j]).data(),  (strShares[j] + strShares_Zero[j]).size(), false);
+        // ss.Put((const CryptoPP::byte*)(strShares[j] + str_GF256_shares + " ").data(),  (strShares[j] + str_GF256_shares).size(), false);
 
-
+        // int z_length =  str_GF256_shares.size();
+        int z_length =  strShares_Zero.size();
+        int M_length =  strShares[j].size();
     }
-//    int out = Enc_SecrtShr(strShares_for_Enc,  ppk, vctx_Shrs, ShareSize, _len); // Encrypt the shares to extract a vector of ctxts elemets.
     vctx_Shrs = HamDistAtmostT::Enc_SecrtShr_V2(strShares_for_Enc, ppk, ShareSize, _len); // Encrypt the shares to extract a vector of ctxts elemets.
-
-
-
-//    char* ctx_final =(char*) malloc (  3 * sizeof(size_t) + AECtxSize + _len *  Ctxt_Byte_size);
-
 
 
     for (int j = 0; j <_len ; j++) {
@@ -682,6 +796,179 @@ string HamDistAtmostT::CondEnc(paillier_pubkey_t* ppk,
     return "EncrypteKey[0]";
 //    return ctx_final;
 }
+
+
+
+
+
+// string HamDistAtmostT::CondEnc(paillier_pubkey_t* ppk,
+//                                char RlPwd_ctx_pull[],
+//                                string& typo,
+//                                string& payload,
+//                                size_t _len,
+//                                int threshold,
+//                                char ctx_final[])
+// {
+//
+//      string seed = CryptoPP::IntToString(time(NULL));
+//      seed.resize(AES::DEFAULT_KEYLENGTH, ' '); //The defualt key length is 16
+//      CryptoPP::RandomPool rng;
+//      rng.IncorporateEntropy((CryptoPP::byte*)seed.data(), strlen(seed.data()));
+//      int shares = _len;
+//      const unsigned int CHID_LENGTH = 4;
+//      bool fail, pass;
+//      string cipherText, encoded;
+//
+//      size_t AECtxSize = 2 * KEYSIZE_BYTES + payload.size();
+//
+//      size_t Ctxt_Vec_size =_len; //1 for the numeber of elemements, 2 for the AE and its lenght, and 2 * _len PaillerCtxt samples
+//      size_t Ctxt_Byte_size =  PAILLIER_BITS_TO_BYTES(ppk->bits)*2;
+//      memcpy(ctx_final, &Ctxt_Vec_size, sizeof(size_t));
+//      memcpy(ctx_final + sizeof(size_t), &AECtxSize, sizeof(size_t));
+//      memcpy(ctx_final + 2 * sizeof(size_t), &Ctxt_Byte_size, sizeof(size_t));
+//      /*
+// * Randomly selecting 16 bytes of secret and derive the AES key from it for Authenticated encryption.
+// * */
+//
+//      std::string* EncrypteKey = new std::string[1];
+//      string b(AES::DEFAULT_KEYLENGTH, 0);
+//      PRNG.GenerateBlock((CryptoPP::byte*) b.data(), b.size());
+//      bool kEncCtxtRst;
+//      kEncCtxtRst = CryptoSymWrapperFunctions::Wrapper_AuthEncrypt(b, payload, EncrypteKey[0]);
+//      size_t sizeEncKey = EncrypteKey[0].size();
+//      assert(sizeEncKey == AECtxSize);
+//
+//
+//      memcpy(ctx_final + 3 * sizeof(size_t), EncrypteKey[0].c_str(),  sizeof(char) * sizeEncKey); //Appending the AECtxt to the begining of the ctxt vector.
+//      delete[] EncrypteKey;
+//
+//
+//      size_t ShareSize = SSShareSize;
+//      string msg = CryptoSymWrapperFunctions::Wrapper_pad(typo,_len); //orig_typo TODO: make sure the correct input is added here perviously was orig_typo extract from encoded typo. It should be handled outside this fubnction
+//      vector<paillier_ciphertext_t*> vctx(_len);
+//      vector<paillier_ciphertext_t*> vctx1(_len); //Used for encrypting the chars of typo.
+//      vector<paillier_ciphertext_t*> vctx_Shrs(_len);
+// //    vector<paillier_ciphertext_t *> V_ctx_typo(_len);
+//      int VecSize;
+//      string Ctxt_0;
+//
+//      vctx = PaillerWrapperFunctions::Pail_Parse_Ctx_size(ppk, RlPwd_ctx_pull); // Extracting the ctxt of each char of the original meesage using the parsing function desined in Paillier Wrapper functions.
+//
+//      vctx1 = PaillerWrapperFunctions::Enc_Vec_Typo(msg, ppk);
+//
+//
+//      string message = CryptoSymWrapperFunctions::Wrapper_pad(typo,_len); // pad(typo);  TODO: Double check if we need to make sure that we need pad here?
+//      string Zero_secret = "0";
+//
+//
+//     CryptoPP::ChannelSwitch *channelSwitch;
+//     channelSwitch = NULLPTR;
+//     CryptoPP::ChannelSwitch *channelSwitch_Zero;
+//     channelSwitch_Zero = NULLPTR;
+// //        CryptoPP::StringSource source(message.c_str(), false, new CryptoPP::SecretSharing(rng, threshold, shares,
+// //                                                                                          channelSwitch = new CryptoPP::ChannelSwitch));
+//     CryptoPP::StringSource source(b, false,
+//                                   new CryptoPP::SecretSharing(rng, threshold, shares,
+//                                                               channelSwitch = new CryptoPP::ChannelSwitch, false));
+//
+//     CryptoPP::StringSource source_Zero(Zero_secret, false, new CryptoPP::SecretSharing(rng, threshold, shares,
+//                                                                                        channelSwitch_Zero = new CryptoPP::ChannelSwitch,false)); //Genreating the shares for Zero: "0"
+//
+//
+//
+//     vector<string> strShares(shares);
+//     vector<string> strShares_for_Enc(shares);
+//     vector<string> Plain_strShares(shares);
+//     CryptoPP::vector_member_ptrs<CryptoPP::StringSink> strSinks(shares);
+//     string channel;
+//
+//     /*
+//     * Generating the shares for the zero part.
+//     * */
+//
+//     vector<string> strShares_Zero(shares);
+//     vector<string> strShares_for_Enc_Zero(shares);
+//     vector<string> Plain_strShares_Zero(shares);
+//     CryptoPP::vector_member_ptrs<CryptoPP::StringSink> strSinks_Zero(shares);
+//     string channel_Zero;
+//     //*-*-*-*-*-*-*-*-*
+//
+//     // ********** Create Shares for the AES secret information "b".
+//     for (unsigned int i = 0; i < shares; i++) {
+//         strSinks[i].reset(new CryptoPP::StringSink(strShares[i]));
+//         channel = CryptoPP::WordToString<word32>(i);
+//         strSinks[i]->Put((CryptoPP::byte*) channel.data(), CHID_LENGTH);
+//         channelSwitch->AddRoute(channel, *strSinks[i],DEFAULT_CHANNEL  ); //CryptoPP::BufferedTransformation::NULL_CHANNEL
+//     }
+//     source.PumpAll();
+//
+//
+//     // ********** Create and assigns the Shares for the zero part
+//     for (unsigned int i = 0; i < shares; i++) {
+//         strSinks_Zero[i].reset(new CryptoPP::StringSink(strShares_Zero[i]));
+//         channel_Zero = CryptoPP::WordToString<word32>(i);
+//         strSinks_Zero[i]->Put((CryptoPP::byte*) channel_Zero.data(), CHID_LENGTH);
+//         channelSwitch_Zero->AddRoute(channel_Zero, *strSinks_Zero[i], DEFAULT_CHANNEL); //CryptoPP::BufferedTransformation::NULL_CHANNEL
+//     }
+//     source_Zero.PumpAll();
+//
+//     /*Transferring the shares to another aux array for feeding it to the encryption fuacntion*/
+//
+//     for(unsigned int j=0; j<shares; j++ )
+//     {
+//         CryptoPP::StringSink ss(strShares_for_Enc[j] );
+//         ss.Put((const CryptoPP::byte*)(strShares[j] + strShares_Zero[j]).data(),  (strShares[j] + strShares_Zero[j]).size(), false);
+//
+//     }
+// //    int out = Enc_SecrtShr(strShares_for_Enc,  ppk, vctx_Shrs, ShareSize, _len); // Encrypt the shares to extract a vector of ctxts elemets.
+//     vctx_Shrs = HamDistAtmostT::Enc_SecrtShr_V2(strShares_for_Enc, ppk, ShareSize, _len); // Encrypt the shares to extract a vector of ctxts elemets.
+//
+//
+//
+// //    char* ctx_final =(char*) malloc (  3 * sizeof(size_t) + AECtxSize + _len *  Ctxt_Byte_size);
+//
+//
+//
+//     for (int j = 0; j <_len ; j++) {
+//         paillier_ciphertext_t* Aux_Ctx;
+//         paillier_ciphertext_t* Aux_Ctx1;
+//         paillier_ciphertext_t* V_ctx_typo;
+//         paillier_plaintext_t *R;
+//         char* byteCtxt1;
+//
+//         Aux_Ctx1 =paillier_create_enc_zero();
+//         Aux_Ctx = PaillerWrapperFunctions::Pail_Subtct(ppk, vctx[j], vctx1[j]);
+//
+//         R = PaillerWrapperFunctions::Rand_Plain_Pail(ppk); //I need to describe a function to generate random number in plaintext.
+// //        mpz_powm(Aux_Ctx1->c, Aux_Ctx->c, R->m, ppk->n_squared);
+//         Aux_Ctx1 = PaillerWrapperFunctions::Pail_Mult_PtxCtx(ppk, Aux_Ctx, R);
+//         V_ctx_typo = PaillerWrapperFunctions::Pail_Add(ppk, vctx_Shrs[j], Aux_Ctx1); //TODO: Continue using the functions which will be defined in the Paillier Wrapper function.
+//
+//         byteCtxt1 = (char*)paillier_ciphertext_to_bytes(Ctxt_Byte_size, V_ctx_typo);//TODO: Temproray
+// //        byteCtxt1 = (char*)paillier_ciphertext_to_bytes(Ctxt_Byte_size, vctx_Shrs[j]);
+//         memcpy(ctx_final + 3 * sizeof(size_t) + AECtxSize + j * Ctxt_Byte_size, byteCtxt1, Ctxt_Byte_size);
+//
+//         paillier_freeciphertext(Aux_Ctx);
+//         paillier_freeciphertext(Aux_Ctx1);
+//         paillier_freeciphertext(V_ctx_typo);
+//         paillier_freeplaintext(R);
+// //        free(byteCtxt1);
+//     }
+//
+//
+// //    ctx_final[3 * sizeof(size_t) + AECtxSize + _len * Ctxt_Byte_size] = '\0';
+//     for (int i = 0; i< _len; i++)
+//     {
+//         paillier_freeciphertext(vctx[i]);
+//         paillier_freeciphertext(vctx1[i]);
+//         paillier_freeciphertext(vctx_Shrs[i]);
+//     }
+//     return "EncrypteKey[0]";
+// //    return ctx_final;
+// }
+//
+//
+
 
 
 tuple<vector<paillier_ciphertext_t*>, string>  HamDistAtmostT::Pail_Parse_Ctx_size_AECtx(paillier_pubkey_t* ppk,
@@ -892,6 +1179,7 @@ int HamDistAtmostT::CondDec_NonSmallFieldCheck(paillier_pubkey_t* ppk,
     mpz_init(P_GF);
      size_t ShareSize =  SSShareSize;
     int max_power_int = (ShareSize * 8) + 1;
+    // int max_power_int = (ShareSize * 5) + 1;
     mpz_ui_pow_ui(P_GF, 2, max_power_int);
     mpz_sub_ui(P_GF, P_GF, 1); // computing the value of P_GF based on the size of the input value.
     void* ByteDec;
@@ -911,6 +1199,7 @@ int HamDistAtmostT::CondDec_NonSmallFieldCheck(paillier_pubkey_t* ppk,
 //        ab = PaillerWrapperFunctions::mpz_to_vector(dec->m, ShareSize);
         string s(ab.begin(), ab.end());
         strShares_Main[j] =  s.substr (0,20);
+        // strShares_Zero[j] =  s.substr (20,8);
         strShares_Zero[j] =  s.substr (20,8);
 
         free(ByteDec);
@@ -972,8 +1261,7 @@ int HamDistAtmostT::CondDec_NonSmallFieldCheck(paillier_pubkey_t* ppk,
     return rsltRcVr;
 }
 
-
-int HamDistAtmostT::CondDec(paillier_pubkey_t* ppk,
+int HamDistAtmostT::CondDec_SmallGF256(paillier_pubkey_t* ppk,
                               char typo_ctx [],
                               paillier_prvkey_t* psk,
                               int threshold,
@@ -996,6 +1284,9 @@ int HamDistAtmostT::CondDec(paillier_pubkey_t* ppk,
 
      vector<string> strShares_Zero(_len);
      vector<string> strShares_Main(_len);
+    shares* GF256_shares = new shares(_len);
+    point temp;
+
      paillier_plaintext_t* dec;
      const unsigned int CHID_LENGTH = 4;
 
@@ -1004,6 +1295,7 @@ int HamDistAtmostT::CondDec(paillier_pubkey_t* ppk,
      mpz_init(P_GF);
      size_t ShareSize = SSShareSize;
      int max_power_int = (ShareSize * 8) + 1;
+    // int max_power_int = (ShareSize * 5) + 1;
      mpz_ui_pow_ui(P_GF, 2, max_power_int);
      mpz_sub_ui(P_GF, P_GF, 1); // computing the value of P_GF based on the size of the input value.
      void* ByteDec;
@@ -1023,14 +1315,36 @@ int HamDistAtmostT::CondDec(paillier_pubkey_t* ppk,
 //        ab = PaillerWrapperFunctions::mpz_to_vector(dec->m, ShareSize);
         string s(ab.begin(), ab.end());
         strShares_Main[j] =  s.substr (0,20);
-        strShares_Zero[j] =  s.substr (20,8);
+        // strShares_Zero[j] =  s.substr (20,8);
+         // strShares_Zero[j] =  s.substr (20,8);
+         strShares_Zero[j] =  s.substr (20, 3);
+
+
+         scheme GF256_SSscheme(_len,threshold);
+         unsigned char c;
+         temp.x = GF256::byte(j+1);
+         try {
+             c =static_cast<unsigned char>(static_cast<unsigned int>(std::stoi(strShares_Zero[j])) % 256);
+         } catch (const std::invalid_argument& e) {
+             // Generate a random number between 0 and 255
+             std::srand(std::time(0));
+             c = std::rand() % 256;
+             // std::cerr << "Invalid argument: The string does not contain a valid integer. Error: " << e.what() << std::endl;
+         } catch (const std::out_of_range& e) {
+             std::srand(std::time(0));
+             c = std::rand() % 256;
+             // std::cerr << "Out of range: The number is too large to fit in an int. Error: " << e.what() << std::endl;
+         }
+
+         temp.y = GF256::byte(static_cast<unsigned char>(c));
+         (*GF256_shares)[j].push_back(temp);
+         }
 
         free(ByteDec);
 //        free(ab);
         paillier_freeplaintext(dec);
 //        paillier_freeciphertext(V_ctx_typo[j]);
 
-     }
 
 
 
@@ -1042,9 +1356,13 @@ int HamDistAtmostT::CondDec(paillier_pubkey_t* ppk,
     vector<int> v(_len);
     vector<int> ValidSelected(threshold);
     v = HamDistAtmostT::GnereateVectorOfIntegeres(_len);
-    rsltRcVr = HamDistAtmostT::generatesubsets(strShares_Main, strShares_Zero,  CtxAE, MainRecoveredSecret,
-                                           plaintext_rcv, v,0,threshold, Valid_selected, ValidSelected);
 
+
+    // rsltRcVr = HamDistAtmostT::generatesubsets(strShares_Main, strShares_Zero,  CtxAE, MainRecoveredSecret,
+                                           // plaintext_rcv, v,0,threshold, Valid_selected, ValidSelected);
+
+    rsltRcVr = HamDistAtmostT::generatesubsets_GF256(strShares_Main, GF256_shares,  CtxAE, MainRecoveredSecret,
+                                           plaintext_rcv, v,0,threshold, Valid_selected, ValidSelected, _len);
 
 //    string ciphertext_rcv;
     // bool AEReslt;
@@ -1076,6 +1394,121 @@ int HamDistAtmostT::CondDec(paillier_pubkey_t* ppk,
 
     return ret;
 }
+
+
+
+int HamDistAtmostT::CondDec(paillier_pubkey_t* ppk,
+                              char typo_ctx [],
+                              paillier_prvkey_t* psk,
+                              int threshold,
+                              string &recovered,
+                              size_t _len)
+{
+     int ret =0;
+     string CtxAE;
+     vector<paillier_ciphertext_t*> V_ctx_typo(_len);
+     int pars_rslt =0;
+
+
+     pars_rslt = HamDistAtmostT::Pail_Parse_Ctx_size_AECtx2(ppk, typo_ctx, CtxAE, V_ctx_typo );
+//    std::string CtxAE;
+//    CtxAE = CtxAE2;
+//    memcpy(&CtxAE, &CtxAE2, 24);
+
+//    CtxAE2.clear();
+//    memcpy(&CtxAE, &CtxAE2[0], CtxAE2.size() );
+
+     vector<string> strShares_Zero(_len);
+     vector<string> strShares_Main(_len);
+
+     paillier_plaintext_t* dec;
+     const unsigned int CHID_LENGTH = 4;
+
+
+     mpz_t P_GF;
+     mpz_init(P_GF);
+     size_t ShareSize = SSShareSize;
+     int max_power_int = (ShareSize * 8) + 1;
+    // int max_power_int = (ShareSize * 5) + 1;
+     mpz_ui_pow_ui(P_GF, 2, max_power_int);
+     mpz_sub_ui(P_GF, P_GF, 1); // computing the value of P_GF based on the size of the input value.
+     void* ByteDec;
+     for  (int j = 0; j <_len; j++)
+     {
+        dec = paillier_dec(NULL, ppk, psk, V_ctx_typo[j]);
+        mpz_mod(dec->m, dec->m, P_GF); // The DRand function which transfers which cancelouts the term a_i * GF_P which was added previously.
+        //Jsut now we need to export the mpz_t element to byte stream which are elements of the secret sharing scheme.
+
+        vector<CryptoPP::byte> ab (ShareSize);
+//        vector<char> ab (ShareSize);
+//        string* ab = (string*) malloc(ShareSize);
+//        string s;
+        ByteDec = paillier_plaintext_to_bytes_NegOrd(ShareSize, dec);
+        memcpy(&ab[0],ByteDec, ShareSize);
+//        string s  = ab[0];
+//        ab = PaillerWrapperFunctions::mpz_to_vector(dec->m, ShareSize);
+        string s(ab.begin(), ab.end());
+        strShares_Main[j] =  s.substr (0,20);
+        // strShares_Zero[j] =  s.substr (20,8);
+         // strShares_Zero[j] =  s.substr (20,8);
+         strShares_Zero[j] =  s.substr (20, 8);
+         }
+
+        free(ByteDec);
+//        free(ab);
+        paillier_freeplaintext(dec);
+//        paillier_freeciphertext(V_ctx_typo[j]);
+
+
+
+
+    vector<int> Valid_selected;
+    string MainRecoveredSecret;
+    string plaintext_rcv;
+    int rsltRcVr =0;
+
+    vector<int> v(_len);
+    vector<int> ValidSelected(threshold);
+    v = HamDistAtmostT::GnereateVectorOfIntegeres(_len);
+
+
+    rsltRcVr = HamDistAtmostT::generatesubsets(strShares_Main, strShares_Zero,  CtxAE, MainRecoveredSecret,
+                                           plaintext_rcv, v,0,threshold, Valid_selected, ValidSelected);
+
+    // rsltRcVr = HamDistAtmostT::generatesubsets_GF256(strShares_Main, GF256_shares,  CtxAE, MainRecoveredSecret,
+                                           // plaintext_rcv, v,0,threshold, Valid_selected, ValidSelected, _len);
+
+//    string ciphertext_rcv;
+    // bool AEReslt;
+//    HamDistAtmostT::ToConstStringConvert(CtxAE2);
+    /*I have modified the function for handling the following part*/
+
+    // AEReslt = CryptoSymWrapperFunctions::Wrapper_AuthDecrypt(MainRecoveredSecret, CtxAE,plaintext_rcv );
+
+
+    mpz_clear(P_GF);
+    if (rsltRcVr == 1)
+    {
+        recovered = plaintext_rcv;
+        ret =1;
+    }
+    else
+    {
+//        recovered = ""; //(The original agreed i one)
+        recovered = plaintext_rcv;
+        ret = -1;
+    }
+
+//    for (int i=0; i< _len; i++)
+//    {
+//        paillier_freeciphertext(V_ctx_typo[i]);
+//    }
+//    paillier_freeplaintext(dec);
+
+
+    return ret;
+}
+
 
 int HamDistAtmostT::CondDec_2dif(paillier_pubkey_t* ppk,
                               char typo_ctx [],

@@ -56,6 +56,8 @@ include_directories("/usr/local/include")
 #include_directories("/usr/local/include/cryptopp")
 #include_directories("argon2/phcargon2/include")
 include_directories("paillier")
+include_directories("ShamirSS/src")
+#include_directories("argon2/phcargon2")
 
 include_directories( ${MY_EXTERNAL_SOURCE__DIR})
 
@@ -87,6 +89,7 @@ ENABLE_TESTING()
 add_subdirectory(test) #//TODO: we need to add the test directory
 
 file(COPY PWDvsTyposDataSet DESTINATION test )
+
 file(COPY GeneratePlotsPdfs DESTINATION . )
 
 #file(COPY TestScript.py DESTINATION test )

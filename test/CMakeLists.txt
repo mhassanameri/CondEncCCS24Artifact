@@ -13,6 +13,7 @@ include_directories(${GMP_INCLUDE_DIRS})
 
 set(TEST_SRCS test-main.cpp testCondEncEvaluation.cpp testCondEncEvaluation.h
         ../paillier/pailliercpp.cpp ../paillier/pailliercpp.h
+        ../ShamirSS/src/GF256.cpp ../ShamirSS/src/GF256.h ../ShamirSS/src/shamir.cpp ../ShamirSS/src/shamir.h
         #        set(TEST_SRCS test-main.cpp test_pw_crypto.cpp test_install.cpp
 #        set(TEST_SRCS testCondEncEvaluation.cpp testCondEncEvaluation.h
 #        ../src/PaillierWrapperFunctions.cpp ../src/PaillierWrapperFunctions.h
@@ -64,14 +65,21 @@ message(STATUS "condenccpp lib: " ${CRYPTOPP_INCLUDE_DIRS})
 
 
 include_directories( ${GMP_INCLUDE_DIRS})
-target_include_directories(tests PUBLIC ${CMAKE_SOURCE_DIR}/src ${CMAKE_BINARY_DIR}/src ${GMP_INCLUDE_DIRS} "../paillier/pailliercpp.cpp" ${ZXCVBN_INCLUDE_DIRS} ${PLOG_INCLUDE_DIRS})
+target_include_directories(tests PUBLIC ${CMAKE_SOURCE_DIR}/src ${CMAKE_BINARY_DIR}/src ${GMP_INCLUDE_DIRS} "../paillier/pailliercpp.cpp" "../ShamirSS/src/GF256.cpp" "../ShamirSS/src/GF256.h" "../ShamirSS/src/shamir.cpp" "../ShamirSS/src/shamir.h" ${ZXCVBN_INCLUDE_DIRS} ${PLOG_INCLUDE_DIRS})
 
 #target_include_directories(tests PUBLIC ${CRYPTOPP_INCLUDE_DIRS} ${CMAKE_SOURCE_DIR}/src ${CMAKE_BINARY_DIR}/src  ${ZXCVBN_INCLUDE_DIRS} ${PLOG_INCLUDE_DIRS})
 #target_include_directories(tests PUBLIC ${${CRYPTOPP}_SOURCE_DIR} ${CMAKE_SOURCE_DIR}/src ${CMAKE_BINARY_DIR}/src ${ZXCVBN_INCLUDE_DIRS} ${PLOG_INCLUDE_DIRS})
 
 #target_link_libraries(tests /Users/mameriek/Documents/GitHub/ConditionalEncryptionTypTop/CondEncCPP/cmake-build-debug/_deps/cryptopp-build/libcryptopp.a)
 #target_link_libraries(tests /usr/local/lib/libargon2.a)
-target_link_libraries(tests /home/hassan/CLionProjects/CondEncCCS24/argon2/phcargon2/libargon2.a)
+#target_link_libraries(tests /home/hassan/CLionProjects/CondEncCCS24/argon2/phcargon2/libargon2.a)
+
+find_library(ARGON2_LIBRARY argon2 PATHS ${CMAKE_SOURCE_DIR}/argon2/phcargon2)
+if(ARGON2_LIBRARY)
+    target_link_libraries(tests ${ARGON2_LIBRARY})
+else()
+    message(FATAL_ERROR "libargon2.a not found!")
+endif()
 
 #target_link_libraries(tests /usr/lib/libargon2.a)
 #target_link_libraries(tests ../argon2/phcargon2/libargon2.a)

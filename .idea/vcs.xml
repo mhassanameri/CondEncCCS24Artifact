@@ -6,6 +6,7 @@
     <mapping directory="$PROJECT_DIR$/3rdparty/zxcvbn21" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/build/cryptopp-cmake/cryptopp" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/cmake-build-debug/cryptopp-cmake/cryptopp" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/cmake-build-release/cryptopp-cmake/cryptopp" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/cryptopp-cmake" vcs="Git" />
   </component>
 </project>

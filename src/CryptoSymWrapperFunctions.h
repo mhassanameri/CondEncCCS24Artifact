@@ -7,6 +7,7 @@
 
 #include <string>
 #include <iostream>
+#include <random>
 using std::ostream;
 using std::cout;
 using std::cerr;
@@ -258,5 +259,38 @@ class CryptoSymWrapperFunctions {
 //    static void Pad(RandomNumberGenerator& rng, const byte *input, size_t inputLen, byte *pkcsBlock, size_t pkcsBlockLen);
 
 };
+
+
+class ShamirSecretSharing {
+public:
+    ShamirSecretSharing(int threshold, int numShares)
+       : threshold(threshold), numShares(numShares) {
+        assert(threshold > 0 && numShares >= threshold);
+    }
+
+
+    // Function to split the secret (0 or 1 bit) into shares
+    std::vector<uint8_t> split(uint8_t secret);
+
+    // Function to combine the shares and recover the secret
+    uint8_t combine(const std::vector<uint8_t>& shares, const std::vector<uint8_t>& x_values);
+
+private:
+     int threshold;
+     int numShares;
+
+    // Generate random coefficients for the polynomial
+    void generateRandomCoefficients(std::vector<uint8_t>& coefficients);
+
+    // Evaluate the polynomial at a given x value
+    uint8_t evaluatePolynomial(uint8_t secret, const std::vector<uint8_t>& coefficients, uint8_t x);
+
+    // Compute the multiplicative inverse of a modulo m
+    uint8_t modInverse(uint8_t a, uint8_t m);
+};
+
+
+
+
 
 #endif //TYPTOP_CRYPTOSYMWRAPPERFUNCTIONS_H

@@ -5,7 +5,12 @@ PROTOBUF_GENERATE_CPP(PROTO_SRCS PROTO_HDRS db.proto)
 include_directories(${PROTOBUF_INCLUDE_DIRS})
 message(STATUS ">>> PROTOBUF_INCLUDE_DIRS: (${PROTOBUF_INCLUDE_DIRS})")
 
-find_library(PROTOBUF_STATIC_LIB libprotobuf.a PROTOBUF_LIBRARIES)
+if(APPLE)
+    find_library(PROTOBUF_STATIC_LIB libprotobuf-c.a PROTOBUF_LIBRARIES)
+else()
+    find_library(PROTOBUF_STATIC_LIB libprotobuf.a PROTOBUF_LIBRARIES)
+endif()
+#    find_library(PROTOBUF_STATIC_LIB libprotobuf.a PROTOBUF_LIBRARIES)
 find_library(PROTOBUF_SHARED_LIB libprotobuf.so PROTOBUF_LIBRARIES)
 
 find_library(GMP_STATIC_LIB libgmp.a GMP_LIBRARIES)
@@ -57,7 +62,7 @@ set(CONDENCCPP_SRCS  ${CONDENCCPP_SRCS} ${CONDENCCPP_HDRS}  ${PROTO_SRCS} ${PROT
         ConditionalEncryptionHamDistAtmostT.cpp ConditionalEncryptionHamDistAtmostT.h
         ConditionalEncryptionCAPSLOCK.cpp ConditionalEncryptionCAPSLOCK.h
         ConditionalEncryptionOR.cpp
-
+        ../ShamirSS/src/GF256.cpp ../ShamirSS/src/GF256.h ../ShamirSS/src/shamir.cpp ../ShamirSS/src/shamir.h
 )
 
 message(STATUS ">>>> ${CONDENCCPP_SRCS}")
@@ -66,6 +71,7 @@ message(STATUS ">>>> ${CONDENCCPP_SRCS}")
 
 add_library(condenccppdb ${CONDENCCPP_SRCS}
         ../paillier/pailliercpp.cpp ../paillier/pailliercpp.h
+        ../ShamirSS/src/GF256.cpp ../ShamirSS/src/GF256.h ../ShamirSS/src/shamir.cpp ../ShamirSS/src/shamir.h
         )
 #target_link_libraries(condenccppdb ${CRYPTOPP_STATIC_LIB})
 
@@ -80,26 +86,37 @@ add_executable(condenccpp main.cpp
         ConditionalEncryptionHamDistAtmostT.cpp ConditionalEncryptionHamDistAtmostT.h
         ConditionalEncryptionOR.cpp
         ConditionalEncryptionCAPSLOCK.cpp ConditionalEncryptionCAPSLOCK.h
-        )  # Not sure why we have win32
+        ../ShamirSS/src/GF256.cpp ../ShamirSS/src/GF256.h ../ShamirSS/src/shamir.cpp ../ShamirSS/src/shamir.h
+)  # Not sure why we have win32
 
 
 include_directories( ${GMP_INCLUDE_DIRS})
 
 SET (CRYPTOPP_INCLUDE_DIRS "cryptopp-cmake/cryptopp" )
 message(STATUS ">>> INCLUDE_DIRS: (${CMAKE_PROJECT_DIR} ${CRYPTOPP_INCLUDE_DIRS}, ${CMAKE_CURRENT_BINARY_DIR}, ${ZXCVBN_INCLUDE_DIRS}, ${PLOG_INCLUDE_DIRS})")
-target_include_directories(condenccppdb PRIVATE ${GMP_INCLUDE_DIRS} ${CMAKE_CURRENT_BINARY_DIR} "../paillier/pailliercpp.cpp" "../paillier/pailliercpp.h" ${ZXCVBN_INCLUDE_DIRS} ${PLOG_INCLUDE_DIRS})
-target_include_directories(condenccpp PUBLIC ${GMP_INCLUDE_DIR}  ${CMAKE_CURRENT_BINARY_DIR} "../paillier/pailliercpp.cpp" "../paillier/pailliercpp.h" ${ZXCVBN_INCLUDE_DIRS} ${PLOG_INCLUDE_DIRS})
+target_include_directories(condenccppdb PRIVATE ${GMP_INCLUDE_DIRS} ${CMAKE_CURRENT_BINARY_DIR} "../paillier/pailliercpp.cpp" "../paillier/pailliercpp.h" "../ShamirSS/src/GF256.cpp" "../ShamirSS/src/GF256.h" "../ShamirSS/src/shamir.cpp" "../ShamirSS/src/shamir.h" ${ZXCVBN_INCLUDE_DIRS} ${PLOG_INCLUDE_DIRS})
+target_include_directories(condenccpp PUBLIC ${GMP_INCLUDE_DIR}  ${CMAKE_CURRENT_BINARY_DIR} "../paillier/pailliercpp.cpp" "../paillier/pailliercpp.h"  "../ShamirSS/src/GF256.cpp" "../ShamirSS/src/GF256.h" "../ShamirSS/src/shamir.cpp" "../ShamirSS/src/shamir.h" ${ZXCVBN_INCLUDE_DIRS} ${PLOG_INCLUDE_DIRS})
 #target_include_directories(condenccppdb PRIVATE ${CMAKE_CURRENT_BINARY_DIR}  "../paillier"  ${ZXCVBN_INCLUDE_DIRS} ${PLOG_INCLUDE_DIRS})
 #target_include_directories(condenccpp PUBLIC ${CMAKE_CURRENT_BINARY_DIR} "../paillier" ${ZXCVBN_INCLUDE_DIRS} ${PLOG_INCLUDE_DIRS})
 
 ### Link libraries. These are configured through 3rdparty/${lib_name}
 
+find_library(ARGON2_LIBRARY argon2 PATHS ${CMAKE_SOURCE_DIR}/argon2/phcargon2)
+if(ARGON2_LIBRARY)
+    target_link_libraries(condenccppdb cryptopp  ${GMP_STATIC_LIB} ${ARGON2_LIBRARY})
+    target_link_libraries(condenccpp cryptopp ${ARGON2_LIBRARY})
+else()
+    message(FATAL_ERROR "libargon2.a not found!")
+endif()
 
-target_link_libraries(condenccppdb cryptopp  ${GMP_STATIC_LIB} /home/hassan/CLionProjects/CondEncCCS24/argon2/phcargon2/libargon2.a)
+
+#target_link_libraries(condenccppdb cryptopp  ${GMP_STATIC_LIB} /home/hassan/CLionProjects/CondEncCCS24/argon2/phcargon2/libargon2.a)
 
 #target_link_libraries(condenccpp condenccppdb ${CRYPTOPP_STATIC_LIB} zxcvbn curl)
+
 target_link_libraries(condenccpp condenccppdb cryptopp zxcvbn curl)
-target_link_libraries(condenccpp /home/hassan/CLionProjects/CondEncCCS24/argon2/phcargon2/libargon2.a)
+#target_link_libraries(condenccpp /home/hassan/CLionProjects/CondEncCCS24/argon2/phcargon2/libargon2.a)
+
 
 add_dependencies(condenccppdb cryptopp zxcvbn)
 

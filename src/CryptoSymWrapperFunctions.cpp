@@ -4,6 +4,8 @@
 
 #include "CryptoSymWrapperFunctions.h"
 
+#include <random>
+
 // #include <bits/struct_stat.h>
 
 
@@ -370,6 +372,90 @@ bool CryptoSymWrapperFunctions::Wrapper_AuthDecrypt(const string &k, const strin
     // msg.clear(); msg.resize( n );
     // if( n > 0 ) { df.Get( (byte*)msg.data(), msg.size() ); }
 }
+
+
+    // Function to split the secret (0 or 1 bit) into shares
+    std::vector<uint8_t> ShamirSecretSharing::split(uint8_t secret) {
+        assert(secret == 0 || secret == 1); // Secret must be 0 or 1
+
+        // Generate random coefficients for the polynomial
+        std::vector<uint8_t> coefficients(threshold - 1);
+        generateRandomCoefficients(coefficients);
+
+        // Create shares
+        std::vector<uint8_t> shares(numShares);
+        for (int i = 0; i < numShares; ++i) {
+            uint8_t x = static_cast<uint8_t>(i + 1);
+            shares[i] = evaluatePolynomial(secret, coefficients, x);
+        }
+
+        return shares;
+    }
+
+    // Function to combine the shares and recover the secret
+    uint8_t ShamirSecretSharing::combine(const std::vector<uint8_t>& shares, const std::vector<uint8_t>& x_values) {
+        assert(shares.size() >= threshold);
+
+        uint8_t secret = 0;
+        for (size_t i = 0; i < threshold; ++i) {
+            uint8_t y = shares[i];
+            uint8_t x = x_values[i];
+
+            // Compute the Lagrange basis polynomial L_i(0)
+            uint8_t Li = 1;
+            for (size_t j = 0; j < threshold; ++j) {
+                if (i != j) {
+                    uint8_t xj = x_values[j];
+                    Li *= (0 - xj) * modInverse(x - xj, 256);
+                }
+            }
+            secret ^= y * Li;
+            // secret += y * Li;
+
+        }
+
+        return secret;
+    }
+
+    int threshold;
+    int numShares;
+
+    // Generate random coefficients for the polynomial
+    void ShamirSecretSharing::generateRandomCoefficients(std::vector<uint8_t>& coefficients) {
+        auto seed = std::chrono::high_resolution_clock::now().time_since_epoch().count();
+        // std::random_device rd;
+        std::mt19937  gen(static_cast<unsigned int>(seed));
+        std::uniform_int_distribution<uint8_t> dist(0, 255);
+
+        for (auto& coef : coefficients) {
+            coef = dist(gen);
+        }
+    }
+
+    // Evaluate the polynomial at a given x value
+    uint8_t ShamirSecretSharing::evaluatePolynomial(uint8_t secret, const std::vector<uint8_t>& coefficients, uint8_t x) {
+        uint8_t result = secret;
+        uint8_t x_power = 1;
+
+        for (const auto& coef : coefficients) {
+            x_power *= x;
+            result ^= coef * x_power;
+        }
+
+        return result;
+    }
+
+    // Compute the multiplicative inverse of a modulo m
+    uint8_t ShamirSecretSharing::modInverse(uint8_t a, uint8_t m) {
+        for (uint8_t x = 1; x < m; ++x) {
+            if ((a * x) % m == 1) {
+                return x;
+            }
+        }
+        return 1; // Should never happen if m is a prime number
+    }
+
+
 
 //
 //void CryptoSymWrapperFunctions::Pad(const byte *input, size_t inputLen, byte *pkcsBlock, size_t pkcsBlockLen )
