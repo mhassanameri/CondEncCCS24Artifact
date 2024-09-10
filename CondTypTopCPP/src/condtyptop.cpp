@@ -244,6 +244,11 @@ void TypTop::reinitialize(const string &pw) {
     initialize(pw);
 }
 
+void TypTop::MHF_Activation( const bool MHF_ON) {
+    this->_MHF_ON = MHF_ON;
+}
+
+
 void TypTop::initialize(const string &real_pw) {
     ConfigHeader *ch = db.mutable_ch();
     this->real_pw = real_pw;
@@ -347,7 +352,7 @@ void TypTop::initialize(const string &real_pw) {
             LOGD << "Inserting: " << T_cache[i];
         }
 
-        auto AuthEncRst = CryptoSymWrapperFunctions::Wrapper_AuthEncrypt_Hardened(T_cache[i], sk_str_Pail, sk_ctx); //Encrypting the generated secret key under the symmerteric key extracted from pw
+        auto AuthEncRst = CryptoSymWrapperFunctions::Wrapper_AuthEncrypt_Hardened(T_cache[i], sk_str_Pail, sk_ctx, this->_MHF_ON); //Encrypting the generated secret key under the symmerteric key extracted from pw
         // LOG_DEBUG << "Inserting " << T_cache[i] << " at " << i;
         _insert_into_typo_cache(i, sk_ctx, (i == 0 ? INT_MAX : T_size - i));
 #ifdef DEBUG
@@ -464,7 +469,7 @@ int TypTop::is_typo_present(const string &pw, string &sk_str) const {
     int i = 0;
     for (i = 0; i < T_size; i++) {
         sk_str.clear();
-        if (CryptoSymWrapperFunctions::Wrapper_AuthDecrypt_Hardened(pw, db.t(i), sk_str)) { //looks like that all the ctxs in the dp.t are the encryption of the set of pdws that have small edit distance from the original pwd. Encryption scheme is simply the the classic encryption algorithm.
+        if (CryptoSymWrapperFunctions::Wrapper_AuthDecrypt_Hardened(pw, db.t(i), sk_str, this->_MHF_ON)) { //looks like that all the ctxs in the dp.t are the encryption of the set of pdws that have small edit distance from the original pwd. Encryption scheme is simply the the classic encryption algorithm.
             break;
         }
     }
@@ -473,7 +478,7 @@ int TypTop::is_typo_present(const string &pw, string &sk_str) const {
 
 bool TypTop::is_correct(const string &pw) const {
     string sk_str;
-    bool ret = CryptoSymWrapperFunctions::Wrapper_AuthDecrypt_Hardened(pw, db.t(0), sk_str);
+    bool ret = CryptoSymWrapperFunctions::Wrapper_AuthDecrypt_Hardened(pw, db.t(0), sk_str, this->_MHF_ON);
     sk_str.clear();
     return ret;
 }
@@ -673,7 +678,7 @@ void TypTop::expire_typos(const string &sk_str) {
         if ((t_now - ench.last_used(i)) > db.ch().typo_expiry_time()) {
             string fake_pw(DEFAULT_PW_LENGTH, 0);
             PRNG.GenerateBlock((CryptoPP::byte *) fake_pw.data(), fake_pw.size());
-            CryptoSymWrapperFunctions::Wrapper_AuthEncrypt_Hardened(fake_pw, sk_str, sk_ctx);
+            CryptoSymWrapperFunctions::Wrapper_AuthEncrypt_Hardened(fake_pw, sk_str, sk_ctx,this->_MHF_ON);
             LOG_INFO << "Expiring typo at " << i
                       << " time_now:" << t_now
                       << " Last used:" << ench.last_used(i);
@@ -757,7 +762,7 @@ void TypTop::process_waitlist(const string &sk_str) {
             // try to insert at i-th location
             if (win(ench.freq((int) i), freq)) {
 //                cout  << "A typo is inserted to the chache of valid typos \n";
-                CryptoSymWrapperFunctions::Wrapper_AuthEncrypt_Hardened(pw, sk_str, sk_ctx);
+                CryptoSymWrapperFunctions::Wrapper_AuthEncrypt_Hardened(pw, sk_str, sk_ctx, this->_MHF_ON);
                 LOG_DEBUG << "Inserting " << pw << " at " << i;
                 _insert_into_typo_cache((int) i, sk_ctx, max(freq, freq_vec[i] + 1));
 #ifdef DEBUG

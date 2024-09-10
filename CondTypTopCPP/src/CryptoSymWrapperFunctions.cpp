@@ -261,46 +261,63 @@ bool CryptoSymWrapperFunctions::Wrapper_AuthDecrypt(const string &k, const strin
 }
 
 
- bool CryptoSymWrapperFunctions::Wrapper_AuthEncrypt_Hardened(const string &k, const string &msg, string& ctx) {
+ bool CryptoSymWrapperFunctions::Wrapper_AuthEncrypt_Hardened(const string &k, const string &msg, string& ctx, const bool MHF_ON) {
     bool ret = false;
-    try {
-        ctx.clear();
-        SecByteBlock salt, key;
-        auto ret_harden = CryptoSymWrapperFunctions::Wrapper_harden_pw(k, salt, key); //Extracts the secret key "key" from the input value k.
-        string base_ctx;
+    if (MHF_ON == true)
+    {
+        try {
+            ctx.clear();
+            SecByteBlock salt, key;
+            auto ret_harden = CryptoSymWrapperFunctions::Wrapper_harden_pw(k, salt, key); //Extracts the secret key "key" from the input value k.
+            string base_ctx;
 
-        ret = CryptoSymWrapperFunctions::Wrapper_encrypt(key, msg, "", base_ctx);
+            ret = CryptoSymWrapperFunctions::Wrapper_encrypt(key, msg, "", base_ctx);
 
-        // TODO:  <hash_algo>.<iteration_cnt>.<salt>.<ctx>
-        CryptoPP::StringSink ss(ctx);
-        // ss.Put((const byte*)"SHA256", 6, true);
-        cout <<"";
-        ss.Put(salt, salt.size(), true);
-        ss.Put(reinterpret_cast<const CryptoPP::byte*>(base_ctx.data()), base_ctx.size(), true);
-    } catch (CryptoPP::Exception& ex) {
-         // cerr << ex.what() << endl;
-        ret = false;
+            // TODO:  <hash_algo>.<iteration_cnt>.<salt>.<ctx>
+            CryptoPP::StringSink ss(ctx);
+            // ss.Put((const byte*)"SHA256", 6, true);
+            cout <<"";
+            ss.Put(salt, salt.size(), true);
+            ss.Put(reinterpret_cast<const CryptoPP::byte*>(base_ctx.data()), base_ctx.size(), true);
+        } catch (CryptoPP::Exception& ex) {
+            // cerr << ex.what() << endl;
+            ret = false;
+        }
+
+        return ret;
+    }
+    else
+    {
+        ret = CryptoSymWrapperFunctions::Wrapper_AuthEncrypt(k, msg, ctx);
+        return ret;
     }
 
-    return ret;
 }
 
- bool CryptoSymWrapperFunctions::Wrapper_AuthDecrypt_Hardened(const string &k, const string &ctx, string &msg) {
+ bool CryptoSymWrapperFunctions::Wrapper_AuthDecrypt_Hardened(const string &k, const string &ctx, string &msg, const bool MHF_ON) {
     bool ret = false;
-    SecByteBlock key;
-    try {
-        msg.clear();
-        SecByteBlock salt(reinterpret_cast<CryptoPP::byte*>(ctx.substr(0, KEYSIZE_BYTES).data()), KEYSIZE_BYTES);
-        string base_ctx = ctx.substr(KEYSIZE_BYTES);
-        CryptoSymWrapperFunctions::Wrapper_harden_pw(k, salt, key);
-        CryptoSymWrapperFunctions::Wrapper_decrypt(key, base_ctx, "", msg);
-        ret = true;
-    } catch (CryptoPP::Exception& ex) {
+    if (MHF_ON == true)
+    {
+        SecByteBlock key;
+        try {
+            msg.clear();
+            SecByteBlock salt(reinterpret_cast<CryptoPP::byte*>(ctx.substr(0, KEYSIZE_BYTES).data()), KEYSIZE_BYTES);
+            string base_ctx = ctx.substr(KEYSIZE_BYTES);
+            CryptoSymWrapperFunctions::Wrapper_harden_pw(k, salt, key);
+            CryptoSymWrapperFunctions::Wrapper_decrypt(key, base_ctx, "", msg);
+            ret = true;
+        } catch (CryptoPP::Exception& ex) {
 //         cerr << ex.what() << endl;
-         ret = false;
+            ret = false;
+        }
+        // TODO:  <hash_algo>.<iteration_cnt>.<salt>.<ctx>
+        return ret;
     }
-    // TODO:  <hash_algo>.<iteration_cnt>.<salt>.<ctx>
-    return ret;
+    else
+    {
+        ret = CryptoSymWrapperFunctions::Wrapper_AuthDecrypt(k, ctx, msg);
+    }
+
 }
 
 //bool CryptoSymWrapperFunctions::Wrapper_pwdecrypt_V2(const string &pw, const string &ctx, string &msg) {

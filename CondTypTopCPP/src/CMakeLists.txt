@@ -19,6 +19,7 @@ message(STATUS ">>> PROTOBUF_INCLUDE_DIRS: (${PROTOBUF_INCLUDE_DIRS})")
 
 find_library(PROTOBUF_STATIC_LIB libprotobuf.a PROTOBUF_LIBRARIES)
 find_library(PROTOBUF_SHARED_LIB libprotobuf.so PROTOBUF_LIBRARIES)
+find_library(PROTOBUF_STATIC_LIB libprotobuf-c.a PROTOBUF_LIBRARIES)
 
 find_library(GMP_STATIC_LIB libgmp.a GMP_LIBRARIES)
 

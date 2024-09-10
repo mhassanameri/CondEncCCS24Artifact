@@ -20,7 +20,7 @@ using namespace std::chrono;
 
 const string _db_fname = "./test_condtyptop_db";
 
-
+bool MHF_ON;
 
 string install_id; // get_install_id();
 const int32_t infinity = INT_MAX;
@@ -35,6 +35,7 @@ public:
     using TypTop::permute_typo_cache;
     using TypTop::initialize;
     using TypTop::reinitialize;
+    using TypTop::MHF_Activation;
 };
 
 
@@ -83,7 +84,7 @@ string SelectRandPwd()
     assert (index < 14344383); //14344383 is the number of passwords in Rockyou.txt. Here we just randomly select a random line in the rockyou.txt
 
     std::string line;
-    std::ifstream myfile("/Users/mameriek/Downloads/rockyou.txt");
+    std::ifstream myfile("PWDvsTyposDataSet/PWDvsTypoDataSet.txt");
 //    ifstream myfile ("/Users/mameriek/Documents/GitHub/ConditionalEncryptionTypTop/CondEncCPP/CMakeLists.txt");
 //    myfile.open("/Users/mameriek/Documents/GitHub/ConditionalEncryptionTypTop/CondEncCPP/rockyou.txt");
     if (myfile.is_open()) {
@@ -94,7 +95,7 @@ string SelectRandPwd()
         }
         myfile.close();
     }
-    else cout << "rockyou.txt unable to be opened";
+    else cout << "PWDvsTypoDataSet.txt unable to be opened";
     return pwd;
 }
 
@@ -230,6 +231,7 @@ string MakeTypo(string &pwd)
 TEST_CASE("Timing") {
     std::ofstream TyptopCondOPT("TypTopCondOPT.dat", std::ios_base::app | std::ios_base::out);
     TyptopCondOPT << "TypTopType" <<"\t" << "Init" << "\t" << "usrLoginNotif(Correct)" << "\t" << "usrLoginNotif(Incorrect)" <<"\t" << "TotalProcessingTimeCorrectLogin"<< "\t" << "TotalProcessingTimeIncorrectLogin" << "\t" << "ProcessWaitListContainsValidTypo" << "\t" << "WaitListSize" <<"\n";
+    MHF_ON = false;
 
     int NUM_ROUNDS = 1;
     double Sum_time_init =0;
@@ -249,6 +251,7 @@ TEST_CASE("Timing") {
         install_id = get_install_id();
         remove(_db_fname.c_str());
         TypTopTest tp;
+        tp.MHF_Activation(MHF_ON); //Continue from here 
         vector<string> pws(2);
 
         const typoDB &db = tp.get_db();

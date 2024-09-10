@@ -65,6 +65,9 @@ private:
     string db_fname;
     PwPkCrypto pkobj;
     string real_pw;   // secure object; carefully delete it once done
+    bool _MHF_ON; // If _MHF_ON is set as true then we use Memoery Harad Function (More specifically: Argon2id).
+
+
 //    PwdCtx real_pw_ctx;
 //    PwdCtxEDOne real_pw_ctx_edone;
 //    PwdCtxORPredicate real_pw_ctx_or;
@@ -106,6 +109,7 @@ public:
 protected:
 
     void fill_waitlist_w_garbage();
+    void MHF_Activation(const bool MHF_ON);
     void initialize(const string& pw);
     void reinitialize(const string& pw);
     void insert_into_log(const string& pw, bool in_cache, time_t ts);

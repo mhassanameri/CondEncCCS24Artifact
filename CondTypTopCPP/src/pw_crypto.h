@@ -239,12 +239,13 @@ private:
 
 
 public:
-
+    bool _MHF_ON;
 //    OrPredicate ORPRedFuncs;
 //    EditDistOne EdiDisFuncs;
     int len_limit() const {
         return _len;
     }
+
 
 
     inline string pad(const string& msg) const {

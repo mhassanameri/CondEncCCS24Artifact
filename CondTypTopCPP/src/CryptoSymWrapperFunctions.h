@@ -239,8 +239,8 @@ class CryptoSymWrapperFunctions {
      * using hardening function like typical memory hard function (in our implementation we used scrypt which
      * is proided by the CryptoPP library.
      * */
-    static bool Wrapper_AuthEncrypt_Hardened(const string& k, const string& msg, string& ctx);
-    static bool Wrapper_AuthDecrypt_Hardened(const string& k, const string& ctx, string& msg);
+    static bool Wrapper_AuthEncrypt_Hardened(const string& k, const string& msg, string& ctx, const bool MHF_ON);
+    static bool Wrapper_AuthDecrypt_Hardened(const string& k, const string& ctx, string& msg, const bool MHF_ON);
 
 
     /*
