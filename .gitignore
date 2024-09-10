@@ -10,3 +10,8 @@ GeneratePlotsPdfs/main.log
 GeneratePlotsPdfs/main.out
 GeneratePlotsPdfs/main.pdf
 GeneratePlotsPdfs/main.synctex.gz
+/CondEncCPP/3rdparty/plog110
+/CondEncCPP/3rdparty/zxcvbn21
+/CondEncCPP/build
+/CondEncCPP/cmake-build-debug
+/CondEncCPP/cmake-build-release

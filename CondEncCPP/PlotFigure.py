@@ -198,6 +198,15 @@ def main(FigureName):
         webbrowser.open_new_tab(output_pdf3)
 
 
+
+
+#Usge of this scrypt: To plot the desired figure we just need to execute the following command on terminal
+#associated to the path that contains this script (e.g., /build/test). For example if we want ot plot
+# ``Figure 1a'' of the paper, we can simply run the following command (after the test scripts are executed and the output
+# .dat are generated):
+# $ python3 ./PlotFigure.py Figure1a
+
+
 if __name__ == "__main__":
     # Create the parser
     parser = argparse.ArgumentParser(description="Process the inputs.")
