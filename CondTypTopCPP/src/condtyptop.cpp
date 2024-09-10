@@ -360,7 +360,7 @@ void TypTop::initialize(const string &real_pw) {
         if(i>0) {
 
             assert(db.t(i) == sk_ctx);
-            assert(CryptoSymWrapperFunctions::Wrapper_AuthDecrypt_Hardened(T_cache[i], db.t(i), _t));
+            assert(CryptoSymWrapperFunctions::Wrapper_AuthDecrypt_Hardened(T_cache[i], db.t(i), _t, this->_MHF_ON));
             assert(ench.freq(i) == T_size-i);
         }
 #endif
@@ -767,7 +767,7 @@ void TypTop::process_waitlist(const string &sk_str) {
                 _insert_into_typo_cache((int) i, sk_ctx, max(freq, freq_vec[i] + 1));
 #ifdef DEBUG
             string _t;
-            assert(CryptoSymWrapperFunctions::Wrapper_AuthDecrypt_Hardened(pw, db.t(i), _t));
+            assert(CryptoSymWrapperFunctions::Wrapper_AuthDecrypt_Hardened(pw, db.t(i), _t, this->_MHF_ON));
 #endif
                 break;
             }

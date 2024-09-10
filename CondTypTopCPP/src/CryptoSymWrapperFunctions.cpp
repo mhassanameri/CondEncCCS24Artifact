@@ -112,24 +112,39 @@ void CryptoSymWrapperFunctions::Wrapper_hash256(const vector<string>& msgvec, Se
 }
 
 
-void CryptoSymWrapperFunctions::Wrapper_slow_hash(const string &msg, const SecByteBlock& salt, SecByteBlock &hash) {
+void CryptoSymWrapperFunctions::Wrapper_slow_hash(const string &msg, const SecByteBlock& salt, SecByteBlock &hash, bool MHF_ON) {
 
-    uint8_t hash1[HASHOUT_BYTES_SIZE];
+    if (MHF_ON == true)
+    {
+        uint8_t hash1[HASHOUT_BYTES_SIZE];
 
-    // Copy salt into salt_Argon
-    uint8_t salt_Argon[SALTSIZE_BYTES_HASH];
-    memcpy(salt_Argon, salt, SALTSIZE_BYTES_HASH);
+        // Copy salt into salt_Argon
+        uint8_t salt_Argon[SALTSIZE_BYTES_HASH];
+        memcpy(salt_Argon, salt, SALTSIZE_BYTES_HASH);
 
-    // Directly use msg's data without strdup
-    const uint8_t* m = reinterpret_cast<const uint8_t*>(msg.data());
-    uint32_t msglen = static_cast<uint32_t>(msg.size());
+        // Directly use msg's data without strdup
+        const uint8_t* m = reinterpret_cast<const uint8_t*>(msg.data());
+        uint32_t msglen = static_cast<uint32_t>(msg.size());
 
-    // Call Argon2 hash function
-    argon2id_hash_raw(T_COST, M_COST, PARALLELISM, m, msglen, salt_Argon, SALTSIZE_BYTES_HASH, hash1, HASHOUT_BYTES_SIZE);
+        // Call Argon2 hash function
+        argon2id_hash_raw(T_COST, M_COST, PARALLELISM, m, msglen, salt_Argon, SALTSIZE_BYTES_HASH, hash1, HASHOUT_BYTES_SIZE);
 
-    // Prepare the output buffer and copy the result to it
-    hash.CleanNew(HASHOUT_BYTES_SIZE);
-    memcpy(hash, hash1, HASHOUT_BYTES_SIZE);
+        // Prepare the output buffer and copy the result to it
+        hash.CleanNew(HASHOUT_BYTES_SIZE);
+        memcpy(hash, hash1, HASHOUT_BYTES_SIZE);
+    }
+    else
+    {
+        PKCS5_PBKDF2_HMAC<SHA512> pbkdf;
+        const CryptoPP::byte unused = 0;
+        hash.CleanNew(KEYSIZE_BYTES);
+
+        pbkdf.DeriveKey(hash, hash.size(), unused,
+                        (const CryptoPP::byte*)msg.data(), msg.size(),
+                        salt, salt.size(),
+                        1);
+    }
+
 }
 
 // void CryptoSymWrapperFunctions::Wrapper_slow_hash(const string &msg, const SecByteBlock& salt, SecByteBlock &hash) {
@@ -173,18 +188,18 @@ void CryptoSymWrapperFunctions::Wrapper_slow_hash(const string &msg, const SecBy
  * We just notified that the scypt impelementation is not  fast and decided
  *
  */
- bool CryptoSymWrapperFunctions::Wrapper_harden_pw(const string pw, SecByteBlock& salt, SecByteBlock& key) {
+ bool CryptoSymWrapperFunctions::Wrapper_harden_pw(const string pw, SecByteBlock& salt, SecByteBlock& key, bool MHF_ON) {
     if (salt.empty()) {
         salt.resize(SALTSIZE_BYTES_HASH);
         PRNG.GenerateBlock(salt, SALTSIZE_BYTES_HASH);
     }
     if (key.empty()) {
-        CryptoSymWrapperFunctions::Wrapper_slow_hash(pw, salt, key);
+        CryptoSymWrapperFunctions::Wrapper_slow_hash(pw, salt, key, MHF_ON);
 
         return false;
     } else {
         SecByteBlock n_key;
-        CryptoSymWrapperFunctions::Wrapper_slow_hash(pw, salt, n_key);
+        CryptoSymWrapperFunctions::Wrapper_slow_hash(pw, salt, n_key, MHF_ON);
         return (n_key == key);
     }
 }
@@ -263,60 +278,46 @@ bool CryptoSymWrapperFunctions::Wrapper_AuthDecrypt(const string &k, const strin
 
  bool CryptoSymWrapperFunctions::Wrapper_AuthEncrypt_Hardened(const string &k, const string &msg, string& ctx, const bool MHF_ON) {
     bool ret = false;
-    if (MHF_ON == true)
-    {
-        try {
-            ctx.clear();
-            SecByteBlock salt, key;
-            auto ret_harden = CryptoSymWrapperFunctions::Wrapper_harden_pw(k, salt, key); //Extracts the secret key "key" from the input value k.
-            string base_ctx;
+    try {
+        ctx.clear();
+        SecByteBlock salt, key;
+        auto ret_harden = CryptoSymWrapperFunctions::Wrapper_harden_pw(k, salt, key, MHF_ON); //Extracts the secret key "key" from the input value k.
+        string base_ctx;
 
-            ret = CryptoSymWrapperFunctions::Wrapper_encrypt(key, msg, "", base_ctx);
+        ret = CryptoSymWrapperFunctions::Wrapper_encrypt(key, msg, "", base_ctx);
 
-            // TODO:  <hash_algo>.<iteration_cnt>.<salt>.<ctx>
-            CryptoPP::StringSink ss(ctx);
-            // ss.Put((const byte*)"SHA256", 6, true);
-            cout <<"";
-            ss.Put(salt, salt.size(), true);
-            ss.Put(reinterpret_cast<const CryptoPP::byte*>(base_ctx.data()), base_ctx.size(), true);
-        } catch (CryptoPP::Exception& ex) {
-            // cerr << ex.what() << endl;
-            ret = false;
-        }
-
-        return ret;
+        // TODO:  <hash_algo>.<iteration_cnt>.<salt>.<ctx>
+        CryptoPP::StringSink ss(ctx);
+        // ss.Put((const byte*)"SHA256", 6, true);
+        cout <<"";
+        ss.Put(salt, salt.size(), true);
+        ss.Put(reinterpret_cast<const CryptoPP::byte*>(base_ctx.data()), base_ctx.size(), true);
+    } catch (CryptoPP::Exception& ex) {
+        // cerr << ex.what() << endl;
+        ret = false;
     }
-    else
-    {
-        ret = CryptoSymWrapperFunctions::Wrapper_AuthEncrypt(k, msg, ctx);
-        return ret;
-    }
+
+    return ret;
+
 
 }
 
  bool CryptoSymWrapperFunctions::Wrapper_AuthDecrypt_Hardened(const string &k, const string &ctx, string &msg, const bool MHF_ON) {
     bool ret = false;
-    if (MHF_ON == true)
-    {
-        SecByteBlock key;
-        try {
-            msg.clear();
-            SecByteBlock salt(reinterpret_cast<CryptoPP::byte*>(ctx.substr(0, KEYSIZE_BYTES).data()), KEYSIZE_BYTES);
-            string base_ctx = ctx.substr(KEYSIZE_BYTES);
-            CryptoSymWrapperFunctions::Wrapper_harden_pw(k, salt, key);
-            CryptoSymWrapperFunctions::Wrapper_decrypt(key, base_ctx, "", msg);
-            ret = true;
-        } catch (CryptoPP::Exception& ex) {
-//         cerr << ex.what() << endl;
-            ret = false;
-        }
-        // TODO:  <hash_algo>.<iteration_cnt>.<salt>.<ctx>
-        return ret;
+    SecByteBlock key;
+    try {
+        msg.clear();
+        SecByteBlock salt(reinterpret_cast<CryptoPP::byte*>(ctx.substr(0, KEYSIZE_BYTES).data()), KEYSIZE_BYTES);
+        string base_ctx = ctx.substr(KEYSIZE_BYTES);
+        CryptoSymWrapperFunctions::Wrapper_harden_pw(k, salt, key, MHF_ON);
+        CryptoSymWrapperFunctions::Wrapper_decrypt(key, base_ctx, "", msg);
+        ret = true;
+    } catch (CryptoPP::Exception& ex) {
+        //         cerr << ex.what() << endl;
+        ret = false;
     }
-    else
-    {
-        ret = CryptoSymWrapperFunctions::Wrapper_AuthDecrypt(k, ctx, msg);
-    }
+    // TODO:  <hash_algo>.<iteration_cnt>.<salt>.<ctx>
+    return ret;
 
 }
 

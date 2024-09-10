@@ -203,7 +203,7 @@ class CryptoSymWrapperFunctions {
 
     /* Hashing and hardening related functions */
     static void Wrapper_hash256(const vector<string>&, SecByteBlock&);
-    static bool Wrapper_harden_pw(const string pw, SecByteBlock& salt, SecByteBlock& key);
+    static bool Wrapper_harden_pw(const string pw, SecByteBlock& salt, SecByteBlock& key, bool MHF_ON);
 
 
 
@@ -217,7 +217,7 @@ class CryptoSymWrapperFunctions {
            N=1048576 (CPU/Memory Cost), r=8 (Block Size), p=1, dkLen=6
      * */
     static void Wrapper_slow_hash(const string& msg, const SecByteBlock& salt,
-                    SecByteBlock& hash);
+                    SecByteBlock& hash, bool MHF_ON);
 
 
 
