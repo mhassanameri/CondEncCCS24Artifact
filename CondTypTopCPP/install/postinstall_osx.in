@@ -1,0 +1,72 @@
+#!/usr/bin/env bash
+
+if [ "$EUID" -ne 0 ]; then
+    echo "Please run as root"
+    exit
+fi
+
+
+sudo chmod 04755 /usr/local/bin/typtop
+pam_mod=@pam_module@
+participate_file=/usr/local/etc/condtyptop.d/participate
+if [ -z ${TYPTOP_NOUI+x} ]; then
+    echo "Cmd line size: $# ${*}.  TYPTOP_NOUI=${TYPTOP_NOUI}" >>/tmp/typtop-inst
+    if [ "$1" == "1" ]; then
+        TYPTOP_NOUI=1
+    fi
+fi
+
+function participate() {
+    local answer="yes"
+    if [ "${TYPTOP_NOUI}" != "1" ]; then
+        answer=$(osascript -e '
+        set question to display dialog "Do you want to allow TypTop to send anonymous statics for research purposes? Visit https://typtop.info for more details." buttons {"Yes", "No"} default button 1
+        set answer to button returned of question
+        ' | tr '[:upper:]' '[:lower:]')
+    fi
+
+    echo "Participate: " ${answer}
+
+    if [[ "${answer}" == "yes" ]]; then
+        echo "yes" > ${participate_file}
+    else
+        rm -rf ${participate_file}
+    fi
+}
+
+if [ -d "/etc/pam.d/" ]; then
+    for f in /etc/pam.d/*.orig; do
+        if [ -e "$f" ]; then
+            echo "Already backed up PAM config files at /etc/pam.d/*.orig. Have you already installed?"
+            participate >> /tmp/typtop-inst 2>&1
+            exit
+        fi
+    done
+    if [ -e "/etc/pam.d/*.orig" ]; then
+        participate >> /tmp/typtop-inst  2>&1
+        exit
+    fi
+    pushd /etc/pam.d > /dev/null
+    for f in /etc/pam.d/{su,screensaver,authorization}; do
+        if [ ! -e $f ]; then continue; fi
+        if [[ "$f" == *"typtop-auth"* ]]; then continue; fi
+        if [[ $(grep -e "^auth.*${pam_mod}" $f) ]]; then
+            sed -i '.orig' "/^auth*.*${pam_mod}.*/ i\\
+auth   include  typtop-auth \\
+" $f
+        fi
+    done
+
+    popd > /dev/null
+    echo "Configuring PAM to use typtop with /etc/pam.d/ files"
+elif [ -e "/etc/pam.conf" ]; then
+    sed -i '.orig' "/^auth*.*${pam_mod}.*/i \
+auth   include     typtop-auth \
+" /etc/pam.conf
+
+    echo "Configured /etc/pam.conf to use typtop"
+else
+    echo "Could not determine where to install pam config files, please do so manually"
+fi
+
+participate >> /tmp/typtop-inst 2>&1

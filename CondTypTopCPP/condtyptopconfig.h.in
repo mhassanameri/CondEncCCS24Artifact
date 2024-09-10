@@ -1,0 +1,21 @@
+// #cmakedefine DEBUG
+#define DB_ROOT "@INSTALL_DATA_DIR@/condtyptop.d"
+
+// the configured options and settings for Tutorial
+#define condtyptop_VERSION_MAJOR @condtyptop_VERSION_MAJOR@
+#define condtyptop_VERSION_MINOR @condtyptop_VERSION_MINOR@
+#define condtyptop_VERSION_PATCH @condtyptop_VERSION_PATCH@
+
+#define CAFILE "@CAFILE@"
+#define OLD_CAFILE "@OLD_CAFILE@"
+#define UPLOAD_URL "https://condtyptop.info/submit"
+#define PARTICIPATION_FILE "/usr/local/etc/condtyptop.d/participate"
+
+
+#ifdef WIN32
+#define OS_SEP '\\'
+#define USERDB_LOC "/somewhere/I/don't/know/"
+#else
+#define USERDB_LOC "/usr/local/etc/typtop.d/"
+#define OS_SEP '/'
+#endif

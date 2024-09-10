@@ -1,0 +1,59 @@
+#!/usr/bin/env bash
+
+# TO delete old typtop installations
+
+if [ "$EUID" -ne 0 ]; then
+    echo "Please run as root"
+    exit
+fi
+
+if [ -d "/etc/pam.d/" ]; then
+    for f in /etc/pam.d/*.orig /etc/pam.d/*.bak; do
+        if [ -e "$f" ]; then
+            mv "$f" "${f%.*}"
+        fi
+    done
+    rm -f /etc/pam.d/typtop-auth
+    echo "Reverting to original files"
+elif [ -e "/etc/pam.conf" ]; then
+    mv /etc/pam.conf.orig /etc/pam.conf
+    echo "Reverting to original files"
+else
+    echo "Could not determine where to install pam config files, please do so manually"
+fi
+
+# try calling typtop --uninstall
+typtopexec=$(which typtops.py) || $(echo /usr/local/bin/typtops.py)
+if [ "$typtopexec" ]; then
+   ${typtopexec} --id; if [ "$?" == "0" ]; then ${typtopexec} --id > ~/.typtop.uniq.id; fi
+   echo "yes" | ${typtopexec} --uninstall
+fi
+
+if [ $(which typtop) ]; then
+    typtop --uninstall
+fi
+
+find "/usr/local/etc/typtop.d/" -type d | xargs rm -rf
+
+uniq_id_f=~/.typtop.uniq.id
+if [ -f ${uniq_id_f} ]; then
+   if [[ `uname` == "Darwin" ]]; then
+      sed -i '' "s/Install-id: //g" ${uniq_id_f};
+   else
+      sed -i'' "s/Install-id: //g" ${uniq_id_f};
+   fi
+fi
+
+pip show typtop;
+if [ $? -eq 0 ]; then
+   sudo pip -q uninstall --yes typtop word2keypress zxcvbn zxcvbn-python >& /dev/null
+fi
+
+if [ -f /usr/local/bin/typtop-uninstall.sh ]; then
+   sudo bash /usr/local/bin/typtop-uninstall.sh
+else
+   rm -rf /usr/local/bin/typtop*
+fi
+
+rm -rf /var/log/*typtop*log /usr/local/bin/*typtop* /usr/loca/etc/security/*typtop*
+

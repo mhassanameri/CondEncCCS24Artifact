@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+
+if [ "$EUID" -ne 0 ]; then
+    echo "Please run as root"
+    exit
+fi
+
+if [ -d "/etc/pam.d/" ]; then
+    for f in /etc/pam.d/*.orig; do
+        if [ -e "$f" ] ;
+        then
+            mv "$f" "${f%.*}"
+        fi
+    done
+   if [ "$1" != "-disengage" ]; then
+      rm -f /etc/pam.d/typtop-auth
+      rm -rf /usr/local/etc/typtop.d/$USER
+   fi
+   echo "Reverting to original files"
+elif [ -e "/etc/pam.conf" ]; then
+    mv /etc/pam.conf.orig /etc/pam.conf
+    echo "Reverting to original files"
+else
+    echo "Could not determine where to install pam config files, please do so manually"
+fi
+
+
+if [ "$1" != "-disengage" ]; then
+    cd /
+    pkgutil --only-files --files @typtop_identifier@ | grep typtop | xargs rm -rf
+    pkgutil --forget @typtop_identifier@
+fi

@@ -15,3 +15,7 @@ GeneratePlotsPdfs/main.synctex.gz
 /CondEncCPP/build
 /CondEncCPP/cmake-build-debug
 /CondEncCPP/cmake-build-release
+/CondTypTopCPP/cmake-build-debug
+/CondTypTopCPP/3rdparty/plog110
+/CondTypTopCPP/3rdparty/zxcvbn21
+/CondTypTopCPP/cmake-build-release
