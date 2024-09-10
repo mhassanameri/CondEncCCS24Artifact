@@ -231,7 +231,7 @@ TEST_CASE("Timing") {
     std::ofstream TyptopCondOPT("TypTopCondOPT.dat", std::ios_base::app | std::ios_base::out);
     TyptopCondOPT << "TypTopType" <<"\t" << "Init" << "\t" << "usrLoginNotif(Correct)" << "\t" << "usrLoginNotif(Incorrect)" <<"\t" << "TotalProcessingTimeCorrectLogin"<< "\t" << "TotalProcessingTimeIncorrectLogin" << "\t" << "ProcessWaitListContainsValidTypo" << "\t" << "WaitListSize" <<"\n";
 
-    int NUM_ROUNDS = 1000;
+    int NUM_ROUNDS = 1;
     double Sum_time_init =0;
     double Sum_time_UsrNotif_Correct_Lgin =0;
     double Sum_time_UsrNotif_incorrect_Lgin =0;
@@ -351,6 +351,10 @@ TEST_CASE("Timing") {
                   << "\t" << AVERAGE_time_Login_WaitListIncludeValidTypo << "\t" << SizeOfWaitingList << "\n";
 
 }
+
+
+
+
 
 
 

@@ -199,7 +199,7 @@ int testCondEncEDist(int n_lambda,  int Num_tests, size_t _len,  int Threshold, 
 
         auto start_CondEnc_HD2 = high_resolution_clock::now();
 //        int ED1CondEncRstl =0;
-        auto ctx_final = EditDistOne::CondEnc(pkobj._ppk, ED1_Char_ORigCTx, pad_typo, payload, _len, Threshold,
+        auto ctx_final = EditDistOne::CondEnc(pkobj._ppk, ED1_Char_ORigCTx, pad_typo, payload, _len,
                                               ED1_ctx_typo_Bytes);
         auto stop_CondEnc_HD2 = high_resolution_clock::now();
         auto duration_CondEnc_HD2 = duration_cast<milliseconds>(stop_CondEnc_HD2 - start_CondEnc_HD2);
@@ -208,8 +208,8 @@ int testCondEncEDist(int n_lambda,  int Num_tests, size_t _len,  int Threshold, 
         auto start_CondDec_HD2 = high_resolution_clock::now();
         string recovered_hd2Bytes;
         int CondDecOut = 0;
-        CondDecOut = EditDistOne::CondDec(pkobj._ppk, ED1_ctx_typo_Bytes, pkobj._psk, Threshold, recovered_hd2Bytes,
-                                          _len, 28);
+        CondDecOut = EditDistOne::CondDec(pkobj._ppk, ED1_ctx_typo_Bytes, pkobj._psk, recovered_hd2Bytes,
+                                          _len);
         auto stop_CondDec_HD2 = high_resolution_clock::now();
         auto duration_CondDec_HD2 = duration_cast<milliseconds>(stop_CondDec_HD2 - start_CondDec_HD2);
 
@@ -282,13 +282,13 @@ int testCondEncHamDist(int n_lambda, int Num_tests, size_t _len, int Threshold, 
         /*  Running the traditional Encryption of chosen*/
         auto start_Enc_HD = high_resolution_clock::now();
         int tradEncRslt =0;
-        tradEncRslt = HamDistTwo::Enc(pkobj._ppk, msg_pad, HD_Char_ORigCTx);
+        tradEncRslt = HamDistAtmostT::Enc(pkobj._ppk, msg_pad, HD_Char_ORigCTx);
         auto stop_Enc_HD = high_resolution_clock::now();
         auto duration_Enc_HD = duration_cast<milliseconds>(stop_Enc_HD - start_Enc_HD);
 
         /*Running the Conditional Encryption*/
         auto start_CondEnc_HD = high_resolution_clock::now();
-        auto ctx_final = HamDistTwo::CondEnc(pkobj._ppk, HD_Char_ORigCTx, typo, payload,_len, Threshold, HD_ctx_typo_Bytes);
+        auto ctx_final = HamDistAtmostT::CondEnc(pkobj._ppk, HD_Char_ORigCTx, typo, payload,_len, Threshold, HD_ctx_typo_Bytes);
         auto stop_CondEnc_HD = high_resolution_clock::now();
         auto duration_CondEnc_HD = duration_cast<milliseconds>(stop_CondEnc_HD - start_CondEnc_HD);
 
@@ -296,8 +296,8 @@ int testCondEncHamDist(int n_lambda, int Num_tests, size_t _len, int Threshold, 
         auto start_CondDec_HD = high_resolution_clock::now();
         string recovered_hdBytes;
         int CondDecOut  = 0;
-        CondDecOut = HamDistTwo::CondDec(pkobj._ppk, HD_ctx_typo_Bytes, pkobj._psk, Threshold, recovered_hdBytes, _len, SizeShare);
-//        CondDecOut = HamDistTwo::CondDec_Optimized(pkobj._ppk, HD_ctx_typo_Bytes, pkobj._psk, Threshold, recovered_hdBytes, _len, SizeShare, msg.size());
+        CondDecOut = HamDistAtmostT::CondDec(pkobj._ppk, HD_ctx_typo_Bytes, pkobj._psk, Threshold, recovered_hdBytes, _len, SizeShare);
+//        CondDecOut = HamDistAtmostT::CondDec_Optimized(pkobj._ppk, HD_ctx_typo_Bytes, pkobj._psk, Threshold, recovered_hdBytes, _len, SizeShare, msg.size());
 
         auto stop_CondDec_HD = high_resolution_clock::now();
         auto duration_CondDec_HD = duration_cast<milliseconds>(stop_CondDec_HD - start_CondDec_HD);
@@ -576,7 +576,7 @@ int testCondEncCAPSLOCK(int n_lambda, int Num_tests, size_t _len, int Threshold,
 //        OrPredicate*  Class_OrPredicate = new OrPredicate;
         auto start_CondEnc_HD2 = high_resolution_clock::now();
 //        int ED1CondEncRstl =0;
-        ctx_final = CAPLOCKpredicate::CondEnc(pkobj._ppk, OrPred_Char_ORigCTx, typo, payload,_len, Threshold, OrPred_ctx_typo_Bytes);
+        ctx_final = CAPLOCKpredicate::CondEnc(pkobj._ppk, OrPred_Char_ORigCTx, typo, payload, OrPred_ctx_typo_Bytes);
 
         auto stop_CondEnc_HD2 = high_resolution_clock::now();
         auto duration_CondEnc_HD2 = duration_cast<milliseconds>(stop_CondEnc_HD2 - start_CondEnc_HD2);
@@ -584,7 +584,7 @@ int testCondEncCAPSLOCK(int n_lambda, int Num_tests, size_t _len, int Threshold,
         string recovered_hd2Bytes;
         int CondDecOut = 0;
         auto start_CondDec_HD2 = high_resolution_clock::now();
-        CondDecOut = CAPLOCKpredicate::CondDec(pkobj._ppk, OrPred_ctx_typo_Bytes, pkobj._psk, Threshold, recovered_hd2Bytes, _len, SizeShare);
+        CondDecOut = CAPLOCKpredicate::CondDec(pkobj._ppk, OrPred_ctx_typo_Bytes, pkobj._psk, recovered_hd2Bytes);
 //        CondDecOut = OrPredicate::CondDec(pkobj._ppk, &ctx_final[0], pkobj._psk, 30, recovered_hd2Bytes, 32, 28);
 
         auto stop_CondDec_HD2 = high_resolution_clock::now();

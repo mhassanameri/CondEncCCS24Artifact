@@ -8,7 +8,7 @@
 #include "PaillierWrapperFunctions.h"
 #include "CryptoSymWrapperFunctions.h"
 
-#include "ConditionalEncryptionHamDistTwo.h"
+#include "ConditionalEncryptionHamDistAtmostT.h"
 #include "ConditionalEncryptionOR.h"
 #include "ConditionalEncryptionCAPSLOCK.h"
 #include "ConditionalEncryptionEditDistOne.h"
@@ -24,9 +24,9 @@ string random_msg() {
     return string(s.begin(), s.end());
 }
 
-void get_random_ench(typtop::EncHeaderData& ench) {
+void get_random_ench(condtyptop::EncHeaderData& ench) {
     string pw(20, 0);
-    PRNG.GenerateBlock((byte*)pw.data(), 20);  // might throw segfault
+    PRNG.GenerateBlock((CryptoPP::byte*)pw.data(), 20);  // might throw segfault
     ench.set_pw(pw);
     ench.set_pw_ent((float)-93.346);
     for (int i = 0; i < 10; i++) {

@@ -41,9 +41,13 @@ endif()
 ### Set the sources for typtop
 file(GLOB CONDTYPTOP_SRCS "*.cpp" "*.c")
 file(GLOB CONDTYPTOP_HDRS "*.h" "*.hpp")
-set(CONDTYPTOP_SRCS ${CONDTYPTOP_SRCS} ${CONDTYPTOP_HDRS} ${PROTO_SRCS} ${PROTO_HDRS}
+#set(CONDTYPTOP_SRCS ${CONDTYPTOP_SRCS} ${CONDTYPTOP_HDRS} ${PROTO_SRCS} ${PROTO_HDRS}
+set(CONDTYPTOP_SRCS ${PROTO_SRCS} ${PROTO_HDRS}
         condtyptopconfig.h
         ../paillier/pailliercpp.cpp ../paillier/pailliercpp.h
+        condtyptop.h condtyptop.cpp
+        pw_crypto.h pw_crypto.cpp
+        upload.cpp
 #        conditionalcrypto.h
         CryptoSymWrapperFunctions.cpp CryptoSymWrapperFunctions.h
         PaillierWrapperFunctions.cpp PaillierWrapperFunctions.h

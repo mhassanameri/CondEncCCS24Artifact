@@ -2,7 +2,9 @@
 // Created by rahul on 3/30/17.
 //
 
-#include "typtop.h"
+#include "condtyptop.h"
+#define CATCH_CONFIG_MAIN // This should come **before** including the 'catch.hpp'.
+#define MY_SIGSTKSZ 8192
 #include "catch.hpp"
 
 #include <iostream>
@@ -81,7 +83,7 @@ TEST_CASE("Symmetric Authenticated Encryption"){
         string b(AES::DEFAULT_KEYLENGTH, 0);
         string test  = "TESTTEST";
         string EncrypteKey;
-        PRNG.GenerateBlock((byte *) b.data(), b.size());
+        PRNG.GenerateBlock((CryptoPP::byte *) b.data(), b.size());
         CryptoSymWrapperFunctions::Wrapper_AuthEncrypt(b, test, EncrypteKey);
 
         string plain_text, plain_text2;
@@ -115,7 +117,7 @@ TEST_CASE("Symmetric Authenticated Encryption"){
 TEST_CASE("typtop_util") {
     install_id = get_install_id();
     SECTION("edit_distance") {
-        byte b[] = {0x32, 0xf4, 0x32, 0x65, 0xff};
+        CryptoPP::byte b[] = {0x32, 0xf4, 0x32, 0x65, 0xff};
         string b_str((char *) b, 5);
         REQUIRE(edit_distance(pws[0], pws[0]) == 0);
         CHECK(edit_distance(b_str, b_str) == 0);
@@ -158,7 +160,7 @@ TEST_CASE("typtop_util") {
         //CHECK_THROWS(win(0, 0));
     }
     SECTION("typo_policy_abs_entropy_cutoff") {
-        typtop::TypoPolicy tp;
+        condtyptop::TypoPolicy tp;
         string pw[2] = {"Password1!", "Password1"};
         tp.set_rel_entcutoff(10);
         REQUIRE(entropy(pw[1]) < 6); // weak password
@@ -171,7 +173,7 @@ TEST_CASE("typtop_util") {
         CHECK_FALSE(meets_typo_policy(pw[0], pw[1], tp)); // fails rel_ent_cutoff
     }
     SECTION("meets_typo_policy") {
-        const typtop::TypoPolicy tp;
+        const condtyptop::TypoPolicy tp;
         CHECK(meets_typo_policy(pws[0], pws[0], tp));
         CHECK(meets_typo_policy(pws[0], pws[4], tp));
 //        CHECK(meets_typo_policy(pws[0], pws[5], tp));

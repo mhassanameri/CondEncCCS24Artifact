@@ -1,6 +1,8 @@
-#set(TEST_SRCS test-main.cpp test_typtop.cpp test_install.cpp
+#set(TEST_SRCS test-main.cpp test_CondTypTop.cpp test_install.cpp
 #set(TEST_SRCS test-main.cpp test_condTypTop.cpp test_install.cpp
-set(TEST_SRCS test-main.cpp  test_condTypTop.cpp
+#set(TEST_SRCS test-main.cpp  test_condTypTop.cpp
+set(TEST_SRCS test-main.cpp test_condTypTop.cpp
+        test_condTypTop.h
 
         #set(TEST_SRCS test-main.cpp testCondEncEvaluation.cpp testCondEncEvaluation.h test_install.cpp
 #set(TEST_SRCS test-main.cpp testCondEncEvaluation.cpp testCondEncEvaluation.h
@@ -14,7 +16,7 @@ set(TEST_SRCS test-main.cpp  test_condTypTop.cpp
         )
 
 #test_pw_crypto.cpp
-#set(TEST_SRCS test-main.cpp test_typtop.cpp test_install.cpp
+#set(TEST_SRCS test-main.cpp test_CondTypTop.cpp test_install.cpp
 
 add_executable(tests ${TEST_SRCS}
 #        test_pw_crypto.cpp
@@ -26,8 +28,10 @@ add_executable(tests ${TEST_SRCS}
 #        ../src/ConditionalEncryptionOR.cpp ../src/ConditionalEncryptionOR.h
 #        ../src/conditionalcrypto.h
 #        ../src/ConditionalEncryptionCAPSLOCK.cpp ../src/ConditionalEncryptionCAPSLOCK.h
-        test_condTypTop.cpp)
+#        test_condTypTop.cpp)
 #        testCondEncEvaluation.cpp testCondEncEvaluation.h)
+        test_condTypTop.cpp
+        test_condTypTop.h)
 
 
 #set(Protobuf_PREFIX_PATH
