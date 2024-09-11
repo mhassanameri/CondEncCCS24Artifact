@@ -243,7 +243,8 @@ using namespace std::chrono;
      }
 
 
-     RsltHDTwo = HamDisTwoClass->CondDec_2dif(ppk, typo_ctx + CondEncCPSLKCtxSize + CondEncEDOneCtxSize, psk,threshold, RecoverHDTwo, _len);
+     // RsltHDTwo = HamDisTwoClass->CondDec_2dif(ppk, typo_ctx + CondEncCPSLKCtxSize + CondEncEDOneCtxSize, psk,threshold, RecoverHDTwo, _len);
+      RsltHDTwo = HamDisTwoClass->CondDec_NewOPT(ppk, typo_ctx + CondEncCPSLKCtxSize + CondEncEDOneCtxSize, psk,threshold, RecoverHDTwo, _len);
 
 
      if (RsltHDTwo == 1)

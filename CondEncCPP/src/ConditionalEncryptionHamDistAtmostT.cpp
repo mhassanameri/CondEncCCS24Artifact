@@ -409,6 +409,7 @@ int HamDistAtmostT::generatesubsets_Optimized(vector<string> &MainstrShares, vec
 //            recoveredMainSecret = recoverTheMainSecret;
 
             CryptoPP::StringSink ss_recoveredMainSecret(recoveredMainSecret);
+            cout << "";
             ss_recoveredMainSecret.Put((const CryptoPP::byte*)recoverTheMainSecret.data(),  recoverTheMainSecret.size(), false);
 
 //            memcpy(&recoveredMainSecret, &recoverTheMainSecret, recoverTheMainSecret.size());

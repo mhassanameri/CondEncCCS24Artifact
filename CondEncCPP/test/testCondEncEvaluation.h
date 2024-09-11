@@ -167,21 +167,41 @@ int BasicTestHamDistT(int Num_tests, int n_lambda, int _len, int MaxHam);
 
 
 int PlotFig1a(int NumTest_SmallM, int NumTest_64, int NumTest_128);
+int PlotFig1d(int NumTest);
+int PlotFig1e(int NumTest);
+int PlotFig1f(int NumTest);
+int PlotTable1(int NumTest);
 
 inline int DataForPlottingFigure1(string argv[] )
 {
 
 
-    if(argv[0] == "PlotFig1a")
+    if(argv[0] == "PlotFig1a1b1c")
     {
         cout << argv[1] <<  "\n" + argv[2] + "\n" + argv[3] << endl;
 
         int PlotFig1aResult = PlotFig1a( std::stoi(argv[1]),  std::stoi(argv[2]),  std::stoi(argv[3]));
 
     }
-    else if(argv[0] == "PlotFig1aNo128")
+    else if(argv[0] == "PlotFig1a1b1cNo128")
     {
         cout << argv[0];
+        int PlotFig1aResult = PlotFig1a( std::stoi(argv[1]),  std::stoi(argv[2]),  0);
+    }
+    else if(argv[0] == "PlotFig1d")
+    {
+        int PlotFig1aResult = PlotFig1d( std::stoi(argv[1]));
+
+    }
+    else if(argv[0] == "PlotFig1e")
+    {
+        int PlotFig1aResult = PlotFig1d( std::stoi(argv[1]));
+
+    }
+    else if(argv[0] == "PlotFig1f")
+    {
+        int PlotFig1aResult = PlotFig1d( std::stoi(argv[1]));
+
     }
 
     return 1;
@@ -211,6 +231,28 @@ inline int BasicTest(string argv[] )
 }
 
 
+
+
+
+TEST_CASE("Table1")
+{
+    std::string input[4];
+    std::ifstream inputFile("Table1_input.txt"); // Open the file "input.txt"
+    inputFile >> input[0]; //The first input indicate number of tests that CondEnc is done over different messages of length 32 and different predicates
+
+    string File1 = "Table1.dat";
+
+    std::ofstream HDdataL(File1, std::ios_base::app | std::ios_base::out);
+
+
+    HDdataL << "Predicate Type" << "\t" << "Enc time" << "\t"
+            << "CondEnc time" << "\t"
+            << "CondDec time" << "\t"
+            << "Regular ctxt size" << "\t"
+            << "CondEnc ctxt Size" << "\n";
+    HDdataL.close();
+    auto r = PlotTable1(stoi(input[0]));
+}
 
 
 
