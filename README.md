@@ -55,7 +55,24 @@ More specifically, for the aim of this Artifact Evaluation, we provide instructi
 After compiling the project, go to `build/test` and run `TestScript.sh`. For this script, we can modify the `input.txt` file to generate the desired output. The instruction on how to modify `input.txt` is commented in `TestScript.sh`. In the following, we will provide an examples on how to generate Figure 1a of the paper. 
 
 #### Example
-will be added here very soon. 
+```bash
+$ ./TestScript.sh
+$ python3 ./PlotFigure.py Figure1a
+```
+
+and for Table 1 (CondEnc messge len =32)
+
+```bash
+$ ./TestScriptMakingTable1data.sh
+$ python3 ./PdfGenTable1.py
+```
+Or for CondTypTop (Table 2)
+```bash 
+$ ./TestScript.sh
+$ python3 ./PlotFigureCondTypTop.py
+```
+
+
 
 ## Building the project (CondTypTop: TyoTop System using CondEnc)
 Clone the repository
