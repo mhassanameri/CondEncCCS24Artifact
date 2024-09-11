@@ -195,12 +195,12 @@ inline int DataForPlottingFigure1(string argv[] )
     }
     else if(argv[0] == "PlotFig1e")
     {
-        int PlotFig1aResult = PlotFig1d( std::stoi(argv[1]));
+        int PlotFig1aResult = PlotFig1e( std::stoi(argv[1]));
 
     }
     else if(argv[0] == "PlotFig1f")
     {
-        int PlotFig1aResult = PlotFig1d( std::stoi(argv[1]));
+        int PlotFig1aResult = PlotFig1f( std::stoi(argv[1]));
 
     }
 
