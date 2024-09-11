@@ -1,0 +1,43 @@
+set(TEST_SRCS test-main.cpp test_CompareWithCondEnc.cpp test_install.cpp )
+add_executable(tests ${TEST_SRCS} test_CompareWithCondEnc.cpp)
+find_package(Protobuf REQUIRED)
+# if(APPLE)
+#     set(PAM_LIBS "pam")
+# else()
+#     set(PAM_LIBS "pam")
+# endif()
+
+message(STATUS "CryptoPP lib: " ${CRYPTOPP_INCLUDE_DIRS})
+include_directories(${PROTOBUF_INCLUDE_DIRS})
+target_include_directories(tests PUBLIC ${CRYPTOPP_INCLUDE_DIRS} ${CMAKE_SOURCE_DIR}/src ${CMAKE_BINARY_DIR}/src ${ZXCVBN_INCLUDE_DIRS} ${PLOG_INCLUDE_DIRS})
+
+target_link_libraries(tests /usr/local/lib/libargon2.a)
+
+
+target_link_libraries(tests cryptopp)
+target_link_libraries(tests ${ZXCVBN_INCLUDE_DIRS}/${ZXCVBN_LIBRARIES})
+target_link_libraries(tests pam_typtop)
+message(STATUS "PROTOBUF LIB: ${PROTOBUF_SHARED_LIB} ${PROTOBUF_STATIC_LIB} PROTOUBF_INCLUD_DIR>> ${protobuf_INCLUDE_DIRS} ${PROTOBUF_INCLUDE_DIRS}")
+
+if(CMAKE_PREFER_SHARED_LIBRARIES)
+    if(PROTOBUF_SHARED_LIB)
+        target_link_libraries(tests ${PROTOBUF_SHARED_LIB})
+    else(PROTOBUF_STATIC_LIB)
+        target_link_libraries(tests ${PROTOBUF_STATIC_LIB})
+    endif()
+else()
+    if(PROTOBUF_STATIC_LIB)
+        target_link_libraries(tests ${PROTOBUF_STATIC_LIB})
+    else(PROTOBUF_SHARED_LIB)
+        target_link_libraries(tests ${PROTOBUF_SHARED_LIB})
+    endif()
+endif()
+
+target_link_libraries(tests typtopdb)
+target_link_libraries(tests curl)
+add_dependencies(tests typtopdb zxcvbn ${PLOG_PREFIX})
+
+
+enable_testing()
+find_file(test_exec tests PATHS ${CMAKE_BINARY_DIR}/test)
+add_test(test ${test_exec} -d yes)

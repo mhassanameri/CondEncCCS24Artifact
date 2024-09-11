@@ -1,0 +1,74 @@
+package typtop;
+
+message TypoPolicy {
+    optional int32 edit_cutoff=1 [default = 1];
+    optional int32 abs_entcutoff=2 [default = 10];
+    optional int32 rel_entcutoff=3 [default = 3];
+    optional int32 min_length=4 [default = 6];
+}
+
+message Log {
+    required bool  in_cache = 1;
+    required bool  istop5fixable = 2;
+    required int32 edit_dist = 3;
+    required float rel_entropy = 4;
+    required float pass_complexity = 5;
+    required uint32 tid = 6;
+    required int64 ts = 7; // timestamp
+    required string localtime = 8;
+}
+
+message ConfigHeader {
+    optional bool  allowed_typo_login = 1 [default = true];
+    optional int32 period_for_sending_log = 2 [default = 21600]; // 6 hours
+    optional bool expire_typos = 3 [default = true];  // Should I expire unused typos?
+    optional int64 typo_expiry_time = 4 [default = 2592000];  // expire a typo if not used in 30 days
+    optional bool  allow_upload = 5 [default = true];
+    optional TypoPolicy tp = 6;
+    required string install_id = 7;
+    required bytes public_key = 8;
+    required bytes global_salt = 9;
+}
+
+enum SystemStatus {
+    ALL_GOOD = 0;
+    PW_CHANGED = 1;
+    UNINITIALIZED = 3;
+};
+
+message EncHeaderData{
+    required bytes pw = 1;
+    repeated int32 freq = 2;
+    repeated int64 last_used = 3;   // expire a typo if it is too old
+    required float pw_ent = 4;
+}
+message Header {
+    optional int32 indexj = 1 [default = 0];
+    optional int32 last_log_sent_time = 2 [default = 0];
+    optional int32 login_count = 3 [default = 0];
+    optional SystemStatus sys_state = 4 [default = UNINITIALIZED];
+    required bytes enc_header = 5;
+}
+
+// for sending the log to the server
+message Logs {
+    repeated Log L = 1;  // Log
+    optional int32 typos = 2 [default = 0];
+    optional int32 typos_saved = 3 [default = 0];
+}
+
+message typoDB {
+    optional string version = 9 [default = "1"]; // the version of the db file.
+    required ConfigHeader CH = 1; // Config Header
+    required Header H = 2;  // Header
+    repeated bytes W = 3; // Waitlist
+    repeated bytes T = 4; // TypoCache
+    optional Logs logs = 5;  // Log
+}
+
+
+// Waitlist contains encrypted version of pw and time
+message WaitlistEntry {
+    required bytes pw = 1;
+    required int64 ts = 2 [default = -1];
+}

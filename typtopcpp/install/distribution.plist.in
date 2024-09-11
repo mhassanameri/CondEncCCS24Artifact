@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<installer-gui-script minSpecVersion="1">
+  <title>TypTop</title>
+  <readme file="../install/welcome.txt"/>
+  <license file="../LICENSE"/>
+  <pkg-ref id="com.typtop.cornell.edu"/>
+  <options customize="never" require-scripts="false"/>
+  <domains enable_localSystem="true"/>
+  <options rootVolumeOnly="true"/>
+  <choices-outline>
+    <line choice="default">
+      <line choice="com.typtop.cornell.edu"/>
+    </line>
+  </choices-outline>
+  <choices-outline>
+    <line choice="default">
+      <line choice="com.typtop.cornell.edu"/>
+    </line>
+  </choices-outline>
+  <choices-outline>
+    <line choice="default">
+      <line choice="com.typtop.cornell.edu"/>
+    </line>
+  </choices-outline>
+  <choice id="default"/>
+  <choice id="com.typtop.cornell.edu" visible="false">
+    <pkg-ref id="com.typtop.cornell.edu"/>
+  </choice>
+  <background file="../install/typtop-logo.png" alignment="bottomleft" mime-type="image/png" />
+  <pkg-ref id="com.typtop.cornell.edu" version="@CPACK_PACKAGE_VERSION@" onConclusion="none">@CPACK_PACKAGE_FILE_NAME@-tmp.pkg</pkg-ref>
+</installer-gui-script>
