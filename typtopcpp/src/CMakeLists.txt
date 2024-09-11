@@ -23,6 +23,9 @@ file(GLOB TYPTOP_SRCS "*.cpp")
 file(GLOB TYPTOP_HDRS "*.h" "*.hpp")
 set(TYPTOP_SRCS ${TYPTOP_SRCS} ${TYPTOP_HDRS} ${PROTO_SRCS} ${PROTO_HDRS} typtopconfig.h)
 
+
+
+
 ### Build the main typtop functionality (in particular, the db) as library
 add_library(typtopdb ${TYPTOP_SRCS})
 ### Build typtop as an executable (why for win32?)
@@ -42,7 +45,15 @@ target_include_directories(b64 PUBLIC ${CRYPTOPP_INCLUDE_DIRS} ${CMAKE_CURRENT_B
 target_link_libraries(typtopdb cryptopp)
 target_link_libraries(typtop typtopdb cryptopp zxcvbn typtopdb curl)
 target_link_libraries(b64 typtopdb ${PROTOBUF_STATIC_LIB})
-target_link_libraries(typtop /usr/local/lib/libargon2.a)
+
+find_library(ARGON2_LIBRARY argon2 PATHS ${CMAKE_SOURCE_DIR}/argon2/phcargon2)
+if(ARGON2_LIBRARY)
+    target_link_libraries(typtop cryptopp  ${ARGON2_LIBRARY})
+    message(STATUS "libargon2.a found!")
+else()
+    message(FATAL_ERROR "libargon2.a not found!")
+endif()
+#target_link_libraries(typtop /usr/local/lib/libargon2.a)
 
 ### Make sure cryptopp and zxcvbn are built when necessary.
 add_dependencies(typtopdb cryptopp zxcvbn)

@@ -17,9 +17,9 @@ void hash256(const std::vector<string>& msgvec, SecByteBlock& digest ) {
     SHA256 hash;
     digest.resize((unsigned long) SHA256::DIGESTSIZE);
     for (auto it=msgvec.begin(); it != msgvec.end(); it++) {
-        hash.Update((const byte*)it->data(), it->size());
+        hash.Update((const CryptoPP::byte*)it->data(), it->size());
         string _it_size = std::to_string(it->size());
-        hash.Update((const byte*)(_it_size.c_str()), _it_size.size());
+        hash.Update((const CryptoPP::byte*)(_it_size.c_str()), _it_size.size());
     }
     hash.Final(digest);
 }
@@ -39,7 +39,7 @@ void PkCrypto::set_params() {
 }
 
 void PkCrypto::set_pk(const string& pk) {
-    StringSource ss((const byte*)pk.data(), pk.size(), true);
+    StringSource ss((const CryptoPP::byte*)pk.data(), pk.size(), true);
     // _pk.BERDecode(ss);
     _pk.Load(ss);
     _pk.ThrowIfInvalid(PRNG, 3);
@@ -47,7 +47,7 @@ void PkCrypto::set_pk(const string& pk) {
     set_params();
 }
 void PkCrypto::set_sk(const string& sk, bool gen_pk) {
-    StringSource ss((const byte*)sk.data(), sk.size(), true);
+    StringSource ss((const CryptoPP::byte*)sk.data(), sk.size(), true);
     // _sk.BERDecode(ss);
     _sk.Load(ss);
     _sk.ThrowIfInvalid(PRNG, 3);
@@ -89,7 +89,7 @@ void PkCrypto::pk_encrypt(const string &msg, string &ctx) const {
     ctx.clear();
     if(!_can_encrypt) throw("Cannot encrypt");
     auto e = myECIES::Encryptor(_pk);
-    StringSource((const byte*)msg.data(), msg.size(), true,
+    StringSource((const CryptoPP::byte*)msg.data(), msg.size(), true,
                  new CryptoPP::PK_EncryptorFilter(PRNG, e, new StringSink(ctx)));
 }
 
@@ -97,7 +97,7 @@ void PkCrypto::pk_decrypt(const string& ctx, string& msg) const {
     if(!_can_decrypt) throw("Cannot decrypt");
     msg.clear();
     auto d = myECIES::Decryptor(_sk);
-    StringSource ss((const byte*)ctx.data(), ctx.size(), true,
+    StringSource ss((const CryptoPP::byte*)ctx.data(), ctx.size(), true,
                     new CryptoPP::PK_DecryptorFilter(PRNG, d, new StringSink(msg)));
 }
 
@@ -128,10 +128,10 @@ void _slow_hash(const string &msg, const SecByteBlock& salt, SecByteBlock &hash,
     else
       {
         PKCS5_PBKDF2_HMAC<SHA512> pbkdf;
-            const byte unused = 0;
-            key.CleanNew(KEYSIZE_BYTES);
-            pbkdf.DeriveKey(key, key.size(), unused,
-                            (const byte*)pw.data(), pw.size(),
+            const CryptoPP::byte unused = 0;
+            hash.CleanNew(KEYSIZE_BYTES);
+            pbkdf.DeriveKey(hash, hash.size(), unused,
+                            (const CryptoPP::byte*)msg.data(), msg.size(),
                             salt, salt.size(),
                             PBKDF_ITERATION_CNT);
       }
@@ -182,7 +182,7 @@ bool pwencrypt(const string &pw, const string &msg, string& ctx,bool MHF_ON) {
         StringSink ss(ctx);
         // ss.Put((const byte*)"SHA256", 6, true);
         ss.Put(salt, salt.size(), true);
-        ss.Put((const byte*)base_ctx.data(), base_ctx.size(), true);
+        ss.Put((const CryptoPP::byte*)base_ctx.data(), base_ctx.size(), true);
     } catch (CryptoPP::Exception& ex) {
         // cerr << ex.what() << endl;
         ret = false;
@@ -195,7 +195,7 @@ bool pwdecrypt(const string &pw, const string &ctx, string &msg, bool MHF_ON) {
     SecByteBlock key;
     try {
         msg.clear();
-        SecByteBlock salt((byte*)ctx.substr(0, KEYSIZE_BYTES).data(), KEYSIZE_BYTES);
+        SecByteBlock salt((CryptoPP::byte*)ctx.substr(0, KEYSIZE_BYTES).data(), KEYSIZE_BYTES);
         string base_ctx = ctx.substr(KEYSIZE_BYTES);
         harden_pw(pw, salt, key, MHF_ON);
         _decrypt(key, base_ctx, "", msg);
@@ -232,11 +232,11 @@ void _encrypt(const SecByteBlock &key, const string &msg, const string &extra_da
 
     // Authenticate the extra data first via AAD_CHANNEL.
     if (!extra_data.empty()) {
-        ef.ChannelPut(AAD_CHANNEL, (const byte *) extra_data.data(), extra_data.size(), true);
+        ef.ChannelPut(AAD_CHANNEL, (const CryptoPP::byte *) extra_data.data(), extra_data.size(), true);
         ef.ChannelMessageEnd(AAD_CHANNEL);
     }
     // Now encrypt and auth real data
-    ef.ChannelPut(DEFAULT_CHANNEL, (const byte*) msg.data(), msg.size(), true);
+    ef.ChannelPut(DEFAULT_CHANNEL, (const CryptoPP::byte*) msg.data(), msg.size(), true);
     ef.ChannelMessageEnd(DEFAULT_CHANNEL);
 }
 
@@ -252,7 +252,7 @@ void _decrypt(const SecByteBlock &key, const string &ctx, const string &extra_da
     assert( mac.size() == MAC_SIZE_BYTES );
     assert( ctx.size() == iv.size() + enc.size() + mac.size() );
 
-    decryptor.SetKeyWithIV(key, key.size(), (const byte*)iv.data(), iv.size());
+    decryptor.SetKeyWithIV(key, key.size(), (const CryptoPP::byte*)iv.data(), iv.size());
 
     AuthenticatedDecryptionFilter df(
             decryptor, new StringSink(msg),
@@ -260,9 +260,9 @@ void _decrypt(const SecByteBlock &key, const string &ctx, const string &extra_da
             MAC_SIZE_BYTES
     );
     // The order of the following calls are important
-    df.ChannelPut( DEFAULT_CHANNEL, (const byte*)mac.data(), mac.size() );
-    df.ChannelPut( AAD_CHANNEL,  (const byte*)extra_data.data(), extra_data.size() );
-    df.ChannelPut( DEFAULT_CHANNEL, (const byte*)enc.data(), enc.size() );
+    df.ChannelPut( DEFAULT_CHANNEL, (const CryptoPP::byte*)mac.data(), mac.size() );
+    df.ChannelPut( AAD_CHANNEL,  (const CryptoPP::byte*)extra_data.data(), extra_data.size() );
+    df.ChannelPut( DEFAULT_CHANNEL, (const CryptoPP::byte*)enc.data(), enc.size() );
 
     // If the object throws, it will most likely occur
     //   during ChannelMessageEnd()

@@ -70,7 +70,7 @@ string SelectRandPwd()
 
     std::string line;
     std::ifstream myfile("/Users/mameriek/Downloads/rockyou.txt");
-//    ifstream myfile ("/Users/mameriek/Documents/GitHub/ConditionalEncryptionTypTop/CondEncCPP/CMakeLists.txt");
+//    ifstream myfile ("/Users/mameriek/Documents/GitHub/ConditionalEncryptionTypTop/CondEncCPP/CMakeLists.txt1");
 //    myfile.open("/Users/mameriek/Documents/GitHub/ConditionalEncryptionTypTop/CondEncCPP/rockyou.txt");
     if (myfile.is_open()) {
         for (int lineno = 0; getline(myfile, line) && lineno < index + 1; lineno++) {

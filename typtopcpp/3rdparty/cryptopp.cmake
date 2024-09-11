@@ -18,18 +18,18 @@ if(CRYPTOPP_FOUND AND CMAKE_PREFER_SHARED_LIBRARIES AND (NOT CRYPTOPP_VERSION VE
 else()
     ### Add external projet for adding CryptoPP in case we need to build package
     ExternalProject_Add(
-      ${CRYPTOPP_PREFIX}
+            ${CRYPTOPP_PREFIX}
 
-      GIT_REPOSITORY ${CRYPTOPP_URL}
-      GIT_TAG "CRYPTOPP_5_6_5 "
-      
-      UPDATE_COMMAND ""
-      PATCH_COMMAND ""
-      
-      SOURCE_DIR "${CMAKE_SOURCE_DIR}/3rdparty/${CRYPTOPP_PREFIX}"
-      CMAKE_ARGS -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR> -j${NCPU} -DCMAKE_BUILD_TYPE=Release -DDISABLE_NATIVE_ARCH=ON
-      
-      TEST_COMMAND ""
+            GIT_REPOSITORY ${CRYPTOPP_URL}
+            GIT_TAG "CRYPTOPP_5_6_5 "
+
+            UPDATE_COMMAND ""
+            PATCH_COMMAND ""
+
+            SOURCE_DIR "${CMAKE_SOURCE_DIR}/3rdparty/${CRYPTOPP_PREFIX}"
+            CMAKE_ARGS -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR> -j${NCPU} -DCMAKE_BUILD_TYPE=Release -DDISABLE_NATIVE_ARCH=ON
+
+            TEST_COMMAND ""
     )
 
     ## Otherwise, use the static library which will be compiled using the above

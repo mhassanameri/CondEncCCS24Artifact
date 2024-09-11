@@ -11,6 +11,14 @@ message(STATUS "CryptoPP lib: " ${CRYPTOPP_INCLUDE_DIRS})
 include_directories(${PROTOBUF_INCLUDE_DIRS})
 target_include_directories(tests PUBLIC ${CRYPTOPP_INCLUDE_DIRS} ${CMAKE_SOURCE_DIR}/src ${CMAKE_BINARY_DIR}/src ${ZXCVBN_INCLUDE_DIRS} ${PLOG_INCLUDE_DIRS})
 
+find_library(ARGON2_LIBRARY argon2 PATHS ${CMAKE_SOURCE_DIR}/argon2/phcargon2)
+if(ARGON2_LIBRARY)
+target_link_libraries(tests cryptopp  ${ARGON2_LIBRARY})
+message(STATUS "libargon2.a found!")
+else()
+message(FATAL_ERROR "libargon2.a not found!")
+endif()
+
 target_link_libraries(tests /usr/local/lib/libargon2.a)
 
 
