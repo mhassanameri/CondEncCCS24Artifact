@@ -249,6 +249,11 @@ void TypTop::MHF_Activation( const bool MHF_ON) {
 }
 
 
+void TypTop::ConDec32OPT_Activation(const bool OPT_32_HAMDist2_ON)
+{
+    this->_OPT_32_HAMDist2_ON = OPT_32_HAMDist2_ON;
+}
+
 void TypTop::initialize(const string &real_pw) {
     ConfigHeader *ch = db.mutable_ch();
     this->real_pw = real_pw;
@@ -581,7 +586,7 @@ bool TypTop::check(const string &pw, PAM_RETURN pret, bool isfork) {
 //            pkobj.pk_decrypt(ench_ctx, _t_ench_str);
 //            pkobj.Paill_pk_decrypt(ench_ctx, _t_ench_str); /* Added by Hassan */
 //            pkobj.HE_Pk_Dec(ench_ctx, _t_ench_str);
-//            pkobj.Paill_pk_decrypt(ench_ctx, _t_ench_str, 0);//
+//            pkobj.Paill_pk_decrypt(ench_ctx, _t_ench_str,
 
             /*For Debug
              * added by Hassan
@@ -733,7 +738,16 @@ void TypTop::process_waitlist(const string &sk_str) {
 //        RsltRcvr = pkobj.RecoverShares(db.w(i), pkobj._ppk, pkobj._psk, 29, _wlent_str); // enc_header_str is the recovered typo. \TODO (IMPTN) make this function executable for debugging
 //        RsltRcvr = pkobj.RecoverTypoEdiDisOne (db.w(i), pkobj._ppk, pkobj._psk, 0,_wlent_str); // this should be commented out
 //        RsltRcvr = CondEncEditDistOneProt.CondDec(pkobj._ppk, db.w(i), pkobj._psk,1, _wlent_str, 32, 32);
-        RsltRcvr = OrPredicate::CondDec(pkobj._ppk, &CondTypoCtx[0], pkobj._psk, threshold, wlent_str, _len);
+
+        if(this->_OPT_32_HAMDist2_ON)
+        {
+            RsltRcvr = OrPredicate::CondDec(pkobj._ppk, &CondTypoCtx[0], pkobj._psk, threshold, wlent_str, _len);
+        }
+        else
+        {
+            RsltRcvr = OrPredicate::CondDec_Optimized_for_HD2(pkobj._ppk, &CondTypoCtx[0], pkobj._psk, threshold, wlent_str, _len);
+        }
+
 //        cout << "...CodDec...\n";
 //        RsltRcvr = OrPredicate::CondDec_Optimized_for_HD2(pkobj._ppk, &CondTypoCtx[0], pkobj._psk, threshold, wlent_str, _len, 28, l_m);//TODO: Note that here the decrypted value should be the payaload if the OR_Predi(pwd,typo) =1. So, in the case of 1 as the result of conditional decryption.
         if (RsltRcvr >= 0)  {

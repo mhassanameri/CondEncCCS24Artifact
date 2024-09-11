@@ -2,41 +2,8 @@
 // Created by Mohammad Hassan Ameri on 8/30/22.
 //
 
+#include "test_condTypTop.h"
 
-#include "condtyptop.h"
-#define CATCH_CONFIG_MAIN // This should come **before** including the 'catch.hpp'.
-#define MY_SIGSTKSZ 8192
-#include "catch.hpp"
-
-#include <iostream>
-#include <fstream>
-#include <chrono>
-
-#include <random>
-using namespace std::chrono;
-
-#define DEBUG 1
-#define times(n, code_block) {for(int _ti=0; _ti<n; _ti++) code_block;}
-
-const string _db_fname = "./test_condtyptop_db";
-
-bool MHF_ON;
-
-string install_id; // get_install_id();
-const int32_t infinity = INT_MAX;
-
-class TypTopTest : public TypTop {
-public:
-    TypTopTest() : TypTop(_db_fname) {};
-    using TypTop::add_to_waitlist;
-    using TypTop::get_db;
-    using TypTop::get_ench;
-    using TypTop::get_pkobj;
-    using TypTop::permute_typo_cache;
-    using TypTop::initialize;
-    using TypTop::reinitialize;
-    using TypTop::MHF_Activation;
-};
 
 
 std::vector<std::pair<std::string, std::string>> LoadPWDvsTypoForTEST(const std::string& FileName)
@@ -228,12 +195,170 @@ string MakeTypo(string &pwd)
 //}
 
 
+int testCondTypTop_no_32_OPT(int NUM_ROUNDS, bool MHF_ON, bool OPT_32_HAMDist2_ON)
+{
+
+    double Sum_time_init =0;
+    double Sum_time_UsrNotif_Correct_Lgin =0;
+    double Sum_time_UsrNotif_incorrect_Lgin =0;
+    double Sum_time_TotalProcessing_OrignPWD =0;
+    double Sum_time_TotalProcessing_IncrctTypo =0;
+    double Sum_time_Login_WaitListIncludeValidTypo =0;
+    double SizeOfWaitingList;
+
+    // std::string filename = "PWDvsTyposDataSet/PWDvsTypoDataSetLessThan"+to_string(32)+"HamDisHold"+to_string(2)+".txt";
+    std::string filename = "PWDvsTyposDataSet/PWDvsTypoDataSetLessThan"+to_string(32) + ".txt";
+    std::vector<std::pair<std::string, std::string>> data = LoadPWDvsTypoForTEST(filename);
+
+     for (int round = 0; round <NUM_ROUNDS; round++) // number of passwords the the systm is initialized with.
+    {
+        install_id = get_install_id();
+        remove(_db_fname.c_str());
+        TypTopTest tp;
+        tp.MHF_Activation(MHF_ON); //Continue from heret
+        tp.ConDec32OPT_Activation(OPT_32_HAMDist2_ON);
+
+        vector<string> pws(2);
+
+        const typoDB &db = tp.get_db();
+        REQUIRE(db.h().sys_state() == SystemStatus::UNINITIALIZED);
+
+        // pws[0] = SelectRandPwd();
+        // pws[1] = MakeTypo(pws[0]);
+        pws[0] = data[round].first;
+        pws[1] = data[round].second;
+        string sk_str;
+        int i;
+
+
+        auto start = high_resolution_clock::now();
+        if (!tp.check(pws[0], SECOND_TIME, false))
+        {
+            cout <<  "password check with the original pwd was failed \n";
+        }
+//        tp.check(pws[0], SECOND_TIME, false);   // set the password
+        auto stop = high_resolution_clock::now();
+        auto time_init = duration_cast<milliseconds>(stop - start);/* Computes the execution time of initialization phase*/
+        Sum_time_init += time_init.count();
+
+        auto start_LginOrigPWD = high_resolution_clock::now();
+
+        if (!tp.check(pws[0], FIRST_TIME, false))
+        {
+            cout <<  "password check with the original pwd was failed \n";
+            tp.check(pws[0], FIRST_TIME, false);
+        }
+//        REQUIRE(tp.check(pws[0], FIRST_TIME, false));
+//        tp.check(pws[0], FIRST_TIME, false);
+        auto stop_LginOrigPWD = high_resolution_clock::now();
+        auto time_TotalProcessing_OrignPWD = duration_cast<milliseconds>(stop_LginOrigPWD - start_LginOrigPWD);
+//        double time_AveTotalProcessing_OrignPWD = time_TotalProcessing_OrignPWD.count();
+        Sum_time_TotalProcessing_OrignPWD +=   time_TotalProcessing_OrignPWD.count() ;
+
+
+        auto start_Correct_login = high_resolution_clock::now();
+        i = tp.is_typo_present(pws[0], sk_str);
+        auto stop_Correct_login = high_resolution_clock::now();
+        assert(i == 0);
+        auto time_UsrNotif_Correct_Lgin = duration_cast<microseconds>(
+                stop_Correct_login - start_Correct_login); //When we use MHF, sec is the orde of  computations.
+
+        Sum_time_UsrNotif_Correct_Lgin += time_UsrNotif_Correct_Lgin.count();
+
+        auto start_Incorrect_login = high_resolution_clock::now();
+        i = tp.is_typo_present(pws[1], sk_str);
+        auto stop_Incorrect_login = high_resolution_clock::now();
+//        assert(i == T_size);
+
+        auto time_UsrNotif_incorrect_Lgin = duration_cast<microseconds>(
+                stop_Incorrect_login - start_Incorrect_login); //When we use MHF, sec is the orde of  computations.
+        Sum_time_UsrNotif_incorrect_Lgin +=  time_UsrNotif_incorrect_Lgin.count();
+
+        auto start_LginIncrctTypo = high_resolution_clock::now();
+        times(W_size, CHECK_FALSE(tp.check(pws[1], FIRST_TIME, false)));
+        auto stop_LginIncrctTypo = high_resolution_clock::now();
+
+        auto time_TotalProcessing_IncrctTypo = duration_cast<milliseconds>(
+                stop_LginIncrctTypo - start_LginIncrctTypo);
+        Sum_time_TotalProcessing_IncrctTypo  +=   ((time_TotalProcessing_IncrctTypo.count()) / W_size) ;
+
+
+        auto start_Login_WaitListIncludeValidTypo = high_resolution_clock::now();
+        REQUIRE(tp.check(pws[0], FIRST_TIME, false));
+        auto stop_Login_WaitListIncludeValidTypo = high_resolution_clock::now();
+        auto time_Login_WaitListIncludeValidTypo = duration_cast<milliseconds>(
+                stop_Login_WaitListIncludeValidTypo - start_Login_WaitListIncludeValidTypo);
+
+        Sum_time_Login_WaitListIncludeValidTypo +=    time_Login_WaitListIncludeValidTypo.count();
+
+
+        SizeOfWaitingList = ((db.w(1).size()) * W_size) / 1024;
+//        double SizeOfWaitingList =  1028;
+
+
+        // TyptopCondOPT << "TypTopCondEnc(NonOPT/mhf-12)" << "\t" << time_init.count() << "\t"
+        //               << time_UsrNotif_Correct_Lgin.count()  << "\t" << time_UsrNotif_incorrect_Lgin.count()
+        //               << "\t" << time_TotalProcessing_OrignPWD.count() << "\t" << time_TotalProcessing_IncrctTypo.count() / W_size
+        //               << "\t" << time_Login_WaitListIncludeValidTypo.count() << "\t" << SizeOfWaitingList << "\n";
+
+
+
+        cout << "round #" << round << "\n";
+
+    }
+
+    double AVERAGE_time_init =Sum_time_init / NUM_ROUNDS;
+    double AVERAGE_time_UsrNotif_Correct_Lgin  =            Sum_time_UsrNotif_Correct_Lgin    / NUM_ROUNDS;
+    double AVERAGE_time_UsrNotif_incorrect_Lgin =           Sum_time_UsrNotif_incorrect_Lgin  / NUM_ROUNDS;
+    double AVERAGE_time_TotalProcessing_OrignPWD =          Sum_time_TotalProcessing_OrignPWD /  NUM_ROUNDS;
+    double AVERAGE_time_TotalProcessing_IncrctTypo =      Sum_time_TotalProcessing_IncrctTypo /  NUM_ROUNDS;
+    double AVERAGE_time_Login_WaitListIncludeValidTypo =  Sum_time_Login_WaitListIncludeValidTypo / NUM_ROUNDS;
+
+
+    std::ofstream TyptopCondOPT("TypTopCondOPT.dat", std::ios_base::app | std::ios_base::out);
+    if (MHF_ON ==  true && OPT_32_HAMDist2_ON ==true)
+    {
+        TyptopCondOPT << "Average: TypTopCondEnc(MHF/OPT)" << "\t" << AVERAGE_time_init << "\t"
+                  << AVERAGE_time_UsrNotif_Correct_Lgin  << "\t" << AVERAGE_time_UsrNotif_incorrect_Lgin
+                  << "\t" << AVERAGE_time_TotalProcessing_OrignPWD << "\t" << AVERAGE_time_TotalProcessing_IncrctTypo
+                  << "\t" << AVERAGE_time_Login_WaitListIncludeValidTypo << "\t" << SizeOfWaitingList << "\n";
+    }
+    else if (MHF_ON == false && OPT_32_HAMDist2_ON ==true)
+    {
+        TyptopCondOPT << "Average: TypTopCondEnc(OPT/MHF)" << "\t" << AVERAGE_time_init << "\t"
+                 << AVERAGE_time_UsrNotif_Correct_Lgin  << "\t" << AVERAGE_time_UsrNotif_incorrect_Lgin
+                 << "\t" << AVERAGE_time_TotalProcessing_OrignPWD << "\t" << AVERAGE_time_TotalProcessing_IncrctTypo
+                 << "\t" << AVERAGE_time_Login_WaitListIncludeValidTypo << "\t" << SizeOfWaitingList << "\n";
+    }
+    else if (MHF_ON == false && OPT_32_HAMDist2_ON ==false)
+    {
+        TyptopCondOPT << "Average: TypTopCondEnc(no OPT/no MHF)" << "\t" << AVERAGE_time_init << "\t"
+                 << AVERAGE_time_UsrNotif_Correct_Lgin   << "\t" << AVERAGE_time_UsrNotif_incorrect_Lgin
+                 << "\t" << AVERAGE_time_TotalProcessing_OrignPWD << "\t" << AVERAGE_time_TotalProcessing_IncrctTypo
+                 << "\t" << AVERAGE_time_Login_WaitListIncludeValidTypo << "\t" << SizeOfWaitingList << "\n";
+    }
+    else if (MHF_ON == true && OPT_32_HAMDist2_ON ==false)
+    {
+        TyptopCondOPT << "Average: TypTopCondEnc(no OPT/MHF)" << "\t" << AVERAGE_time_init << "\t"
+                 << AVERAGE_time_UsrNotif_Correct_Lgin   << "\t" << AVERAGE_time_UsrNotif_incorrect_Lgin
+                 << "\t" << AVERAGE_time_TotalProcessing_OrignPWD << "\t" << AVERAGE_time_TotalProcessing_IncrctTypo
+                 << "\t" << AVERAGE_time_Login_WaitListIncludeValidTypo << "\t" << SizeOfWaitingList << "\n";
+    }
+
+return 1;
+
+}
+
+
 TEST_CASE("Timing") {
+
+
+
     std::ofstream TyptopCondOPT("TypTopCondOPT.dat", std::ios_base::app | std::ios_base::out);
     TyptopCondOPT << "TypTopType" <<"\t" << "Init" << "\t" << "usrLoginNotif(Correct)" << "\t" << "usrLoginNotif(Incorrect)" <<"\t" << "TotalProcessingTimeCorrectLogin"<< "\t" << "TotalProcessingTimeIncorrectLogin" << "\t" << "ProcessWaitListContainsValidTypo" << "\t" << "WaitListSize" <<"\n";
-    MHF_ON = true;
+    MHF_ON = false;
 
-    int NUM_ROUNDS = 1;
+    int NUM_ROUNDS = 5;
     double Sum_time_init =0;
     double Sum_time_UsrNotif_Correct_Lgin =0;
     double Sum_time_UsrNotif_incorrect_Lgin =0;
@@ -251,7 +376,7 @@ TEST_CASE("Timing") {
         install_id = get_install_id();
         remove(_db_fname.c_str());
         TypTopTest tp;
-        tp.MHF_Activation(MHF_ON); //Continue from here 
+        tp.MHF_Activation(MHF_ON); //Continue from here
         vector<string> pws(2);
 
         const typoDB &db = tp.get_db();
