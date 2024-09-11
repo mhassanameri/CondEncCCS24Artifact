@@ -31,11 +31,11 @@ table.auto_set_font_size(False)
 table.set_fontsize(10)
 
 # Adjust column widths to fit the page width
-table.scale(2, 1.5)  # Scale to fit width (increase the first number to make it wider)
+table.scale(2.5, 2.5)  # Scale to fit width (increase the first number to make it wider)
 table.auto_set_column_width(col=list(range(len(df.columns))))
 
 # Save the table as a PDF with a specific page size (to fit width)
-pdf_file = 'output_table_fit_to_page.pdf'
+pdf_file = 'output_table_CondTypTopEval.pdf'
 with PdfPages(pdf_file) as pdf:
     fig.tight_layout()
     pdf.savefig(fig, bbox_inches='tight')

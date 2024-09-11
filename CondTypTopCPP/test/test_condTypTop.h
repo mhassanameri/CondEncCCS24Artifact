@@ -52,6 +52,7 @@ TEST_CASE("CondTypTopEval")
     // inputFile >> input[0]; //Number of Round tests (for how many pwd form the PWD DataSet the CondTypTop will be initialized
 
     std::ofstream TyptopCondOPT("CondTypTopEval.dat", std::ios_base::app | std::ios_base::out);
+    TyptopCondOPT << "For simplicity in comparing the numbers, all numbers are in Micor Second.\n";
     TyptopCondOPT << "TypTopType" <<"\t" << "Init" << "\t" << "usrLoginNotif(Correct)" << "\t" << "usrLoginNotif(Incorrect)" <<"\t" << "TotalProcessingTime (Correct Login)"<< "\t" << "TotalProcessingTime (Incorrect Login)" << "\t" << "ProcessWaitListContainsValidTypo" << "\t" << "WaitListSize" <<"\n";
 
     bool MHF_ON= true;

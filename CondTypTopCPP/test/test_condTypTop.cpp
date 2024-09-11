@@ -315,7 +315,7 @@ int testCondTypTop_no_32_OPT(int NUM_ROUNDS, bool MHF_ON, bool OPT_32_HAMDist2_O
     double AVERAGE_time_Login_WaitListIncludeValidTypo =  Sum_time_Login_WaitListIncludeValidTypo / NUM_ROUNDS;
 
 
-    std::ofstream TyptopCondOPT("TypTopCondOPT.dat", std::ios_base::app | std::ios_base::out);
+    std::ofstream TyptopCondOPT("CondTypTopEval.dat", std::ios_base::app | std::ios_base::out);
     if (MHF_ON ==  true && OPT_32_HAMDist2_ON ==true)
     {
         TyptopCondOPT << "Average: TypTopCondEnc(MHF/OPT)" << "\t" << AVERAGE_time_init << "\t"
@@ -325,21 +325,21 @@ int testCondTypTop_no_32_OPT(int NUM_ROUNDS, bool MHF_ON, bool OPT_32_HAMDist2_O
     }
     else if (MHF_ON == false && OPT_32_HAMDist2_ON ==true)
     {
-        TyptopCondOPT << "Average: TypTopCondEnc(OPT/MHF)" << "\t" << AVERAGE_time_init << "\t"
+        TyptopCondOPT << "Average: TypTopCondEnc(MHF/no_OPT)" << "\t" << AVERAGE_time_init << "\t"
                  << AVERAGE_time_UsrNotif_Correct_Lgin  << "\t" << AVERAGE_time_UsrNotif_incorrect_Lgin
                  << "\t" << AVERAGE_time_TotalProcessing_OrignPWD << "\t" << AVERAGE_time_TotalProcessing_IncrctTypo
                  << "\t" << AVERAGE_time_Login_WaitListIncludeValidTypo << "\t" << SizeOfWaitingList << "\n";
     }
     else if (MHF_ON == false && OPT_32_HAMDist2_ON ==false)
     {
-        TyptopCondOPT << "Average: TypTopCondEnc(no OPT/no MHF)" << "\t" << AVERAGE_time_init << "\t"
+        TyptopCondOPT << "Average: TypTopCondEnc(no MHF/no OPT/)" << "\t" << AVERAGE_time_init << "\t"
                  << AVERAGE_time_UsrNotif_Correct_Lgin   << "\t" << AVERAGE_time_UsrNotif_incorrect_Lgin
                  << "\t" << AVERAGE_time_TotalProcessing_OrignPWD << "\t" << AVERAGE_time_TotalProcessing_IncrctTypo
                  << "\t" << AVERAGE_time_Login_WaitListIncludeValidTypo << "\t" << SizeOfWaitingList << "\n";
     }
     else if (MHF_ON == true && OPT_32_HAMDist2_ON ==false)
     {
-        TyptopCondOPT << "Average: TypTopCondEnc(no OPT/MHF)" << "\t" << AVERAGE_time_init << "\t"
+        TyptopCondOPT << "Average: TypTopCondEnc(MHF/no OPT)" << "\t" << AVERAGE_time_init << "\t"
                  << AVERAGE_time_UsrNotif_Correct_Lgin   << "\t" << AVERAGE_time_UsrNotif_incorrect_Lgin
                  << "\t" << AVERAGE_time_TotalProcessing_OrignPWD << "\t" << AVERAGE_time_TotalProcessing_IncrctTypo
                  << "\t" << AVERAGE_time_Login_WaitListIncludeValidTypo << "\t" << SizeOfWaitingList << "\n";
