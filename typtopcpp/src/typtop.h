@@ -81,7 +81,7 @@ protected:
     void process_waitlist(const string& sk_str);
     void permute_typo_cache(const string& sk_str);
     void expire_typos(const string& sk_str);
-
+    void MHF_Activation( const bool MHF_ON);
     // For testing
     inline const typoDB& get_db(){ return db; }
     inline const PkCrypto& get_pkobj(){return pkobj;}

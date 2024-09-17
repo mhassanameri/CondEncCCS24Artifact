@@ -131,7 +131,7 @@ void TypTop::add_to_waitlist(const string &typo, time_t ts) {
 void TypTop::fill_waitlist_w_garbage() {
     for (int i = 0; i < W_size; i++) {
         string b(DEFAULT_PW_LENGTH, 0);
-        PRNG.GenerateBlock((byte *) b.data(), b.size());
+        PRNG.GenerateBlock((CryptoPP::byte *) b.data(), b.size());
         add_to_waitlist(b, -1); // ts = -1 for garbage strings
     }
 }
@@ -177,20 +177,20 @@ void TypTop::initialize(const string &real_pw) {
     for (int i = 0; i < T_size; i++) {
         if ((T_cache[i].empty() || !meets_typo_policy(real_pw, T_cache[i], db.ch().tp())) && i!= 0) { // generate random
             T_cache[i].resize(DEFAULT_PW_LENGTH, 0);
-            PRNG.GenerateBlock((byte *) T_cache[i].data(), T_cache[i].size());
+            PRNG.GenerateBlock((CryptoPP::byte*) T_cache[i].data(), T_cache[i].size());
             if (!T_cache[i].empty()) LOGD << "Skipping: " << T_cache[i];
         } else {
             insert_into_log(T_cache[i], true, -1); // sets L
             LOGD << "Inserting: " << T_cache[i];
         }
-        pwencrypt(T_cache[i], sk_str, sk_ctx);
+        pwencrypt(T_cache[i], sk_str, sk_ctx,this->_MHF_ON);
         // LOG_DEBUG << "Inserting " << T_cache[i] << " at " << i;
         _insert_into_typo_cache(i, sk_ctx, (i == 0 ? INT_MAX : T_size - i));
 #ifdef DEBUG
         // cerr << "Inserting -->" << T_cache[i] << endl;
         if(i>0) {
             assert(db.t(i) == sk_ctx);
-            assert(pwdecrypt(T_cache[i], db.t(i), _t));
+            assert(pwdecrypt(T_cache[i], db.t(i), _t, this->_MHF_ON));
             assert(ench.freq(i) == T_size-i);
         }
 #endif
@@ -249,7 +249,7 @@ void TypTop::insert_into_log(const string &pw, bool in_cache, time_t ts) {
         return;
     }
 
-    SecByteBlock g_salt((const byte *) db.ch().global_salt().data(), db.ch().global_salt().size());
+    SecByteBlock g_salt((const CryptoPP::byte *) db.ch().global_salt().data(), db.ch().global_salt().size());
     Log *l = db.mutable_logs()->add_l();
     l->set_in_cache(in_cache);
     l->set_istop5fixable(top5fixable(real_pw, pw));
@@ -265,7 +265,7 @@ int TypTop::is_typo_present(const string &pw, string &sk_str) const {
     int i = 0;
     for (i = 0; i < T_size; i++) {
         sk_str.clear();
-        if (pwdecrypt(pw, db.t(i), sk_str)) { // match found
+        if (pwdecrypt(pw, db.t(i), sk_str, this->_MHF_ON)) { // match found
             break;
         }
     }
@@ -274,7 +274,7 @@ int TypTop::is_typo_present(const string &pw, string &sk_str) const {
 
 bool TypTop::is_correct(const string &pw) const {
     string sk_str;
-    bool ret = pwdecrypt(pw, db.t(0), sk_str);
+    bool ret = pwdecrypt(pw, db.t(0), sk_str, this->_MHF_ON);
     sk_str.clear();
     return ret;
 }
@@ -428,8 +428,8 @@ void TypTop::expire_typos(const string &sk_str) {
     for (int i = 1; i < T_size; i++) { // don't remove real password
         if ((t_now - ench.last_used(i)) > db.ch().typo_expiry_time()) {
             string fake_pw(DEFAULT_PW_LENGTH, 0);
-            PRNG.GenerateBlock((byte *) fake_pw.data(), fake_pw.size());
-            pwencrypt(fake_pw, sk_str, sk_ctx);
+            PRNG.GenerateBlock((CryptoPP::byte *) fake_pw.data(), fake_pw.size());
+            pwencrypt(fake_pw, sk_str, sk_ctx, this->_MHF_ON);
             LOG_INFO << "Expiring typo at " << i
                       << " time_now:" << t_now
                       << " Last used:" << ench.last_used(i);
@@ -471,13 +471,13 @@ void TypTop::process_waitlist(const string &sk_str) {
         for (auto i: freq_vec_sorted_idx) {
             // try to insert at i-th location
             if (win(ench.freq((int) i), freq)) {
-                pwencrypt(pw, sk_str, sk_ctx);
+                pwencrypt(pw, sk_str, sk_ctx, this->_MHF_ON);
                 LOG_DEBUG << "Inserting " << pw << " at " << i;
 
                 _insert_into_typo_cache((int) i, sk_ctx, max(freq, freq_vec[i] + 1));
 #ifdef DEBUG
             string _t;
-            assert(pwdecrypt(pw, db.t(i), _t));
+            assert(pwdecrypt(pw, db.t(i), _t, this->_MHF_ON));
 #endif
                 break;
             }

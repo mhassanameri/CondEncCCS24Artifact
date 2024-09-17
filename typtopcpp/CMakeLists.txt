@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 3.18)
 
 ## Basic project information
 project(typtop)
@@ -19,11 +19,16 @@ message(STATUS "Building with shared libraries preferred: ${CMAKE_PREFER_SHARED_
 set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -s")
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -s")
 
-set(CMAKE_CXX_STANDARD 11)
+#set(CMAKE_CXX_STANDARD 11)
+#set(CMAKE_C_COMPILER ${CC})
+#set(CMAKE_CXX_COMPILER ${CC})
+#set(CMAKE_CXX_FLAGS "-Wall -std=c++11")
+
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_C_COMPILER ${CC})
 set(CMAKE_CXX_COMPILER ${CC})
-set(CMAKE_CXX_FLAGS "-Wall -std=c++11")
-
+set(CMAKE_CXX_FLAGS "-Wall -std=c++17")
+set (GCC_NO_COMMON_BLOCKS "NO")
 ## Load any cmake modules from 3rdparty/
 ## Allows us to do find_package(CryptoPP)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${PROJECT_SOURCE_DIR}/3rdparty/")
@@ -31,17 +36,17 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${PROJECT_SOURCE_DIR}/3rdparty/")
 #### Set up sources for external dependencies
 
 ## CryptoPP fallback
-set(CRYPTOPP_URL https://github.com/weidai11/cryptopp.git)
-set(CRYPTOPP_TAG CRYPTOPP_5_6_5)
-set(CRYPTOPP_PREFIX cryptopp565)
-set(CRYPTOPP_TARGET_VERSION 5.6.5)
-message(STATUS "Configuring dependencies: cryptopp, zxcvbn and plog")
-include(cryptopp)
-if(${CRYPTOPP_SHARED})
-    message(STATUS "Crypto++ setup to be shared.")
-else()
-    message(STATUS "Crypto++ setup to be compiled.")
-endif()
+#set(CRYPTOPP_URL https://github.com/weidai11/cryptopp.git)
+#set(CRYPTOPP_TAG CRYPTOPP_5_6_5)
+#set(CRYPTOPP_PREFIX cryptopp565)
+#set(CRYPTOPP_TARGET_VERSION 5.6.5)
+#message(STATUS "Configuring dependencies: cryptopp, zxcvbn and plog")
+##include(cryptopp)
+#if(${CRYPTOPP_SHARED})
+#    message(STATUS "Crypto++ setup to be shared.")
+#else()
+#    message(STATUS "Crypto++ setup to be compiled.")
+#endif()
 
 ## Zxcvbn source (always used)
 set(ZXCVBN_URL https://github.com/tsyrogit/zxcvbn-c.git)
@@ -76,6 +81,7 @@ configure_file (
 ### Build each component
 # build main source code
 add_subdirectory(src)
+add_subdirectory(cryptopp-cmake)
 
 # build pam module
 add_subdirectory(src/pam_modules)

@@ -170,7 +170,7 @@ bool harden_pw(const string pw, SecByteBlock& salt, SecByteBlock& key, bool MHF_
     }
 }
 
-bool pwencrypt(const string &pw, const string &msg, string& ctx,bool MHF_ON) {
+bool pwencrypt(const string &pw, const string &msg, string& ctx, bool MHF_ON) {
     bool ret = false;
     try {
         ctx.clear();

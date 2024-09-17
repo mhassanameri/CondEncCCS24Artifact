@@ -111,14 +111,15 @@ static const uint32_t MAC_SIZE_BYTES = 16; // size of tag
 static AutoSeededRandomPool PRNG;  // instantiate only one class
 static const OID CURVE = secp256r1();
 
-typedef CryptoPP::ECIES<ECP, CryptoPP::IncompatibleCofactorMultiplication, true> myECIES;
+// typedef CryptoPP::ECIES<ECP, CryptoPP::IncompatibleCofactorMultiplication, true> myECIES;
+typedef CryptoPP::ECIES<ECP, CryptoPP::IncompatibleCofactorMultiplication> myECIES;
 
 
 /* Hashing related functions */
 void hash256(const std::vector<string>&, SecByteBlock&);
-bool harden_pw(const string pw, SecByteBlock& salt, SecByteBlock& key);
+bool harden_pw(const string pw, SecByteBlock& salt, SecByteBlock& key, bool MHF_ON);
 void _slow_hash(const string& pw, const SecByteBlock& salt,
-                SecByteBlock& key);
+                SecByteBlock& key, bool MHF_ON);
 
 /* Symmetric key functions */
 bool pwencrypt(const string& pw, const string& msg, string& ctx, bool MHF_ON);
@@ -194,7 +195,7 @@ void PrintKeyAndIV(SecByteBlock& ekey,
                    SecByteBlock& akey);
 
 /* Utility Functions */
-inline void b64encode(const byte* raw_bytes, ulong len, string& str) {
+inline void b64encode(const CryptoPP::byte* raw_bytes, ulong len, string& str) {
     StringSource ss( raw_bytes, len, true, new Base64URLEncoder(new StringSink(str), true));
     // StringSource ss( raw_bytes, len, true, new HexEncoder(new StringSink(str)));
 }
@@ -216,7 +217,7 @@ inline uint32_t compute_id(const SecByteBlock& key, const string& msg) {
     return *(uint32_t*)hmac256(key, msg).substr(0, 4).data();
 }
 
-inline string b64encode(const string& in){ string out; b64encode((const byte*)in.data(), in.size(), out); return out; }
+inline string b64encode(const string& in){ string out; b64encode((const CryptoPP::byte*)in.data(), in.size(), out); return out; }
 inline string b64decode(const string& in) { string out; b64decode(in, out); return out; }
 
 /*
@@ -231,7 +232,7 @@ inline std::ostream& operator<< (std::ostream& os, SecByteBlock const& value){
     return os;
 }
 
-inline void debug_print(byte* m, size_t len, string name="") {
+inline void debug_print(CryptoPP::byte* m, size_t len, string name="") {
 #ifdef DEBUG
     string key_str;
     b64encode(m, len, key_str);

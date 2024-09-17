@@ -4,6 +4,8 @@
 
 
 #include "typtop.h"
+#define CATCH_CONFIG_MAIN // This should come **before** including the 'catch.hpp'.
+#define MY_SIGSTKSZ 8192
 #include "catch.hpp"
 
 #include <iostream>

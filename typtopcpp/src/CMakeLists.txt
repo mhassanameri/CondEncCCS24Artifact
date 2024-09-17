@@ -19,15 +19,22 @@ if(CMAKE_BUILD_TYPE MATCHES "Debug")
 endif()
 
 ### Set the sources for typtop
-file(GLOB TYPTOP_SRCS "*.cpp")
+file(GLOB TYPTOP_SRCS "*.cpp" "*.c")
 file(GLOB TYPTOP_HDRS "*.h" "*.hpp")
+
+set(CONDTYPTOP_SRCS ${PROTO_SRCS} ${PROTO_HDRS}
+        typtopconfig.h
+        pw_crypto.h pw_crypto.cpp
+        upload.cpp
+        #        conditionalcrypto.h
+        CryptoSymWrapperFunctions.cpp CryptoSymWrapperFunctions.h)
+
 set(TYPTOP_SRCS ${TYPTOP_SRCS} ${TYPTOP_HDRS} ${PROTO_SRCS} ${PROTO_HDRS} typtopconfig.h)
-
-
 
 
 ### Build the main typtop functionality (in particular, the db) as library
 add_library(typtopdb ${TYPTOP_SRCS})
+
 ### Build typtop as an executable (why for win32?)
 add_executable(typtop typtop-main.cpp)  # Not sure why we have win32
 
@@ -42,18 +49,28 @@ target_include_directories(typtop PUBLIC ${CRYPTOPP_INCLUDE_DIRS} ${CMAKE_CURREN
 target_include_directories(b64 PUBLIC ${CRYPTOPP_INCLUDE_DIRS} ${CMAKE_CURRENT_BINARY_DIR} ${ZXCVBN_INCLUDE_DIRS} ${PLOG_INCLUDE_DIRS})
 
 ### Link libraries. These are configured through 3rdparty/${lib_name}
-target_link_libraries(typtopdb cryptopp)
-target_link_libraries(typtop typtopdb cryptopp zxcvbn typtopdb curl)
+#target_link_libraries(typtopdb cryptopp)
+target_link_libraries(typtop typtopdb  zxcvbn typtopdb curl)
 target_link_libraries(b64 typtopdb ${PROTOBUF_STATIC_LIB})
+
+
+
+
 
 find_library(ARGON2_LIBRARY argon2 PATHS ${CMAKE_SOURCE_DIR}/argon2/phcargon2)
 if(ARGON2_LIBRARY)
-    target_link_libraries(typtop cryptopp  ${ARGON2_LIBRARY})
+    target_link_libraries(typtop cryptopp ${ARGON2_LIBRARY})
+    target_link_libraries(typtopdb cryptopp ${ARGON2_LIBRARY})
     message(STATUS "libargon2.a found!")
 else()
     message(FATAL_ERROR "libargon2.a not found!")
 endif()
 #target_link_libraries(typtop /usr/local/lib/libargon2.a)
+
+#target_link_libraries(typtop
+#        ${CMAKE_BINARY_DIR}/cryptopp565-prefix/src/cryptopp565-build/libcryptopp.a
+#)
+target_link_libraries(typtop cryptopp)
 
 ### Make sure cryptopp and zxcvbn are built when necessary.
 add_dependencies(typtopdb cryptopp zxcvbn)
