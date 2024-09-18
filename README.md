@@ -14,12 +14,25 @@ In summary, we implemented conditional encryption for groups of binary predicate
 ## Dependencies
 To compile the project from source, you will need the following:
 * `cmake >= 3.6`
+     ```bash
+      $ wget https://github.com/Kitware/CMake/releases/download/v3.30.3/cmake-3.30.3.tar.gz
+      $ tar -xvzf cmake-3.30.3.tar.gz
+      $ ./configure
+      $ make
+      $ sudo make install
+  
 * `protobuf` [source](https://protobuf.dev/overview/) (in debian use sudo `apt install protobuf-compiler`)
 * `pam-dev` (in debian use `sudo apt-get install libpam0g-dev`)
 * `cURL` (in debian use `sudo apt install libcurl4-openssl-dev`)
 * `catch2` [source](https://github.com/catchorg/Catch2) (to install, clone the repository and build)
+     ```bash
+      $ git clone https://github.com/catchorg/Catch2.git
+      $ cd Catch2
+      $ cmake -Bbuild -H. -DBUILD_TESTING=OFF
+      $ sudo cmake --build build/ --target install
 * `cryptopp`, `zxcvbn` and `plog` (inside the repository, will automatically build)
 * `Argon2` memory hard functions [Source](https://github.com/P-H-C/phc-winner-argon2) (inside the repository, requires manually building)
+
 
 
 ## Building the project (Just Conditional Encryption)
@@ -32,6 +45,8 @@ Build the Argon2 libraries
 ```bash
 $ cd argon2/phcargon2
 $ make
+$ make test 
+$ make install
 $ cd ../../
 ```
 Create a build directory and build the program
