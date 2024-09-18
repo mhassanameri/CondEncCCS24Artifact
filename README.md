@@ -13,7 +13,7 @@ In summary, we implemented conditional encryption for groups of binary predicate
 
 ## Dependencies
 To compile the project from source, you will need the following:
-* `cmake >= 3.6`
+* `cmake >= 3.28`
      ```bash
       $ wget https://github.com/Kitware/CMake/releases/download/v3.30.3/cmake-3.30.3.tar.gz
       $ tar -xvzf cmake-3.30.3.tar.gz
@@ -46,7 +46,7 @@ Build the Argon2 libraries
 $ cd argon2/phcargon2
 $ make
 $ make test 
-$ make install
+$ sudo make install
 $ cd ../../
 ```
 Create a build directory and build the program
@@ -99,6 +99,8 @@ Build the Argon2 libraries
 ```bash
 $ cd argon2/phcargon2
 $ make
+$ make test 
+$ sudo make install
 $ cd ../../
 ```
 Create a build directory and build the program
