@@ -25,3 +25,6 @@ GeneratePlotsPdfs/main.synctex.gz
 /typtopcpp/3rdparty/cryptopp565
 /typtopcpp/3rdparty/plog110
 /typtopcpp/3rdparty/zxcvbn21
+
+.DS_Store
+.idea
