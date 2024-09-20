@@ -1,23 +1,21 @@
-# CondEnc-CPP #
+# Conditional Encryption
 
-## ACM-CCS24 Artifact Documentation
+## Introduction
 
-**tl;dr** Conditional Encryption: "acronymed CondEnc" is public key cryptographic primitive which helps us to conditionally (under a binary predicate like $P(m_1, m_2)$) encrypt a the payload message $m_3$ given a regular ciphertext $c_1 = Enc(pk, m_1)$ encrypting an unknown message $m_1$. In the predicate, we call $m_2$ the control message. That is, if the predicate $P(m_1, m_2) = 1$ then $c' = ConEnc(pk, c_1, m_2,m_3 )$ is the encryption of the payload message $m_3$, and the person who knows the secret key can extract $m_3$. If the predicate does not hold, i.e., $P(m_1, m_2) = 0$, then $c' = CondEnc(pk, c, m_2, m_3)$ is the encryption of a random message unrelated to $m_1$, $m_2$, or $m_3$ and does not leak any information about $m_2$ or $m_3$ to the adversary (who may even know the secret key!). The predicate can simply be edit distance, hamming distance at most 2, etc. In this repository, we provided a comprehensive implementation of conditional encryption in CPP and evaluate its performance in terms of regualar encryption time, conditional encryption time, conditional decryption time, and regular/conditional ciphertext sizes.
+**Conditional Encryption** is public key cryptographic primitive which helps us to conditionally, under a binary predicate like $P(m_1, m_2)$, encrypt a the payload message $m_3$ given a regular ciphertext $c_1 = \text{Enc}(pk, m_1)$ encrypting an unknown message $m_1$. In the predicate, we call $m_2$ the control message. If the predicate holds, i.e. $P(m_1, m_2) = 1$, $c' = \text{CondEnc}(pk, c_1, m_2,m_3 )$ is the encryption of the payload message $m_3$, and the person who knows the secret key can extract $m_3$; if the predicate does not hold, i.e., $P(m_1, m_2) = 0$, $c' = \text{CondEnc}(pk, c, m_2, m_3)$ is the encryption of a random message **unrelated** to $m_1$, $m_2$, or $m_3$, and $c'$ does not leak any information about $m_2$ or $m_3$ to the adversary (who may even know the secret key!). The predicate can be edit distance at most 1, hamming distance at most 2, etc. In this repository, we provide a comprehensive implementation of conditional encryption in CPP and evaluate its performance in terms of regualar/conditional encryption time, conditional decryption time, and regular/conditional ciphertext sizes. In addition, as an application of conditional encryption, we improved the security of the [TypTop system](https://github.com/rchatterjee/typtopcpp) by replacing the public key encryption with our conditional encryption scheme.
  
-We implemented conditional encryption for the following groups of binary predicates $P(m_1, m_2)$: 
+The following groups of binary predicates $P(m_1, m_2)$ are available in our implementation: 
 
-- Equality Test: $P(m_1, m_2) = 1$ if and only if $m_1 = m_2$
-- Edit-Distance at most 1: $P(m_1, m_2) = \text{EditDistance}(m_1, m_2) \leq 1$
-- Arbitrary Hamming distance $l$: $P(m_1, m_2) = \text{Ham}(m_1, m_2) \leq l$
-- CAPSLOCK error: $P(m_1, m_2) = 1$ if and only if $m_1 = \text{InvertCase}(m_2)$
-- Or of 'Edit distance at most 1, Hamming distance at most 2, CAPSLOCK_ON' predicates.
+- **Equality Test**: $P(m_1, m_2) = 1$ if and only if $m_1 = m_2$
+- **Edit-Distance at most 1**: $P(m_1, m_2) = \text{EditDistance}(m_1, m_2) \leq 1$
+- **Hamming distance at most $l$**: $P(m_1, m_2) = \text{Ham}(m_1, m_2) \leq l$
+- **CAPSLOCK error**: $P(m_1, m_2) = 1$ if and only if $m_1 = \text{InvertCase}(m_2)$
+- **OR Composition**: the OR composition of any combination of the predicates mentioned above
 
-In addition, as a practical application of conditional encryption, we improved the security of the [TypTop system](https://github.com/rchatterjee/typtopcpp) by replacing the public key encryption with our conditional encryption scheme. We also provide an implentation of the improved TypTop system.
-
-The project is divided into two parts, the Conditional Encryption Implementation, and the improved TypTop implementation, located in [CondEncCPP](CondEncCPP) and [CondTypTopCPP](CondTypTopCPP) respectively. 
+The project is divided into two parts, the Conditional Encryption implementation, and the improved TypTop implementation, located in [CondEncCPP](CondEncCPP) and [CondTypTopCPP](CondTypTopCPP) respectively. For instructions on building and testing, see [CondEnc](#conditional-encryption) and [CondTypTop](#Conditional-TypTop).
 
 ## Dependencies
-To compile the project from source, you will need the following:
+To compile the project, you will need the following:
 * `cmake >= 3.28`
   ```bash
     $ wget https://github.com/Kitware/CMake/releases/download/v3.30.3/cmake-3.30.3.tar.gz
@@ -37,34 +35,43 @@ To compile the project from source, you will need the following:
     $ sudo cmake --build build/ --target install
   ```
 * `cryptopp`, `zxcvbn` and `plog` (inside the repository, will automatically build)
-* `Argon2` memory hard functions [Source](https://github.com/P-H-C/phc-winner-argon2) (inside the repository, requires manually building)
+* `Argon2` memory hard functions [Source](https://github.com/P-H-C/phc-winner-argon2) (inside the repository, requires manually building, only required for Conditional TypTop)
 
 ## Conditional Encryption
+
+### Building
+
 Clone the repository
 ```bash
-$ git clone https://github.com/mhassanameri/CondEncCCS24Artifact.git
-$ cd CondEncCCS24Artifact/CondEncCPP
+git clone https://github.com/mhassanameri/CondEncCCS24Artifact.git
+cd CondEncCCS24Artifact/CondEncCPP
 ```
-Build the Argon2 libraries
-```bash
-$ cd argon2/phcargon2
-$ make
-$ make test # to verify that build produced valid results
-$ sudo make install # install argon2 to system
-$ cd ../../
-```
+<!-- Build the Argon2 libraries -->
+<!-- ```bash -->
+<!-- cd argon2/phcargon2 -->
+<!-- make -->
+<!-- make test # to verify that build produced valid results -->
+<!-- sudo make install # install argon2 to system -->
+<!-- cd ../../ -->
+<!-- ``` -->
+
 Create a build directory and build the program
+
 ```bash
-$ mkdir build && cd build
-$ cmake ../
-$ make
+mkdir build && cd build
+cmake ../
+make
 ```
-If the make command failed with errors related to `g_argvPathHint`, in the build directory run `FixingTestInstallCryptoPP.sh`, then run `make` again. Finally, use
+If the make command failed with errors related to `g_argvPathHint`, in the build directory run `FixingTestInstallCryptoPP.sh`, then run `make` again.
+
+### Basic Tests
+
 ```bash
 $ ./test/tests
 ```
 to execute a tests to verify that implementations of all Conditional Encryption schemes associated with the predicates: Hamming Distance at most T, Edit distance at most one, CAPSLOCK_ON, and OR_of_CAPSLOCK_HamDist2_EditDist1 are working correctly.
 
+### Reproducing Results 
 
 ## More details on Tests
 
@@ -75,47 +82,45 @@ After compiling the project, go to `build/test` and run `TestScript.sh`. For thi
 
 #### Example
 ```bash
-$ ./TestScript.sh
-$ python3 ./PlotFigure.py Figure1a
+./TestScript.sh
+python3 ./PlotFigure.py Figure1a
 ```
 
 and for Table 1 (CondEnc messge len =32)
 
 ```bash
-$ ./TestScriptMakingTable1data.sh
-$ python3 ./PdfGenTable1.py
+./TestScriptMakingTable1data.sh
+python3 ./PdfGenTable1.py
 ```
 Or for CondTypTop (Table 2)
 ```bash 
-$ ./TestScript.sh
-$ python3 ./PlotFigureCondTypTop.py
+./TestScript.sh
+python3 ./PlotFigureCondTypTop.py
 ```
 
-
-
-## Building the project (CondTypTop: TyoTop System using CondEnc)
+## Conditional TypTop
 Clone the repository
 ```bash
-$ git clone https://github.com/mhassanameri/CondEncCCS24Artifact.git
-$ cd CondEncCCS24Artifact/CondTypTopCPP
+git clone https://github.com/mhassanameri/CondEncCCS24Artifact.git
+cd CondEncCCS24Artifact/CondTypTopCPP
 ```
 Build the Argon2 libraries
 ```bash
-$ cd argon2/phcargon2
-$ make
-$ make test 
-$ sudo make install
-$ cd ../../
+cd argon2/phcargon2
+make
+make test 
+sudo make install
+cd ../../
 ```
 Create a build directory and build the program
 ```bash
-$ mkdir build && cd build
-$ cmake ../
-$ make
+mkdir build && cd build
+cmake ../
+make
 ```
 If the make command failed with errors related to `g_argvPathHint`, in the build directory run `FixingTestInstallCryptoPP.sh`, then run `make` again. Finally, use
 ```bash
-$ ./test/tests
+./test/tests
 ```
 to execute a tests to verify that implementations of all CondTypTop schemes associated with the OR of Hamming Distance at most 2, Edit distance at most one, CAPSLOCK_ON is working correctly.
 
@@ -139,23 +144,22 @@ encryption is working correctly.
 
 if the random chosen typo is not satisfying the OR predicate (while logging in with wrong password)
 ```bash
-$ CHECK_FALSE( tp.check(pws[1], FIRST_TIME, false) ) 
-$ with expansion:
-$ !true
+CHECK_FALSE( tp.check(pws[1], FIRST_TIME, false) ) 
+with expansion:
+!true
 ```
 
 Or 
 ```bash
-$ A valid typo is detected
+A valid typo is detected
 ```
 And finally once the test is finished sucecesfully, the terminal shows 
 ```bash
-$ round #100
+round #100
 ```
 if you specify 100 as the number of test cases in (`TestScript.sh`). 
 
 The numbers in generated table by `./PlotFigureCondTypTop.py` corresponding to the execution time are computed in microseconds. 
-
 
 <!-- old
 
