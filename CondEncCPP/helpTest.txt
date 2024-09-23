@@ -1,12 +1,17 @@
-For running the test cases, you can follow this general command:
+For running the test cases, you can follow this general command (assuming you are in build directory):
 
-./test/tests <option1>
+
+
+$ cd test
+$ ./tests <option1>
 
 The options are as follows.
 
 1. ArtifactCCS24BasicTests
 2. ArtifactCCS24
 3. Table1
+
+However before that, the required input .txt files need to be generated. The following we will describe how to do that.
 
 
 
