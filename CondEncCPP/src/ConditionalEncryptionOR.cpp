@@ -91,15 +91,15 @@ using namespace std::chrono;
 
       string ctx_CPSLKRslt;
       ctx_CPSLKRslt = CAPLOCKpredicate::CondEnc(ppk, Orig_ctx_pull, typo, payload,  ctx_final);
-      cout << "The CapsLOCK Encrypt is Done\n";
+      // cout << "The CapsLOCK Encrypt is Done\n";
       std::string ctx_EDOneRlst;
       ctx_EDOneRlst= EditDistOne::CondEnc(ppk, Orig_ctx_pull + CAPSLocOrigCtxSize, pad_typo, payload,_len, ctx_final + CondEncCPSLKCtxSize ); //TODO: make sure that the typo is padded [Impprtant], AND remember: Thershold should be 30,
 
-      cout << "The EDOne Encrypt is Done\n";
+      // cout << "The EDOne Encrypt is Done\n";
       std::string ctx_HDTowRslt;
       ctx_HDTowRslt = HamDistAtmostT::CondEnc(ppk, Orig_ctx_pull + CAPSLocOrigCtxSize + EDOneOrigCtxSize, typo, payload,_len, threshold, ctx_final + CondEncCPSLKCtxSize + CondEncEDOneCtxSize); //the threshold is 30 here as well
-      cout << "The OR Encrypt is Done\n";
-      return "ctx_CPSLKRslt";
+      // cout << "The OR Encrypt is Done\n";
+      return "1";
 
 }
 
@@ -154,7 +154,7 @@ using namespace std::chrono;
 
 
 
-      cout << "strat to decrypt CAPSLOACK\n";
+      // cout << "start to decrypt CAPSLOACK\n";
      RsltCAPS  = CAPLOCKpredicate::CondDec(ppk, typo_ctx, psk, RecoverCAPS);
 
      if (RsltCAPS == 1)
@@ -163,7 +163,7 @@ using namespace std::chrono;
          return RsltCAPS;
      }
 
-      cout << "strat to decrypt EDOne\n";
+      // cout << "start to decrypt EDOne\n";
     RsltEDOne = EditDistOne::CondDec(ppk, typo_ctx + CondEncCPSLKCtxSize, psk, RecoverEDOne, _len);
 
     if (RsltEDOne == 1)
@@ -173,7 +173,7 @@ using namespace std::chrono;
     }
 
 
-    cout << "strat to decrypt HmaDis\n";
+    // cout << "start to decrypt HmaDis\n";
     // RsltHDTwo = HamDistAtmostT::CondDec(ppk, typo_ctx + CondEncCPSLKCtxSize + CondEncEDOneCtxSize, psk,threshold, RecoverHDTwo, _len, ShareSize);
     RsltHDTwo = HamDistAtmostT::CondDec(ppk, typo_ctx + CondEncCPSLKCtxSize + CondEncEDOneCtxSize, psk,threshold, RecoverHDTwo, _len);
 

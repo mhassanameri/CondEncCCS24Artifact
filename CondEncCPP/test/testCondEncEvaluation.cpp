@@ -1010,9 +1010,8 @@ int testCondEncOR(int n_lambda, int Num_tests, size_t _len, int MaxHam)
 
     CondEncORpred.close();
     paillier_freepubkey(pkobj._ppk);
-//    paillier_freeprvkey(pkobj._psk);
-    // free(OrPred_Char_ORigCTx);
-    // free(OrPred_ctx_typo_Bytes);
+    paillier_freeprvkey(pkobj._psk);
+
     cout << "OR predicate is finished L =" <<_len << "\n";
     return 1;
 
@@ -1397,7 +1396,7 @@ int PlotFig1a(int NumTest_SmallM, int NumTest_64, int NumTest_128)
         cout << "OPT HamDist at most  " + to_string(i)  + "_len= 8" << endl;
         testCondEncHamDist(1024, NumTest_SmallM , 8,i);
         cout << "OPT HamDist at most  " + to_string(i)  + "_len= 16" << endl;
-        // testCondEncHamDist(1024, NumTest_SmallM , 16,i);
+        testCondEncHamDist(1024, NumTest_SmallM , 16,i);
         cout << "OPT HamDist at most  " + to_string(i)  + " _len= 32" << endl;
         testCondEncHamDist(1024, NumTest_SmallM , 32,i);
         cout << "OPT amDist at most  " + to_string(i)  + "_len= 64" << endl;
@@ -1467,9 +1466,208 @@ int PlotTable1(int NumTest)
     testCondEncHamDist_NonOPT_Table1(1024, NumTest, 32, 4);
     testCondEncHamDist_Table1(1024, NumTest, 32, 4);
     testCondEncOR_Table1(1024, NumTest , 32,2);
+    return 1;
+}
+
+// Function to simulate CAPSLOCK on a given text
+std::string simulateCapsLock(const std::string &text) {
+    std::string result = text;
+    for (char &ch : result) {
+        // Convert each character to uppercase
+        ch = std::toupper(ch);
+    }
+    return result;
 }
 
 
+int BasicTestCapsLock(int Num_tests, int n_lambda, int _len)
+{
+
+    PwPkCrypto pkobj;
+    pkobj.Paill_pk_init(n_lambda);
+    size_t PailCtxtSize =  PAILLIER_BITS_TO_BYTES(pkobj._ppk->bits)*2;
+
+    std::string filename = "PWDvsTyposDataSet/PWDvsTypoDataSetLessThan"+to_string(_len)+".txt";
+    std::vector<std::pair<std::string, std::string>> data = LoadPWDvsTypoForTEST(filename);
+
+    size_t CAPSLocOrigCtxSize = 2 * sizeof(size_t) +  PailCtxtSize;
+
+    double duration_CondEnc_Sum = 0;
+    double duration_Enc_Sum = 0;
+    double duration_CondDec_Sum = 0;
+    double CondEncCPSLKCtxSize_Sum = 0;
+
+    string msg;
+    string typo;
+    string payload;
+
+
+    for(int T = 0; T< Num_tests; T++)
+    {
+
+
+        msg = data[T].first;
+        payload = typo = simulateCapsLock(msg);  // When Capslock Key is on.
+
+        cout << "Test #" << T << ", m_1: "<<msg << ",\t" << "m_2 (control message): " <<typo << ", m_3 (payload)= " << payload  <<"\n";
+        size_t AE_CtxtSize = 2* KEYSIZE_BYTES + payload.size();
+
+        size_t CondEncCPSLKCtxSize = 3 * sizeof(size_t) + (sizeof(char) * AE_CtxtSize) +  PailCtxtSize;
+        CondEncCPSLKCtxSize_Sum =CondEncCPSLKCtxSize_Sum + CondEncCPSLKCtxSize;
+
+        char CAPSLOCK_Pred_Char_ORigCTx [CAPSLocOrigCtxSize];
+        char CAPSLOCK_Pred_ctx_typo_Bytes [CondEncCPSLKCtxSize];
+
+        auto start_Enc = high_resolution_clock::now();
+        int OrigEncRst = 0;
+        OrigEncRst = CAPLOCKpredicate::Enc(pkobj._ppk, msg, CAPSLOCK_Pred_Char_ORigCTx);
+        auto stop_Enc = high_resolution_clock::now();
+        auto duration_Enc = duration_cast<milliseconds>(stop_Enc - start_Enc);
+        assert(OrigEncRst == 1);
+        cout << "Successful Regular Encryption" << endl;
+        string regrecovered;
+        int s;
+        s = CAPLOCKpredicate::RegDec(pkobj._ppk,
+                         CAPSLOCK_Pred_Char_ORigCTx,
+                         pkobj._psk,
+                         regrecovered, _len);
+        assert(s ==1);
+        cout << "The original message: " << msg <<  ", and the decrypted message is: "<< regrecovered << "\n";
+
+        // std::string ctx_final;
+        auto start_CondEnc = high_resolution_clock::now();
+        auto ctx_final = CAPLOCKpredicate::CondEnc(pkobj._ppk, CAPSLOCK_Pred_Char_ORigCTx, typo,
+            payload, CAPSLOCK_Pred_ctx_typo_Bytes);
+        auto stop_CondEnc = high_resolution_clock::now();
+        auto duration_CondEnc = duration_cast<milliseconds>(stop_CondEnc - start_CondEnc);
+        assert(ctx_final == "1");
+        cout << "Successful Conditional Encryption" << "\n";
+        string recovered_hd2Bytes;
+        int CondDecOut = 0;
+
+        auto start_CondDec = high_resolution_clock::now();
+
+        CondDecOut = CAPLOCKpredicate::CondDec(pkobj._ppk, CAPSLOCK_Pred_ctx_typo_Bytes, pkobj._psk, recovered_hd2Bytes);
+        auto stop_CondDec = high_resolution_clock::now();
+        auto duration_CondDec= duration_cast<milliseconds>(stop_CondDec- start_CondDec);
+        assert(recovered_hd2Bytes == payload);
+        cout << "Conditional Decryption is done and the recovered payload message is: " << recovered_hd2Bytes << endl;
+
+        duration_Enc_Sum =  duration_Enc_Sum + duration_Enc.count();
+        duration_CondEnc_Sum =  duration_CondEnc_Sum + duration_CondEnc.count();
+        duration_CondDec_Sum =  duration_CondDec_Sum + duration_CondDec.count();
+
+        cout << "\n\n";
+    }
+    paillier_freepubkey(pkobj._ppk);
+    paillier_freeprvkey(pkobj._psk);
+    return 1;
+}
+
+int BasicTestEDOne(int Num_tests, int n_lambda, int _len)
+{
+
+    std::string filename = "PWDvsTyposDataSet/PWDvsTypoDataSetLessThan"+to_string(_len)+"HamDisHold1.txt";
+
+    std::vector<std::pair<std::string, std::string>> data = LoadPWDvsTypoForTEST(filename);
+
+
+    PwPkCrypto pkobj;
+    pkobj.Paill_pk_init(n_lambda);
+    size_t PailCtxtSize =  PAILLIER_BITS_TO_BYTES(pkobj._ppk->bits)*2;
+
+
+    double duration_CondEnc_ED1_Sum = 0;
+    double duration_Enc_ED1_Sum = 0;
+    double duration_CondDec_ED1_Sum = 0;
+    double TradCtxSize_Sum = 0;
+    double CondCtxSize_Sum = 0;
+
+
+    string msg;
+    string payload;
+    string typo;
+
+
+    for(int T = 0; T< Num_tests; T++) {
+
+        msg = data[T].first;
+        // typo = data[T].second;
+        typo = msg.substr(0, msg.size()-1);
+        payload = typo;
+        cout << "Test #" << T << ", m_1: "<<msg << ",\t" << "m_2 (control message): " <<typo << ", m_3 (payload)= " << payload  <<"\n";
+
+        size_t AECtxSize = 2 * KEYSIZE_BYTES + payload.size();
+        size_t TradCtxSize = 2 * sizeof(size_t) + ( _len+1) * PailCtxtSize;
+        size_t CondCtxSize = 3 * sizeof(size_t) + AECtxSize + (_len + _len +1) * PailCtxtSize;
+
+        TradCtxSize_Sum =  TradCtxSize_Sum + TradCtxSize;
+        CondCtxSize_Sum =  CondCtxSize + CondCtxSize;
+        char ED1_Char_ORigCTx[TradCtxSize];
+        char ED1_ctx_typo_Bytes[CondCtxSize];
+        // msg = SelectRandPwd();
+        //
+        // string typo = ED1MakeTypo(msg, NumOfErrs, _len);
+        // payload = typo;
+        cout << msg + "\n" << typo <<"\n";
+        string pad_typo = CryptoSymWrapperFunctions::Wrapper_pad(typo, _len);
+        string msg_pad = CryptoSymWrapperFunctions::Wrapper_pad(msg, _len);
+
+
+        auto start_Enc_HD2 = high_resolution_clock::now();
+        int OrigEncRst = 0;
+        OrigEncRst = EditDistOne::Enc(pkobj._ppk, msg_pad, ED1_Char_ORigCTx);
+        auto stop_Enc_HD2 = high_resolution_clock::now();
+        auto duration_Enc_HD2 = duration_cast<milliseconds>(stop_Enc_HD2 - start_Enc_HD2);
+        assert(OrigEncRst == 1);
+        cout << "Successful Regular Encryption" << endl;
+        string regrecovered;
+        int s;
+        s = CAPLOCKpredicate::RegDec(pkobj._ppk,
+                         ED1_Char_ORigCTx,
+                         pkobj._psk,
+                         regrecovered, _len);
+        assert(s ==1);
+        cout << "The original message: " << msg <<  ", and the decrypted message is: "<< regrecovered << "\n";
+
+
+        auto start_CondEnc_HD2 = high_resolution_clock::now();
+//        int ED1CondEncRstl =0;
+        auto ctx_final = EditDistOne::CondEnc(pkobj._ppk, ED1_Char_ORigCTx, pad_typo, payload, _len,
+                                              ED1_ctx_typo_Bytes);
+        auto stop_CondEnc_HD2 = high_resolution_clock::now();
+        auto duration_CondEnc_HD2 = duration_cast<milliseconds>(stop_CondEnc_HD2 - start_CondEnc_HD2);
+
+        cout << "\n";
+        assert(ctx_final == "1");
+        cout << "Successful Conditional Encryption" << "\n";
+        string recovered_hd2Bytes;
+
+
+        auto start_CondDec_HD2 = high_resolution_clock::now();
+
+        int CondDecOut = 0;
+        CondDecOut = EditDistOne::CondDec(pkobj._ppk, ED1_ctx_typo_Bytes, pkobj._psk, recovered_hd2Bytes,
+                                          _len);
+
+        auto stop_CondDec_HD2 = high_resolution_clock::now();
+        auto duration_CondDec_HD2 = duration_cast<milliseconds>(stop_CondDec_HD2 - start_CondDec_HD2);
+
+        assert(recovered_hd2Bytes == payload);
+        cout << "Conditional Decryption is done and the recovered payload message is: " << recovered_hd2Bytes << endl;
+
+        duration_Enc_ED1_Sum = duration_Enc_ED1_Sum + duration_Enc_HD2.count();
+        duration_CondEnc_ED1_Sum = duration_CondEnc_ED1_Sum + duration_CondEnc_HD2.count();
+        duration_CondDec_ED1_Sum = duration_CondDec_ED1_Sum + duration_CondDec_HD2.count();
+
+        cout << "\n\n";
+    }
+
+        paillier_freepubkey(pkobj._ppk);
+        paillier_freeprvkey(pkobj._psk);
+
+    return 1;
+}
 
 
 int BasicTestHamDistT(int Num_tests, int n_lambda, int _len, int MaxHam )
@@ -1510,8 +1708,8 @@ int BasicTestHamDistT(int Num_tests, int n_lambda, int _len, int MaxHam )
         // msg = "PWDHan";
         // typo = "PWDHaM";
         payload = CryptoSymWrapperFunctions::Wrapper_pad( typo, _len);
-        cout << msg.size() << "\t" <<typo.size() << "\n";
-        cout << msg << "\t" <<typo << "\n";
+        // cout << msg.size() << "\t" <<typo.size() << "\n";
+        cout << "Test #" << T << ", m_1: "<<msg << ",\t" << "m_2 (control message): " <<typo << ", m_3 (payload)= " << payload  <<"\n";
 
         payload =  typo;
 
@@ -1534,7 +1732,7 @@ int BasicTestHamDistT(int Num_tests, int n_lambda, int _len, int MaxHam )
         int TestRegDec = 0;
         string DecryptedMsg;
         TestRegDec  = HamDistAtmostT::RegDec(pkobj._ppk, HD_Char_ORigCTx, pkobj._psk, _len, DecryptedMsg);
-        cout << "The original message: " << msg <<  " ana the decrypted message is: "<< DecryptedMsg << "\n";
+        cout << "The original message: " << msg <<  " and the decrypted message is: "<< DecryptedMsg << "\n";
 
         assert(DecryptedMsg == msg);
 
@@ -1544,7 +1742,8 @@ int BasicTestHamDistT(int Num_tests, int n_lambda, int _len, int MaxHam )
         auto ctx_final = HamDistAtmostT::CondEnc(pkobj._ppk, HD_Char_ORigCTx, typo, payload,_len, Threshold, HD_ctx_typo_Bytes);
         auto stop_CondEnc_HD = high_resolution_clock::now();
         auto duration_CondEnc_HD = duration_cast<milliseconds>(stop_CondEnc_HD - start_CondEnc_HD);
-        cout <<"successful Cond encryption\n";
+        assert(ctx_final== "1");
+        cout <<"Successful Conditional Encryption\n";
         /*Running the Conditional Decryption */
         auto start_CondDec_HD = high_resolution_clock::now();
         string recovered_hdBytes;
@@ -1556,7 +1755,8 @@ int BasicTestHamDistT(int Num_tests, int n_lambda, int _len, int MaxHam )
         // CondDecOut = HamDistAtmostT::CondDec_NewOPT(pkobj._ppk, HD_ctx_typo_Bytes, pkobj._psk, Threshold, recovered_hdBytes, _len);
         assert(CondDecOut == 1); //The As the predicate is holding it should outputs 1;
         assert(recovered_hdBytes  == payload); //As the predicate is holding, it have to returns the intended payload;
-        cout << "The recovered payload: "<< recovered_hdBytes << "\n";
+        cout << "Conditional Decryption is done and the recovered payload message is: " << recovered_hdBytes << endl;
+        cout << "The expected payload is: " << payload << endl;
         // CondDecOut = HamDistAtmostT::CondDec_NonSmallFieldCheck(pkobj._ppk, HD_ctx_typo_Bytes, pkobj._psk, Threshold, recovered_hdBytes, _len, SizeShare);
         // CondDecOut = HamDistAtmostT::CondDec_2dif(pkobj._ppk, HD_ctx_typo_Bytes, pkobj._psk, Threshold, recovered_hdBytes, _len, SizeShare);
 
@@ -1565,47 +1765,131 @@ int BasicTestHamDistT(int Num_tests, int n_lambda, int _len, int MaxHam )
         auto stop_CondDec_HD = high_resolution_clock::now();
         auto duration_CondDec_HD = duration_cast<milliseconds>(stop_CondDec_HD - start_CondDec_HD);
 
-        cout <<T << "\n";
+        cout <<"\n\n";
 
     }
-
-    string File1 = "OPT_HDdataL_T" + std::to_string(NumOfErrs -1) + ".dat";
-    string File2 = "OPT_HDdataL" + std::to_string(_len) + "_T.dat";
-
-    // string File1 = "HDdataL_T" + std::to_string(NumOfErrs -1) + ".dat";
-    // string File2 = "HDdataL" + std::to_string(_len) + "_T.dat";
-
-    // string File1 = "OPT_HoldingHDdataL_T" + std::to_string(NumOfErrs -1) + ".dat";
-    // string File2 = "OPT_HoldingHDdataL" + std::to_string(_len) + "_T.dat";
-
-    // string File1 = "HoldingHDdataL_T" + std::to_string(NumOfErrs -1) + ".dat";
-    // string File2 = "HoldingHDdataL" + std::to_string(_len) + "_T.dat";
-    // string File1 = "OPTJustHam2HoldingHDdataL_T" + std::to_string(NumOfErrs -1) + ".dat";
-    // string File2 = "OPTJustHam2HoldingHDdataL" + std::to_string(_len) + "_T.dat";
-
-
-    std::ofstream HDdataL(File1, std::ios_base::app | std::ios_base::out);
-    std::ofstream HDdataT(File2, std::ios_base::app | std::ios_base::out);
-
-    size_t MaxDist  = _len - Threshold;
-
-    HDdataT << MaxDist << "\t"<< _len << "\t" << duration_Enc_HD_Sum / Num_tests << "\t"
-            << duration_CondEnc_HD_Sum / Num_tests << "\t"
-            << duration_CondDec_HD_Sum / Num_tests << "\t"
-            << TradCtxSize  << "\t"
-            << CondCtxSize_HD_Sum /Num_tests  << "\n";
-
-    HDdataL << MaxDist << "\t"<< _len << "\t" << duration_Enc_HD_Sum / Num_tests << "\t"
-            << duration_CondEnc_HD_Sum / Num_tests << "\t"
-            << duration_CondDec_HD_Sum / Num_tests << "\t"
-            << TradCtxSize << "\t"
-            << CondCtxSize_HD_Sum /Num_tests << "\n";
 
     paillier_freepubkey(pkobj._ppk);
     paillier_freeprvkey(pkobj._psk);
 
     return 1;
 
+}
+
+
+int BasicTestOR(int Num_tests, int n_lambda,  int _len)
+{
+    PwPkCrypto pkobj;
+    pkobj.Paill_pk_init(n_lambda);
+    int MaxHam = 2;
+    size_t Threshold  = _len - MaxHam;
+
+
+    size_t PailCtxtSize =  PAILLIER_BITS_TO_BYTES(pkobj._ppk->bits)*2;
+
+    size_t EDOneOrigCtxSize   = 2 * sizeof(size_t) + (_len + 1)  *  PailCtxtSize;
+    size_t HDTwoOrigCtxSize   = 2 * sizeof(size_t) + _len *  PailCtxtSize;
+    size_t CAPSLocOrigCtxSize = 2 * sizeof(size_t) +  PailCtxtSize;
+
+    size_t ORPrdrigCtxSize = CAPSLocOrigCtxSize + EDOneOrigCtxSize + HDTwoOrigCtxSize;
+
+    std::string filename = "PWDvsTyposDataSet/PWDvsTypoDataSetLessThan"+to_string(_len)+"HamDisHold2.txt";
+    std::vector<std::pair<std::string, std::string>> data = LoadPWDvsTypoForTEST(filename);
+
+
+
+
+    double duration_CondEnc_ED1_Sum = 0;
+    double duration_Enc_ED1_Sum = 0;
+    double duration_CondDec_ED1_Sum = 0;
+    double CondEncOR_CtxSize_Sum = 0;
+
+    string msg;
+    string typo;
+    string payload;
+
+
+
+
+    // char* OrPred_Char_ORigCTx = (char*) malloc(ORPrdrigCtxSize);
+    // char* OrPred_ctx_typo_Bytes = (char*) malloc(CondEncOR_CtxSize);
+
+
+    for(int T = 0; T< Num_tests; T++)
+    {
+
+        int control = 1;
+        // msg= "Test";
+        // typo = "0est";
+        msg = data[T].first;
+        typo = data[T].second;
+        payload = CryptoSymWrapperFunctions::Wrapper_pad(typo, _len);
+        assert(payload.size()==_len);
+        cout << "Test #" << T << ", m_1: "<<msg << ",\t" << "m_2 (control message): " <<typo << ", m_3 (payload)= " << typo  <<"\n";
+
+        size_t AE_CtxtSize = 2 * KEYSIZE_BYTES + payload.size();
+        size_t CondEncEDOneCtxSize = 3 * sizeof(size_t) + (sizeof(char) * AE_CtxtSize) + ((2 * _len) + 1) *  PailCtxtSize;
+        size_t CondEncHDTwoCtxSize = 3 * sizeof(size_t) + (sizeof(char) * AE_CtxtSize) + (_len *  PailCtxtSize);
+        size_t CondEncCPSLKCtxSize = 3 * sizeof(size_t) + (sizeof(char) * AE_CtxtSize) +  PailCtxtSize;
+
+        size_t CondEncOR_CtxSize = CondEncCPSLKCtxSize + CondEncEDOneCtxSize + CondEncHDTwoCtxSize;
+
+
+
+
+        char OrPred_Char_ORigCTx[ ORPrdrigCtxSize];
+        char OrPred_ctx_typo_Bytes [CondEncOR_CtxSize];
+
+        string msg_pad  = CryptoSymWrapperFunctions::Wrapper_pad(msg, _len);
+        string pad_typo = CryptoSymWrapperFunctions::Wrapper_pad(typo, _len);
+
+        // std::unique_ptr<OrPredicate> Class_OrPredicate(new OrPredicate());
+
+        auto start_Enc_HD2 = high_resolution_clock::now();
+        int OrigEncRst = 0;
+        OrigEncRst = OrPredicate::Enc(pkobj._ppk, msg, OrPred_Char_ORigCTx, _len);
+        auto stop_Enc_HD2 = high_resolution_clock::now();
+        auto duration_Enc_HD2 = duration_cast<milliseconds>(stop_Enc_HD2 - start_Enc_HD2);
+
+
+        string ctx_final;
+//        OrPredicate*  Class_OrPredicate = new OrPredicate;
+        auto start_CondEnc_HD2 = high_resolution_clock::now();
+//        int ED1CondEncRstl =0;
+        ctx_final = OrPredicate::CondEnc(pkobj._ppk, OrPred_Char_ORigCTx, typo, payload,_len, Threshold, OrPred_ctx_typo_Bytes);
+
+        auto stop_CondEnc_HD2 = high_resolution_clock::now();
+        auto duration_CondEnc_HD2 = duration_cast<milliseconds>(stop_CondEnc_HD2 - start_CondEnc_HD2);
+        assert(ctx_final == "1");
+        cout << "Successful Conditional Encryption" << "\n";
+        string recovered_hd2Bytes;
+        int CondDecOut = 0;
+        auto start_CondDec_HD2 = high_resolution_clock::now();
+        // CondDecOut = Class_OrPredicate->CondDec_Optimized_for_HD2(pkobj._ppk, OrPred_ctx_typo_Bytes, pkobj._psk, Threshold, recovered_hd2Bytes, _len, SizeShare);
+        // CondDecOut = Class_OrPredicate->CondDec_Optimized_for_HD2(pkobj._ppk, OrPred_ctx_typo_Bytes, pkobj._psk, Threshold, recovered_hd2Bytes, _len, SizeShare);
+        // CondDecOut = OrPredicate::CondDec(pkobj._ppk, &ctx_final[0], pkobj._psk, 30, recovered_hd2Bytes, 32, 28);
+        // CondDecOut = OrPredicate::CondDec(pkobj._ppk, OrPred_ctx_typo_Bytes, pkobj._psk, _len-2, recovered_hd2Bytes, _len);
+        CondDecOut = OrPredicate::CondDec_Optimized_for_HD2(pkobj._ppk, OrPred_ctx_typo_Bytes, pkobj._psk, _len-2, recovered_hd2Bytes, _len);
+
+
+
+        auto stop_CondDec_HD2 = high_resolution_clock::now();
+        auto duration_CondDec_HD2 = duration_cast<milliseconds>(stop_CondDec_HD2 - start_CondDec_HD2);
+        assert(recovered_hd2Bytes == payload);
+        cout << "Conditional Decryption is done and the recovered payload message is: " << recovered_hd2Bytes << endl;
+        cout << "The expected payload: " << typo << endl;
+
+        duration_Enc_ED1_Sum =  duration_Enc_ED1_Sum + duration_Enc_HD2.count();
+        duration_CondEnc_ED1_Sum =  duration_CondEnc_ED1_Sum + duration_CondEnc_HD2.count();
+        duration_CondDec_ED1_Sum =  duration_CondDec_ED1_Sum + duration_CondDec_HD2.count();
+        CondEncOR_CtxSize_Sum = CondEncOR_CtxSize_Sum + CondEncOR_CtxSize;
+
+        cout << "\n\n";
+    }
+
+    paillier_freepubkey(pkobj._ppk);
+    paillier_freeprvkey(pkobj._psk);
+    return 1;
 }
 
 

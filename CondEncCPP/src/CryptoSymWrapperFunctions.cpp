@@ -193,7 +193,7 @@ bool CryptoSymWrapperFunctions::Wrapper_AuthEncrypt(const string &k, const strin
         size_t base_ctx_size= base_ctx.size();
         // ss.Put(salt, salt.size(), true);
 
-        cout << "AuthEncPre\n";
+        cout << "";
         ss.Put((const CryptoPP::byte*)base_ctx.data(),  base_ctx.size(), true);
         // ss.Put(reinterpret_cast<const CondEnc_byte*>(base_ctx.data()),  base_ctx.size(), true);
         // cout << "AuthEncSuccess\n";

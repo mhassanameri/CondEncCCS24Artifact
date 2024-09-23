@@ -389,7 +389,7 @@ string CAPLOCKpredicate::CondEnc(paillier_pubkey_t *ppk,
 
 //    mpz_clear(aux_Typo);
 
-    return "EncrypteKey[0]";
+    return "1";
     // return "1";
 //    byteVCtx_Insrt[0] = mpz_get_str(NULL, 10, Aux_Ctx2->c);
 
@@ -435,7 +435,7 @@ string CAPLOCKpredicate::CondEnc(paillier_pubkey_t *ppk,
     return ret;
 }
 
-int CAPLOCKpredicate:: RegDec(paillier_pubkey_t* ppk,
+int CAPLOCKpredicate::RegDec(paillier_pubkey_t* ppk,
                         char typo_ctx[],
                          paillier_prvkey_t* psk,
                          string &recovered,

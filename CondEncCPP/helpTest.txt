@@ -1,0 +1,51 @@
+For running the test cases, you can follow this general command:
+
+./test/tests <option1>
+
+The options are as follows.
+
+1. ArtifactCCS24BasicTests
+2. ArtifactCCS24
+
+However before each case you need to make a proper .txt input file with the following command:
+
+echo -e "HamDistT\n25\n1024\n32\n2" > BasicTestInputs.txt
+
+
+
+============================================================
+
+For running Basic Test (assuming you are in CondEncCPP/build) directory:
+Do the following steps:
+$ cd test
+$ echo -e "HamDistT\n25\n1024\n32\n2" > BasicTestInputs.txt
+# This command generates an input txt file ``BasicTestInputs.txt'' which indicates:
+#   HamDistT: The target predicate, other options: EDOne, CAPSLOCK, OR, all. Note that all will run test for all predicates.
+#   Num_Of_rounds: 25  (runs the CondEnc for Hamming distance for 25 different message m_1 and its corresponding typos)
+#   pk size= 1024,
+#   _len =  32 (other options are 8, 16, 64, 128)
+#   T = 2 (other options are 1, 2, 3, 4)
+# Note that \n just goes to the next line of BasicTestInputs.txt and makes sure that the new input argument will be added in the next line.
+
+$ ./tests ArtifactCCS24BasicTests
+# the Test_Case compiled file ./tests
+
+
+For The Performance Evaluation Do the following steps (To generate the .dat file required to plot Figure 1 of our paper):
+
+$cd test
+$rm *.dat
+$ echo  -e "PlotFig1a1b1c\n10\n2\n1" > input.txt  # Indicating the target figure to plot the options: [PlotFig1a1b1c, PlotFig1a1b1cNo128, PlotFig1d, PlotFig1e, PlotFig1f]
+
+# This command will generate input.txt file which is required for test case that generates the .dat files required for obtaining Figure 1 in paper.
+# PlotFig1a1b1c: The target figure: it generates the .dat files required to plot Figure 1a, 1b and 1c
+# Note that \n just goes to the next line of BasicTestInputs.txt and makes sure that the new input argument will be added in the next line.
+# 10:  Number of tests for messages of length _len = 8, 16, 32
+# 2:  Number of tests for messages of length _len =64
+# 1:  Number of tests for messages of length _len =128. You can set this value =0  to avoid running tests related to _len=128 as it needs more time to be executed.
+
+$ ./tests ArtifactCCS24
+[Optional: to visualize the results and reproduce figures of Figure 1 of the paper. For example Figure 1a, Figure 1b and Figure 1c]
+$ python3 ./PlotFigure.py Figure1a
+$ python3 ./PlotFigure.py Figure1b
+$ python3 ./PlotFigure.py Figure1c

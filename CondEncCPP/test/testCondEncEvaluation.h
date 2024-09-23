@@ -163,8 +163,9 @@ int testCondEncCAPSLOCK(int n_lambda, int Num_tests, size_t _len);
  */
 int BasicTestHamDistT(int Num_tests, int n_lambda, int _len, int MaxHam);
 
-
-
+int BasicTestCapsLock(int Num_tests, int n_lambda, int _len);
+int BasicTestEDOne(int Num_tests, int n_lambda, int _len);
+int BasicTestOR(int Num_tests, int n_lambda, int _len);
 
 int PlotFig1a(int NumTest_SmallM, int NumTest_64, int NumTest_128);
 int PlotFig1d(int NumTest);
@@ -210,22 +211,50 @@ inline int DataForPlottingFigure1(string argv[] )
 
 inline int BasicTest(string argv[] )
 {
+    int retuslt = 0;
+    if (argv[0] == "all")
+    {
+        cout << "========================================================\n";
+        cout << "Running Basic Tests of Conditional Encryption schemes for all considered predicates in the paper:\n";
+        cout << "========================================================\n";
+        cout << "========================================================\n\n";
+        cout << "Basic Testing of CAPSLOCK predicate: \n";
+        retuslt =  BasicTestCapsLock(std::stoi(argv[1]),  std::stoi(argv[2]),  std::stoi(argv[3]));
+        cout << "Conditional Encryption For ``Capslock'' is Working Properly \n";
+        cout << "========================================================\n";
+        cout << "========================================================\n";
+
+        cout << "Basic Testing of Hamming Distance predicate: \n";
+        retuslt=  BasicTestHamDistT(std::stoi(argv[1]),  std::stoi(argv[2]),  std::stoi(argv[3]), std::stoi(argv[4]));
+        cout << "Conditional Encryption For ``Hamming Distance at most'' " << argv[4] << " is Working Properly \n";
+        cout << "========================================================\n";
+        cout << "========================================================\n";
+
+        cout << "Basic Testing of Edit Distance at Most One predicate: \n";
+        retuslt =  BasicTestEDOne(std::stoi(argv[1]),  std::stoi(argv[2]),  std::stoi(argv[3]));
+        cout << "Conditional Encryption For ``Edit Distance at most One'' is Working Properly \n";
+
+        cout << "========================================================\n";
+        cout << "========================================================\n";
+        cout << "Basic Testing of OR predicate: \n";
+        retuslt =  BasicTestOR(std::stoi(argv[1]),  std::stoi(argv[2]),  std::stoi(argv[3]));
+        cout << "Conditional Encryption For ``OR'' is Working Properly \n";
+    }
     if(argv[0] == "CAPSLOCK")
     {
-        int CapsLockRslt = 0;
-        // BasicTestCapsLock();
+       retuslt =  BasicTestCapsLock(std::stoi(argv[1]),  std::stoi(argv[2]),  std::stoi(argv[3]));
     }
     else if(argv[0] == "EDOne")
     {
-
+        retuslt = BasicTestEDOne(std::stoi(argv[1]),  std::stoi(argv[2]),  std::stoi(argv[3]));
     }
     else if (argv[0] == "HamDistT")
     {
-         BasicTestHamDistT(std::stoi(argv[1]),  std::stoi(argv[2]),  std::stoi(argv[3]), std::stoi(argv[4]));
+        retuslt=  BasicTestHamDistT(std::stoi(argv[1]),  std::stoi(argv[2]),  std::stoi(argv[3]), std::stoi(argv[4]));
     }
     else if(argv[0] == "OR")
     {
-
+        retuslt =  BasicTestOR(std::stoi(argv[1]),  std::stoi(argv[2]),  std::stoi(argv[3]));
     }
     return 1;
 }

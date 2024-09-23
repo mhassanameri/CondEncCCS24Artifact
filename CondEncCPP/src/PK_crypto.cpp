@@ -210,13 +210,15 @@ void PkCrypto::Paill_pk_encrypt(const string &msg, string &ctx) const
         }
 
 
-        for (int i=0; i< s.size();  ++i)
+        for (std::string::size_type i=0; i< s.size();  ++i)
         {
             ctx = ctx + byteVCtx[i];
             ctx = ctx + "%VVV";
 
         }
-        ctx[ctx.size()+1] = NULL;
+        // ctx[ctx.size()+1] = NULL;
+        ctx[ctx.size()+1] = '\0';
+
 
 
 
@@ -241,7 +243,7 @@ void PkCrypto::Paill_pk_encrypt(const string &msg, string &ctx) const
         {
 //            assert(RV[h]->c->_mp_d == SV[h]->c->_mp_d);
             assert(mpz_cmp(RV[h]->c,SV[h]->c) == 0);
-            paillier_ciphertext_t* Rctx;
+            // paillier_ciphertext_t* Rctx;
 //            Rctx = paillier_ciphertext_from_bytes(RV[h], PAILLIER_BITS_TO_BYTES(ppk->bits) *2);
 
             paillier_prvkey_t * psk;
@@ -256,7 +258,7 @@ void PkCrypto::Paill_pk_encrypt(const string &msg, string &ctx) const
             cddd = mpz_get_ui (dec->m );
             int cdii = cddd - UINT_MAX - 1;
             assert(cdii == s[h]);
-            char cii = (char) cdii;
+            // char cii = (char) cdii;
             assert(cii == s[h]);
 
             /*subtract debug*/
@@ -275,7 +277,7 @@ void PkCrypto::Paill_pk_encrypt(const string &msg, string &ctx) const
             cd_Sub = mpz_get_ui (dec1->m );
             int cdii_Sub = cd_Sub - UINT_MAX - 1;
             assert(cdii_Sub == 0);
-            char cii_Sub = (char) cdii_Sub;
+            // char cii_Sub = (char) cdii_Sub;
             assert(cii_Sub == '\0');
 
             /*******/

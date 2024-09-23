@@ -432,10 +432,37 @@ string EditDistOne::CondEnc(paillier_pubkey_t* ppk,
 //    free(byteCtxt);
     mpz_clear(aux);
     mpz_clear(aux_Del);
-    return "EncrypteKey[0]";
+    return "1";
 //    return EncrypteKey;
 
 }
+
+
+int EditDistOne::RegDec(paillier_pubkey_t* ppk,
+                        char typo_ctx[],
+                         paillier_prvkey_t* psk,
+                         string &recovered,
+                         size_t _len)
+ {
+     int ret = 0;
+     int PailCtxtSize =  PAILLIER_BITS_TO_BYTES(ppk->bits)*2;
+     void* c = malloc(PailCtxtSize);
+     auto byteCtxt = static_cast<paillier_ciphertext_t*>(malloc(PailCtxtSize));
+
+     memcpy(c, typo_ctx + 2 * sizeof(size_t), PailCtxtSize);
+
+     byteCtxt = paillier_ciphertext_from_bytes(c, PailCtxtSize);
+     paillier_plaintext_t* dec;
+     dec = paillier_dec(nullptr, ppk, psk, byteCtxt);
+     recovered = paillier_plaintext_to_str_NegOrd(dec);
+
+     ret =1;
+     free(c);
+     paillier_freeciphertext(byteCtxt);
+     paillier_freeplaintext(dec);
+     return ret;
+ }
+
 
 
 vector<paillier_ciphertext_t*> EditDistOne::Pail_Parse_Ctx_size_AECtx(paillier_pubkey_t* ppk,

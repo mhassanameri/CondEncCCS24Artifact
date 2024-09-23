@@ -300,7 +300,7 @@ int HamDistAtmostT::generatesubsets(vector<string> &MainstrShares, vector<string
             ifCorrectShareVec = HamDistAtmostT::RecoverSecretFromValidShares (MainstrShares, K, selected, recoverTheMainSecret );
             size_t key_size = recoverTheMainSecret.size();
             CryptoPP::StringSink ss_recoveredMainSecret(recoveredMainSecret);
-            cout << "Hi\n";
+            cout << "";
             auto reMainSecrtSize = ss_recoveredMainSecret.Put((const CryptoPP::byte*)recoverTheMainSecret.data(),  recoverTheMainSecret.size(), false);
             bool AEReslt = false;
             AEReslt = CryptoSymWrapperFunctions::Wrapper_AuthDecrypt(recoverTheMainSecret, DecoddCtxAE,plaintext_rcv );
@@ -794,7 +794,7 @@ string HamDistAtmostT::CondEnc(paillier_pubkey_t* ppk,
         paillier_freeciphertext(vctx1[i]);
         paillier_freeciphertext(vctx_Shrs[i]);
     }
-    return "EncrypteKey[0]";
+    return "1";
 //    return ctx_final;
 }
 
@@ -1599,7 +1599,7 @@ int HamDistAtmostT::CondDec_NewOPT(paillier_pubkey_t* ppk,
              cout << recovered << "\n";
              return ret =1;
          }
-         cout << k <<"\t";
+         // cout << k <<"\t";
 
      }
 

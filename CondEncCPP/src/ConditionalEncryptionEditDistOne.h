@@ -90,6 +90,13 @@ public:
                               size_t _len,
                                char ctx_final[]);
 
+	static int RegDec(paillier_pubkey_t* ppk,
+						 char typo_ctx[],
+						 paillier_prvkey_t* psk,
+						 string &recovered,
+						 size_t _len);
+
+
 
     static vector<paillier_ciphertext_t*> Pail_Parse_Ctx_size_AECtx(paillier_pubkey_t* ppk,
                                                                     char* ctx, string &CtxAE);
