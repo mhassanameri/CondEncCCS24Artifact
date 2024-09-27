@@ -87,9 +87,9 @@ echo -e "option\n10\n2\n1" > input.txt
 ./tests ArtifactCCS24
 ```
 
-`option` can be `PlotFig1a1b1c`, `PlotFig1d`, `PlotFig1e`, or `PlotFig1f`, depending the figure you want to generate. The following three numbers are the number of test messages of length (8, 16, 32), the number of test messages of length 64, and the number of test messages of length 128, respectively. To avoid the program taking too long to run, set the last number to be $0$ to avoid running tests for messages of length 128.
+`option` can be `PlotFig1a1b1c`, `PlotFig1d`, `PlotFig1e`, or `PlotFig1f`, depending on the figure you want to generate. The following three numbers are the number of test messages of length (8, 16, 32), the number of test messages of length 64, and the number of test messages of length 128, respectively. To avoid the program taking too long to run, set the last number to be 0 to avoid running tests for messages of length 128.
 
-Under normal conditions, this command should take time at most <expected time>. After generating the `.dat` files, one can visualize the results using
+Under normal conditions, this command should take time at most [expected time]. After generating the `.dat` files, one can visualize the results using
 
 ```bash
 python3 ./PlotFigure.py Figure1x
@@ -105,7 +105,7 @@ Use the command to generate the data form table 1
 ./TestScriptMakingTable1data.sh
 ```
 
-Under normal conditions, this command should take time at most <insert expected time>. After generating the `.dat` files, one can visualize the results using
+Under normal conditions, this command should take time at most [expected time]. After generating the `.dat` files, one can visualize the results using
 
 ```bash
 python2 ./PdfGenTable1.py
@@ -141,47 +141,51 @@ If the make command failed with errors related to `g_argvPathHint`, in the build
 
 ### Basic Tests
 
-After building, run a basic test to ensure that conditional encryption and decryption are functioning correctly:
+After building, run a basic test to ensure that conditional typtop is functioning correctly:
 
 ```bash
-<insert basic test script>
+# in directory build/test
+./tests
 ```
 
-## More details on Tests
+Under normal conditions, this command should take time at most [expected time].
 
-More specifically, for the aim of this Artifact Evaluation, we provide instructions on reproducing the results demonstrated in the paper. We provide bash scripts called 'TestScript.sh' that creates `CondTypTopEval.dat` file, which can be used to generate a pdf file containing a table which shpws the performance evaluation of our target CondTypTop under for difference cases: 
+When executing the command, you will see either 
+```bash
+"A valid typo is detected"
+```
+indicating that the typo satisfies the predicate, or
 
-1. No Optimization and Using Memory Hard Function (MHF)
-2. No Optimization and not Using MHF
-3. HamingDistanceAtmost2 specific Optimization and using MHF
-4. HamingDistanceAtmost2 specific Optimization and not using MHF
-
-After compiling the project by executing `./test/TestScript.sh` the file `CondTypTopEval.dat` will be generated. 
-Then you can run 'python ./PlotFigureCondTypTop.py' you can see Table 2 (of the paper) in on-page pdf comparing the above four cases.  Note that, to have the output file as pdf, you need to have 'pandas' install in your machine. 
-
-#### Example
-Once you executed `./test/TestScript.sh` on terminal you may see the following lines which indicates that typtop usage of conditional 
-encryption is working correctly. 
-
-
-if the random chosen typo is not satisfying the OR predicate (while logging in with wrong password)
 ```bash
 CHECK_FALSE( tp.check(pws[1], FIRST_TIME, false) ) 
 with expansion:
 !true
 ```
 
-Or 
-```bash
-A valid typo is detected
-```
-And finally once the test is finished sucecesfully, the terminal shows 
-```bash
-round #100
-```
-if you specify 100 as the number of test cases in (`TestScript.sh`). 
+indicating that the typo does not satisfy the predicate.
 
-The numbers in generated table by `./PlotFigureCondTypTop.py` corresponding to the execution time are computed in microseconds. 
+### Reproducing results
+
+Table 2 in the paper desmonstrates the performances of the original TypTop and Conditional TypTop under different conditions:
+
+1. No optimization and using Memory Hard Function (MHF)
+2. No optimization and not Using MHF
+3. Optimization for the Hamming Distance at most 2 predicate and using MHF
+3. Optimization for the Hamming Distance at most 2 predicate and not using MHF
+
+To generate data for Table2 in the paper, use the command
+
+```bash
+# in directory build/test
+./TestScript.sh
+```
+
+To visualize the results, use
+
+```bash
+# in directory build/test
+./PlotFigureCondTypTop.py
+```
 
 <!-- old
 
