@@ -1,1 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Conditional Encryption — ACM CCS 2024 Artifact</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      max-width: 850px;
+      margin: 40px auto;
+      padding: 0 20px;
+      font-family: Arial, Helvetica, sans-serif;
+      line-height: 1.6;
+      color: #222;
+    }
+    h1, h2 {
+      color: #1f3a5f;
+    }
+    .subtitle {
+      font-size: 1.15em;
+      color: #555;
+      margin-top: -10px;
+    }
+    .links a {
+      display: inline-block;
+      margin: 6px 10px 6px 0;
+      padding: 8px 12px;
+      border: 1px solid #1f3a5f;
+      border-radius: 6px;
+      text-decoration: none;
+      color: #1f3a5f;
+    }
+    .links a:hover {
+      background: #f0f4f8;
+    }
+    code {
+      background: #f5f5f5;
+      padding: 2px 4px;
+      border-radius: 3px;
+    }
+    footer {
+      margin-top: 40px;
+      font-size: 0.9em;
+      color: #666;
+      border-top: 1px solid #ddd;
+      padding-top: 15px;
+    }
+  </style>
+</head>
 
+<body>
+  <h1>Conditional Encryption</h1>
+  <p class="subtitle">ACM CCS 2024 Artifact</p>
+
+  <p>
+    This page accompanies our ACM CCS 2024 paper on <strong>Conditional Encryption</strong>.
+    Conditional Encryption is a public-key cryptographic primitive that allows a payload message
+    to be encrypted conditionally on whether an encrypted hidden message satisfies a predicate with
+    respect to a control message.
+  </p>
+
+  <div class="links">
+    <a href="YOUR_ARXIV_LINK">Paper / arXiv</a>
+    <a href="YOUR_ACM_LINK">ACM CCS Version</a>
+    <a href="https://github.com/mhassanameri/CondEncCCS24Artifact">GitHub Artifact</a>
+    <a href="slides.pdf">Slides</a>
+    <a href="https://www.cs.purdue.edu/homes/mameriek/">Author Homepage</a>
+  </div>
+
+  <h2>Overview</h2>
+  <p>
+    The artifact includes a C++ implementation of Conditional Encryption, predicate families
+    including equality, edit distance, Hamming distance, CAPSLOCK, and OR composition, performance
+    evaluation scripts for reproducing the paper’s figures and tables, and an application to TypTop
+    for privacy-preserving typo-tolerant password checking.
+  </p>
+
+  <h2>Why this matters</h2>
+  <p>
+    Many security systems need to determine whether a hidden value satisfies a condition without
+    revealing the value itself. Conditional Encryption provides a cryptographic way to support such
+    checks while preserving privacy and maintaining formal security guarantees, even against an
+    adversary who holds a decryption secret key when the predicate is not satisfied.
+  </p>
+
+  <h2>Artifact</h2>
+  <p>
+    The implementation is organized into two components:
+  </p>
+  <ul>
+    <li><code>CondEncCPP</code>: Conditional Encryption implementation and evaluation.</li>
+    <li><code>CondTypTopCPP</code>: Conditional TypTop implementation using Conditional Encryption.</li>
+  </ul>
+
+  <p>
+    For build instructions, dependencies, tests, and reproduction scripts, see the
+    <a href="https://github.com/mhassanameri/CondEncCCS24Artifact/blob/main/README.md">README</a>.
+  </p>
+
+  <h2>Citation</h2>
+  <pre>
+@inproceedings{YOUR_BIBTEX_KEY,
+  title     = {Conditional Encryption},
+  author    = {YOUR AUTHOR LIST},
+  booktitle = {Proceedings of the ACM Conference on Computer and Communications Security},
+  year      = {2024}
+}
+  </pre>
+
+  <footer>
+    Project page maintained by Mohammad Hassan Ameri.
+  </footer>
+</body>
+</html>
