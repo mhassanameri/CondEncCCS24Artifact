@@ -1,111 +1,188 @@
-# Conditional Encryption
+# Conditional Encryption — ACM CCS 2024 Artifact
 
-## Introduction
+This repository contains the implementation and evaluation artifact for our ACM CCS 2024 paper on **Conditional Encryption**.
 
-**Conditional Encryption** is public key cryptographic primitive which helps us to conditionally, under a binary predicate like $P(m_1, m_2)$, encrypt a the payload message $m_3$ given a regular ciphertext $c_1 = \text{Enc}(pk, m_1)$ encrypting an unknown message $m_1$. In the predicate, we call $m_2$ the control message. If the predicate holds, i.e. $P(m_1, m_2) = 1$, $c' = \text{CondEnc}(pk, c_1, m_2,m_3 )$ is the encryption of the payload message $m_3$, and the person who knows the secret key can extract $m_3$; if the predicate does not hold, i.e., $P(m_1, m_2) = 0$, $c' = \text{CondEnc}(pk, c, m_2, m_3)$ is the encryption of a random message **unrelated** to $m_1$, $m_2$, or $m_3$, and $c'$ does not leak any information about $m_2$ or $m_3$ to the adversary (who may even know the secret key!). The predicate can be edit distance at most 1, hamming distance at most 2, etc. In this repository, we provide a comprehensive implementation of conditional encryption in CPP and evaluate its performance in terms of regualar/conditional encryption time, conditional decryption time, and regular/conditional ciphertext sizes. In addition, as an application of conditional encryption, we improved the security of the [TypTop system](https://github.com/rchatterjee/typtopcpp) by replacing the public key encryption with our conditional encryption scheme.
- 
-The following groups of binary predicates $P(m_1, m_2)$ are available in our implementation: 
+Conditional Encryption is a public-key cryptographic primitive that allows a payload message to be encrypted conditionally on whether an encrypted hidden message satisfies a predicate with respect to a control message. This artifact includes:
 
-- **Equality Test**: $P(m_1, m_2) = 1$ if and only if $m_1 = m_2$
-- **Edit-Distance at most 1**: $P(m_1, m_2) = \text{EditDistance}(m_1, m_2) \leq 1$
-- **Hamming distance at most $l$**: $P(m_1, m_2) = \text{Ham}(m_1, m_2) \leq l$
-- **CAPSLOCK error**: $P(m_1, m_2) = 1$ if and only if $m_1 = \text{InvertCase}(m_2)$
-- **OR Composition**: the OR composition of any combination of the predicates mentioned above
+- A C++ implementation of Conditional Encryption.
+- Predicate families including equality, edit distance, Hamming distance, CAPSLOCK, and OR composition.
+- Performance-evaluation scripts for reproducing the paper’s figures and tables.
+- An application to TypTop showing how Conditional Encryption can strengthen typo-tolerant password checking.
 
-The project is divided into two parts, the Conditional Encryption implementation, and the improved TypTop implementation, located in [CondEncCPP](CondEncCPP) and [CondTypTopCPP](CondTypTopCPP) respectively. For instructions on building and testing, see [CondEnc](#conditional-encryption) and [CondTypTop](#Conditional-TypTop).
+This repository demonstrates research-to-implementation work in applied cryptography, privacy-preserving systems, provable security, and secure systems evaluation.
+
+## Paper and links
+
+- Link to the full version of the paper: [[arXiv]](https://arxiv.org/pdf/2409.06128)
+- ACM CCS version: [[DOI]](https://dl.acm.org/doi/10.1145/3658644.3690374)
+- Project page: `[add project page on your homepage]`
+- Artifact repository: `https://github.com/mhassanameri/CondEncCCS24Artifact`
+
+## Why this matters
+
+Many security systems need to determine whether a hidden value satisfies a condition without revealing the value itself. Conditional Encryption provides a cryptographic way to support such checks while preserving privacy and maintaining formal security guarantees, even against an adversary who holds a decryption secret key when the predicate is not satisfied.
+
+This artifact connects cryptographic theory with implementation and evaluation. It shows how a provably secure primitive can be implemented, benchmarked, and applied to a real security system.
+
+## My contribution
+
+As part of the research team, I contributed to the design, implementation, and evaluation of Conditional Encryption constructions and their application to typo-tolerant password checking. The artifact involved cryptographic protocol design, C++ implementation, performance benchmarking, and reproducibility support for the ACM CCS 2024 paper.
+
+## Conditional Encryption syntax
+
+Let `pk` be a public key and let
+
+```text
+c_1 = Enc(pk, m_1)
+```
+
+be a regular ciphertext encrypting an unknown hidden message `m_1`. Conditional Encryption allows a party to compute
+
+```text
+c' = CondEnc(pk, c_1, m_2, m_3)
+```
+
+where `m_2` is a control message, `m_3` is a payload message, and `P(m_1, m_2)` is a binary predicate.
+
+If the predicate holds, meaning `P(m_1, m_2) = 1`, then `c'` decrypts to the payload message `m_3`. If the predicate does not hold, meaning `P(m_1, m_2) = 0`, then `c'` hides the payload and behaves as an encryption of a random message unrelated to `m_1`, `m_2`, or `m_3`. In particular, `c'` does not leak information about `m_2` or `m_3`, even to an adversary who may know the decryption secret key.
+
+The implementation supports predicates such as equality, edit distance at most one, Hamming distance at most `l`, CAPSLOCK errors, and OR compositions of these predicates. In particular, these predicates are defined as follows: 
+
+
+## Repository structure
+
+The project is divided into two main components:
+
+- [`CondEncCPP`](CondEncCPP): implementation and evaluation of Conditional Encryption.
+- [`CondTypTopCPP`](CondTypTopCPP): improved TypTop implementation using Conditional Encryption.
+
+## Implemented predicate families
+
+The following binary predicates `P(m_1, m_2)` are available in this implementation:
+
+- **Equality test**: `P(m_1, m_2) = 1` if and only if `m_1 = m_2`.
+- **Edit distance at most 1**: `P(m_1, m_2) = 1` if `EditDistance(m_1, m_2) <= 1`.
+- **Hamming distance at most l**: `P(m_1, m_2) = 1` if `Ham(m_1, m_2) <= l`.
+- **CAPSLOCK error**: `P(m_1, m_2) = 1` if and only if `m_1 = InvertCase(m_2)`.
+- **OR composition**: an OR composition of any combination of the predicates above.
 
 ## Dependencies
-To compile the project, you will need the following:
-* `cmake >= 3.28`
-  ```bash
-    wget https://github.com/Kitware/CMake/releases/download/v3.30.3/cmake-3.30.3.tar.gz
-    tar -xvzf cmake-3.30.3.tar.gz
-    ./configure
-    make
-    sudo make install
-  ```
-* `protobuf` ([source](https://protobuf.dev/overview/), in debian use `sudo apt install protobuf-compiler`)
-* `pam-dev` (in debian use `sudo apt-get install libpam0g-dev`)
-* `cURL` (in debian use `sudo apt install libcurl4-openssl-dev`)
-* `catch2` ([source](https://github.com/catchorg/Catch2), clone the repository and build)
-  ```bash
-    git clone https://github.com/catchorg/Catch2.git
-    cd Catch2
-    cmake -Bbuild -H. -DBUILD_TESTING=OFF
-    sudo cmake --build build/ --target install
-  ```
-* `cryptopp`, `zxcvbn` and `plog` (inside the repository, will automatically build)
-* `Argon2` memory hard functions ([Source](https://github.com/P-H-C/phc-winner-argon2), only required for Conditional TypTop, inside the repository and requires manually building)
+
+To compile the project, install the following dependencies:
+
+- `cmake >= 3.28`
+- `protobuf` — on Debian/Ubuntu: `sudo apt install protobuf-compiler`
+- `pam-dev` — on Debian/Ubuntu: `sudo apt-get install libpam0g-dev`
+- `cURL` — on Debian/Ubuntu: `sudo apt install libcurl4-openssl-dev`
+- `catch2` — build from source if it is not available through your package manager
+- `cryptopp`, `zxcvbn`, and `plog` — included in the repository and built automatically
+- `Argon2` memory-hard functions — included in the repository; required only for Conditional TypTop and built manually
+
+To install CMake from source, if needed:
+
+```bash
+wget https://github.com/Kitware/CMake/releases/download/v3.30.3/cmake-3.30.3.tar.gz
+tar -xvzf cmake-3.30.3.tar.gz
+cd cmake-3.30.3
+./configure
+make
+sudo make install
+```
+
+To build Catch2 from source, if needed:
+
+```bash
+git clone https://github.com/catchorg/Catch2.git
+cd Catch2
+cmake -Bbuild -H. -DBUILD_TESTING=OFF
+sudo cmake --build build/ --target install
+```
 
 ## Conditional Encryption
 
-### Building
+### Build
 
-Clone the repository
+Clone the repository and enter the Conditional Encryption directory:
+
 ```bash
 git clone https://github.com/mhassanameri/CondEncCCS24Artifact.git
 cd CondEncCCS24Artifact/CondEncCPP
 ```
 
-Create a build directory and build the program
+Create a build directory and compile the implementation:
 
 ```bash
 mkdir build && cd build
 cmake ../
 make
 ```
-If the make command failed with errors related to `g_argvPathHint`, in the build directory run `FixingTestInstallCryptoPP.sh`, then run `make` again.
 
-### Basic Tests
+If `make` fails with errors related to `g_argvPathHint`, run the following script from the build directory and then run `make` again:
 
-After building, run some basic tests to ensure that conditional encryption and decryption are functioning correctly:
+```bash
+./FixingTestInstallCryptoPP.sh
+make
+```
+
+### Basic tests
+
+After building, run the basic tests to check conditional encryption and decryption:
 
 ```bash
 echo -e "all\n25\n1024\n32\n2" > BasicTestInputs.txt
 ./tests ArtifactCCS24BasicTests
 ```
-* `all` means testing all predicates, for specific predicates, change to `HamDistT`, `EDOne`, `CAPSLOCK`, and `OR` for specific predicates.
-* 25 specifies the number of different messages $m_1$ and its corresponding typos that are being tested
-* 1024 specifies the size of the public key
-* 32 specifies the length of the messages $m_1$, other options are 8, 16, 64, or 128
-* 2
 
-Under normal conditoins, the basic tests should take at most <expected time> to complete.
+Input parameters:
 
-### Reproducing Results 
+- `all`: test all predicates. For a specific predicate, use `HamDistT`, `EDOne`, `CAPSLOCK`, or `OR`.
+- `25`: number of test messages `m_1` and corresponding typo/control-message examples.
+- `1024`: public-key size.
+- `32`: message length. Other options include `8`, `16`, `64`, and `128`.
+- `2`: Hamming-distance threshold for the relevant tests.
 
-We provide scripts that reproduce the results demonstrated in the paper, follow the instructions to generate `.dat` files that can be used to create plots in latex.
+### Reproducing paper results
+
+The repository includes scripts for reproducing the paper’s evaluation results. The scripts generate `.dat` files that can be used to create the plots and tables in the paper.
 
 #### Figure 1
 
-Figure 1 contains nine subplots, (1a) to (1i). To generate the data for figure (1x) for some x, use
+Figure 1 contains nine subplots, labeled Figure 1a through Figure 1i. To generate data for a Figure 1 experiment, run:
 
 ```bash
-# in directory build/test
+# from build/test
 rm *.dat
 echo -e "option\n10\n2\n1" > input.txt
 ./tests ArtifactCCS24
 ```
 
-`option` can be `PlotFig1a1b1c`, `PlotFig1d`, `PlotFig1e`, or `PlotFig1f`, depending on the figure you want to generate. The following three numbers are the number of test messages of length (8, 16, 32), the number of test messages of length 64, and the number of test messages of length 128, respectively. To avoid the program taking too long to run, set the last number to be 0 to avoid running tests for messages of length 128.
+Replace `option` with one of the following:
 
-Under normal conditions, this command should take time at most [expected time]. After generating the `.dat` files, one can visualize the results using
+- `PlotFig1a1b1c`
+- `PlotFig1d`
+- `PlotFig1e`
+- `PlotFig1f`
+
+The three numeric inputs specify the number of test messages of length `(8, 16, 32)`, length `64`, and length `128`, respectively. To reduce running time, set the last number to `0` to skip tests for messages of length `128`.
+
+After generating the `.dat` files, plot the results using:
 
 ```bash
 python3 ./PlotFigure.py Figure1x
 ```
-where `x` is the figure you want to plot.
+
+Replace `x` with the relevant subplot label.
 
 #### Table 1
 
-Use the command to generate the data form table 1
+To generate the data for Table 1, run:
 
 ```bash
-# in directory build/test
+# from build/test
 ./TestScriptMakingTable1data.sh
 ```
 
-Under normal conditions, this command should take time at most [expected time]. After generating the `.dat` files, one can visualize the results using
+After generating the `.dat` files, create the table using:
 
 ```bash
 python2 ./PdfGenTable1.py
@@ -113,23 +190,28 @@ python2 ./PdfGenTable1.py
 
 ## Conditional TypTop
 
-### Building
+The `CondTypTopCPP` component applies Conditional Encryption to TypTop, a typo-tolerant password-checking system. The goal is to strengthen the privacy/security of typo-tolerant password checking by replacing the underlying public-key encryption component with Conditional Encryption.
 
-Clone the repository
+### Build
+
+Clone the repository and enter the Conditional TypTop directory:
+
 ```bash
 git clone https://github.com/mhassanameri/CondEncCCS24Artifact.git
 cd CondEncCCS24Artifact/CondTypTopCPP
 ```
-Build the Argon2 libraries
+
+Build the Argon2 libraries:
+
 ```bash
 cd argon2/phcargon2
 make
-make test 
+make test
 sudo make install
 cd ../../
 ```
 
-Create a build directory and build the program
+Create a build directory and compile Conditional TypTop:
 
 ```bash
 mkdir build && cd build
@@ -137,209 +219,76 @@ cmake ../
 make
 ```
 
-If the make command failed with errors related to `g_argvPathHint`, in the build directory run `FixingTestInstallCryptoPP.sh`, then run `make` again.
-
-### Basic Tests
-
-After building, run a basic test to ensure that conditional typtop is functioning correctly:
+If `make` fails with errors related to `g_argvPathHint`, run the following script from the build directory and then run `make` again:
 
 ```bash
-# in directory build/test
+./FixingTestInstallCryptoPP.sh
+make
+```
+
+### Basic tests
+
+After building, run the basic test:
+
+```bash
+# from build/test
 ./tests
 ```
 
-Under normal conditions, this command should take time at most [expected time].
+During execution, you may see:
 
-When executing the command, you will see either 
 ```bash
 "A valid typo is detected"
 ```
-indicating that the typo satisfies the predicate, or
+
+which indicates that the typo satisfies the predicate. You may also see:
 
 ```bash
-CHECK_FALSE( tp.check(pws[1], FIRST_TIME, false) ) 
+CHECK_FALSE( tp.check(pws[1], FIRST_TIME, false) )
 with expansion:
 !true
 ```
 
-indicating that the typo does not satisfy the predicate.
+which indicates that the tested typo does not satisfy the predicate.
 
-### Reproducing results
+### Reproducing Table 2
 
-Table 2 in the paper desmonstrates the performances of the original TypTop and Conditional TypTop under different conditions:
+Table 2 in the paper compares the performance of the original TypTop system and Conditional TypTop under four configurations:
 
-1. No optimization and using Memory Hard Function (MHF)
-2. No optimization and not Using MHF
-3. Optimization for the Hamming Distance at most 2 predicate and using MHF
-3. Optimization for the Hamming Distance at most 2 predicate and not using MHF
+1. No optimization, using a memory-hard function (MHF).
+2. No optimization, not using an MHF.
+3. Optimization for the Hamming-distance-at-most-2 predicate, using an MHF.
+4. Optimization for the Hamming-distance-at-most-2 predicate, not using an MHF.
 
-To generate data for Table2 in the paper, use the command
+To generate the data for Table 2, run:
 
 ```bash
-# in directory build/test
+# from build/test
 ./TestScript.sh
 ```
 
-To visualize the results, use
+To visualize the results, run:
 
 ```bash
-# in directory build/test
+# from build/test
 ./PlotFigureCondTypTop.py
 ```
 
-<!-- old
+## Citation
 
-# CondEnc-CPP #
+If you use this artifact, please cite the ACM CCS 2024 paper:
 
-## ACM-CCS24 Artifact Documentation
-[comment]: <> ([![Build Status]&#40;https://www.cs.purdue.edu/homes/mameriek/CondEnccpp.svg?branch=master&#41;]&#40;https://travis-ci.org/rchatterjee/typtopcpp&#41;)
-
-[comment]: <> ([![Build Status]&#40;https://www.cs.purdue.edu/homes/mameriek&#41;]&#40;https://www.cs.purdue.edu/homes/mameriek&#41;)
-
-**tl;dr** Conditional Encryption: "acronymed CondEnc" is public key cryptographic primitive which helps us to conditionally (under a binary predicate like `P(m_1, m_2)`) encrypt a the payload message `m_3` given a regular ciphertext `c_1 = Enc(pk, m_1)` encrypting an unknown message `m_1`. In the predicate, we call `m_2` the control message. That is, if the predicate `P(m_1, m_2) = 1` then `c' = ConEnc(pk, c_1, m_2,m_3 )` is the encryption of the payload message `m_3`, and the person who knows the secret key can extract `m_3`. If the predicate does not hold, i.e., `P(m_1, m_2)= 0`, then `c' = CondEnc(pk, c, m_2, m_3)` is the encryption of a random message unrelated to `m_1, m_2, m_3` and does not leak any information about `m_2, m_3` to the adversary (who may even know the secret key). The predicate can simply be edit distance, hamming distance at most 2, etc. In this repository, we provided a comprehensive implementation of conditional encryption via CPP and evaluate its performance in terms of regualar encryption time, conditional encryption time, conditional decryption, as well the regular/conditional ciphertext size.
- 
-In summary, we implemented conditional encryption for groups of binary predicates which are: edit distance 1, arbitrary Hamming distnace [at most 1, at most 2, at most 3 and at most 4], CAPSLOCK_ON error, equality test and Or of 'Edit distance at most 1, Hamming distance at most 2, CAPSLOCK_ON' predicates. In addition, as a practical application of conditional encryption, we improved the security of the TypTop system [here](https://github.com/rchatterjee/typtopcpp) by replacing the public key encryption with our conditional encryption scheme. In what follows we mention the dependencies and the way to install and compile each project on your local machine.
-
-## Dependencies
-To compile the project from source, you will need the following:
-* `cmake >= 3.28`
-     ```bash
-      $ wget https://github.com/Kitware/CMake/releases/download/v3.30.3/cmake-3.30.3.tar.gz
-      $ tar -xvzf cmake-3.30.3.tar.gz
-      $ ./configure
-      $ make
-      $ sudo make install
-  
-* `protobuf` [source](https://protobuf.dev/overview/) (in debian use sudo `apt install protobuf-compiler`)
-* `pam-dev` (in debian use `sudo apt-get install libpam0g-dev`)
-* `cURL` (in debian use `sudo apt install libcurl4-openssl-dev`)
-* `catch2` [source](https://github.com/catchorg/Catch2) (to install, clone the repository and build)
-     ```bash
-      $ git clone https://github.com/catchorg/Catch2.git
-      $ cd Catch2
-      $ cmake -Bbuild -H. -DBUILD_TESTING=OFF
-      $ sudo cmake --build build/ --target install
-* `cryptopp`, `zxcvbn` and `plog` (inside the repository, will automatically build)
-* `Argon2` memory hard functions [Source](https://github.com/P-H-C/phc-winner-argon2) (inside the repository, requires manually building)
-
-
-
-## Building the project (Just Conditional Encryption)
-Clone the repository
-```bash
-$ git clone https://github.com/mhassanameri/CondEncCCS24Artifact.git
-$ cd CondEncCCS24Artifact/CondEncCPP
-```
-Build the Argon2 libraries
-```bash
-$ cd argon2/phcargon2
-$ make
-$ make test # to verify that build produced valid results
-$ sudo make install # install argon2 to system
-$ cd ../../
-```
-Create a build directory and build the program
-```bash
-$ mkdir build && cd build
-$ cmake ../
-$ make
-```
-If the make command failed with errors related to `g_argvPathHint`, in the build directory run `FixingTestInstallCryptoPP.sh`, then run `make` again. Finally, use
-```bash
-$ ./test/tests
-```
-to execute a tests to verify that implementations of all Conditional Encryption schemes associated with the predicates: Hamming Distance at most T, Edit distance at most one, CAPSLOCK_ON, and OR_of_CAPSLOCK_HamDist2_EditDist1 are working correctly.
-
-
-## More details on Tests
-
-More specifically, for the aim of this Artifact Evaluation, we provide instructions on reproducing the results demonstrated in the paper. We provide bash scripts that create `.dat` files, which can be used to generate the plots in latex.
-
-### Generate Figure 1a and 1b 
-After compiling the project, go to `build/test` and run `TestScript.sh`. For this script, we can modify the `input.txt` file to generate the desired output. The instruction on how to modify `input.txt` is commented in `TestScript.sh`. In the following, we will provide an examples on how to generate Figure 1a of the paper. 
-
-#### Example
-```bash
-$ ./TestScript.sh
-$ python3 ./PlotFigure.py Figure1a
+```bibtex
+@inproceedings{conditional-encryption-ccs2024,
+  title     = {Conditional Encryption},
+  author    = {[add author list]},
+  booktitle = {Proceedings of the ACM Conference on Computer and Communications Security (CCS)},
+  year      = {2024}
+}
 ```
 
-and for Table 1 (CondEnc messge len =32)
+## Notes
 
-```bash
-$ ./TestScriptMakingTable1data.sh
-$ python3 ./PdfGenTable1.py
-```
-Or for CondTypTop (Table 2)
-```bash 
-$ ./TestScript.sh
-$ python3 ./PlotFigureCondTypTop.py
-```
-
-
-
-## Building the project (CondTypTop: TyoTop System using CondEnc)
-Clone the repository
-```bash
-$ git clone https://github.com/mhassanameri/CondEncCCS24Artifact.git
-$ cd CondEncCCS24Artifact/CondTypTopCPP
-```
-Build the Argon2 libraries
-```bash
-$ cd argon2/phcargon2
-$ make
-$ make test 
-$ sudo make install
-$ cd ../../
-```
-Create a build directory and build the program
-```bash
-$ mkdir build && cd build
-$ cmake ../
-$ make
-```
-If the make command failed with errors related to `g_argvPathHint`, in the build directory run `FixingTestInstallCryptoPP.sh`, then run `make` again. Finally, use
-```bash
-$ ./test/tests
-```
-to execute a tests to verify that implementations of all CondTypTop schemes associated with the OR of Hamming Distance at most 2, Edit distance at most one, CAPSLOCK_ON is working correctly.
-
-
-## More details on Tests
-
-More specifically, for the aim of this Artifact Evaluation, we provide instructions on reproducing the results demonstrated in the paper. We provide bash scripts called 'TestScript.sh' that creates `CondTypTopEval.dat` file, which can be used to generate a pdf file containing a table which shpws the performance evaluation of our target CondTypTop under for difference cases: 
-
-1. No Optimization and Using Memory Hard Function (MHF)
-2. No Optimization and not Using MHF
-3. HamingDistanceAtmost2 specific Optimization and using MHF
-4. HamingDistanceAtmost2 specific Optimization and not using MHF
-
-After compiling the project by executing `./test/TestScript.sh` the file `CondTypTopEval.dat` will be generated. 
-Then you can run 'python ./PlotFigureCondTypTop.py' you can see Table 2 (of the paper) in on-page pdf comparing the above four cases.  Note that, to have the output file as pdf, you need to have 'pandas' install in your machine. 
-
-#### Example
-Once you executed `./test/TestScript.sh` on terminal you may see the following lines which indicates that typtop usage of conditional 
-encryption is working correctly. 
-
-
-if the random chosen typo is not satisfying the OR predicate (while logging in with wrong password)
-```bash
-$ CHECK_FALSE( tp.check(pws[1], FIRST_TIME, false) ) 
-$ with expansion:
-$ !true
-```
-
-Or 
-```bash
-$ A valid typo is detected
-```
-And finally once the test is finished sucecesfully, the terminal shows 
-```bash
-$ round #100
-```
-if you specify 100 as the number of test cases in (`TestScript.sh`). 
-
-The numbers in generated table by `./PlotFigureCondTypTop.py` corresponding to the execution time are computed in microseconds. 
-
--->
-
+- This artifact is intended for research reproducibility and experimental evaluation.
+- Some scripts may take substantial time depending on the selected message lengths and number of test cases.
+- For faster local checks, use the basic tests before running the full evaluation scripts.
