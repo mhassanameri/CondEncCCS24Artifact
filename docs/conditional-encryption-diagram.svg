@@ -1,43 +1,166 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 390" role="img" aria-labelledby="title desc">
-  <title id="title">Conditional Encryption core primitive</title>
-  <desc id="desc">Hidden encrypted message and control message enter a predicate gate. A payload gift message enters the same gate from bottom to top. If the predicate holds, the payload decrypts; otherwise decryption returns an unrelated random message.</desc>
-  <defs>
-    <linearGradient id="gate" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#ffffff"/>
-      <stop offset="1" stop-color="#f6f9ff"/>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   viewBox="0 0 1000 390"
+   role="img"
+   aria-labelledby="title desc"
+   version="1.1"
+   id="svg39"
+   sodipodi:docname="conditional-encryption-diagram.svg"
+   inkscape:version="1.3.2 (1:1.3.2+202404261509+091e20ef0f)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <sodipodi:namedview
+     id="namedview39"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:zoom="1.542907"
+     inkscape:cx="515.58519"
+     inkscape:cy="151.66177"
+     inkscape:window-width="1614"
+     inkscape:window-height="981"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg39" />
+  <title
+     id="title">Conditional Encryption core primitive</title>
+  <desc
+     id="desc">Hidden encrypted message and control message enter a predicate gate. A payload gift message enters the same gate from bottom to top. If the predicate holds, the payload decrypts; otherwise decryption returns an unrelated random message.</desc>
+  <defs
+     id="defs10">
+    <linearGradient
+       id="gate"
+       x1="0"
+       y1="0"
+       x2="1"
+       y2="1">
+      <stop
+         offset="0"
+         stop-color="#ffffff"
+         id="stop1" />
+      <stop
+         offset="1"
+         stop-color="#f6f9ff"
+         id="stop2" />
     </linearGradient>
-    <linearGradient id="lockBlue" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#2f7de1"/>
-      <stop offset="1" stop-color="#1f58b8"/>
+    <linearGradient
+       id="lockBlue"
+       x1="0"
+       y1="0"
+       x2="1"
+       y2="1">
+      <stop
+         offset="0"
+         stop-color="#2f7de1"
+         id="stop3" />
+      <stop
+         offset="1"
+         stop-color="#1f58b8"
+         id="stop4" />
     </linearGradient>
-    <linearGradient id="giftPurple" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#9b6ee8"/>
-      <stop offset="1" stop-color="#6d43c5"/>
+    <linearGradient
+       id="giftPurple"
+       x1="7.2362723"
+       y1="24.321915"
+       x2="47.03577"
+       y2="64.121413"
+       gradientTransform="scale(1.1055416,0.90453403)"
+       gradientUnits="userSpaceOnUse">
+      <stop
+         offset="0"
+         stop-color="#9b6ee8"
+         id="stop5" />
+      <stop
+         offset="1"
+         stop-color="#6d43c5"
+         id="stop6" />
     </linearGradient>
-    <linearGradient id="green" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#54c46d"/>
-      <stop offset="1" stop-color="#18883b"/>
+    <linearGradient
+       id="green"
+       x1="0"
+       y1="0"
+       x2="1"
+       y2="1">
+      <stop
+         offset="0"
+         stop-color="#54c46d"
+         id="stop7" />
+      <stop
+         offset="1"
+         stop-color="#18883b"
+         id="stop8" />
     </linearGradient>
-    <filter id="softShadow" x="-20%" y="-20%" width="140%" height="140%">
-      <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#0f172a" flood-opacity="0.12"/>
+    <filter
+       id="softShadow"
+       x="-0.0038636365"
+       y="-0.0037280703"
+       width="1.0077273"
+       height="1.0074561">
+      <feDropShadow
+         dx="0"
+         dy="8"
+         stdDeviation="12"
+         flood-color="#0f172a"
+         flood-opacity="0.12" />
     </filter>
-    <marker id="arrowBlue" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto" markerUnits="strokeWidth">
-      <path d="M1,1 L9,5 L1,9 Z" fill="#2962b5"/>
+    <marker
+       id="arrowBlue"
+       markerWidth="10"
+       markerHeight="10"
+       refX="8"
+       refY="5"
+       orient="auto"
+       markerUnits="strokeWidth">
+      <path
+         d="M1,1 L9,5 L1,9 Z"
+         fill="#2962b5"
+         id="path8" />
     </marker>
-    <marker id="arrowGreen" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto" markerUnits="strokeWidth">
-      <path d="M1,1 L9,5 L1,9 Z" fill="#15803d"/>
+    <marker
+       id="arrowGreen"
+       markerWidth="10"
+       markerHeight="10"
+       refX="8"
+       refY="5"
+       orient="auto"
+       markerUnits="strokeWidth">
+      <path
+         d="M1,1 L9,5 L1,9 Z"
+         fill="#15803d"
+         id="path9" />
     </marker>
-    <marker id="arrowDark" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto" markerUnits="strokeWidth">
-      <path d="M1,1 L9,5 L1,9 Z" fill="#111827"/>
+    <marker
+       id="arrowDark"
+       markerWidth="10"
+       markerHeight="10"
+       refX="8"
+       refY="5"
+       orient="auto"
+       markerUnits="strokeWidth">
+      <path
+         d="M1,1 L9,5 L1,9 Z"
+         fill="#111827"
+         id="path10" />
     </marker>
-    <style>
-      .label{font:700 17px -apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;fill:#111827}
-      .small{font:500 14px -apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;fill:#334155}
-      .mini{font:500 12px -apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;fill:#64748b}
-      .code{font:700 16px "SFMono-Regular",Consolas,monospace;fill:#111827}
-      .greenText{font:700 16px "SFMono-Regular",Consolas,monospace;fill:#15803d}
-      .redText{font:700 16px "SFMono-Regular",Consolas,monospace;fill:#dc2626}
-      .gateText{font:500 16px -apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;fill:#12621f}
+    <style
+       id="style10">
+      .label{font:700 17px -apple-system,BlinkMacSystemFont,&quot;Segoe UI&quot;,Arial,sans-serif;fill:#111827}
+      .small{font:500 14px -apple-system,BlinkMacSystemFont,&quot;Segoe UI&quot;,Arial,sans-serif;fill:#334155}
+      .mini{font:500 12px -apple-system,BlinkMacSystemFont,&quot;Segoe UI&quot;,Arial,sans-serif;fill:#64748b}
+      .code{font:700 16px &quot;SFMono-Regular&quot;,Consolas,monospace;fill:#111827}
+      .greenText{font:700 16px &quot;SFMono-Regular&quot;,Consolas,monospace;fill:#15803d}
+      .redText{font:700 16px &quot;SFMono-Regular&quot;,Consolas,monospace;fill:#dc2626}
+      .gateText{font:500 16px -apple-system,BlinkMacSystemFont,&quot;Segoe UI&quot;,Arial,sans-serif;fill:#12621f}
       .gateBox{fill:url(#gate);stroke:#8a9ab2;stroke-width:1.7;filter:url(#softShadow)}
       .dashBlue{stroke:#2b6cc5;stroke-width:3.2;stroke-linecap:round;stroke-dasharray:5 11;fill:none;marker-end:url(#arrowBlue)}
       .dashGreen{stroke:#159447;stroke-width:3.2;stroke-linecap:round;stroke-dasharray:5 11;fill:none;marker-end:url(#arrowGreen)}
@@ -46,84 +169,462 @@
       .thinDash{stroke:#7c8ba1;stroke-width:2.5;stroke-linecap:round;stroke-dasharray:6 8;fill:none;marker-end:url(#arrowBlue)}
     </style>
   </defs>
-
-  <rect x="0" y="0" width="1000" height="390" rx="34" fill="rgba(255,255,255,0)"/>
-
+  <rect
+     x="-1.950711"
+     y="-0.97345781"
+     width="1000"
+     height="390"
+     rx="34"
+     fill="rgba(255,255,255,0)"
+     id="rect10" />
   <!-- Hidden message lock -->
-  <text x="80" y="42" text-anchor="middle" class="label">Hidden Message</text>
-  <g transform="translate(54 76)">
-    <path d="M16 30 v-15 c0-17 12-29 29-29s29 12 29 29v15" fill="none" stroke="#2464c8" stroke-width="9" stroke-linecap="round"/>
-    <rect x="6" y="28" width="78" height="62" rx="11" fill="url(#lockBlue)"/>
-    <circle cx="45" cy="57" r="8" fill="#fff"/>
-    <rect x="41" y="58" width="8" height="17" rx="3" fill="#fff"/>
+  <text
+     x="80"
+     y="42"
+     text-anchor="middle"
+     class="label"
+     id="text10">Hidden Message</text>
+  <g
+     transform="translate(54 76)"
+     id="g12">
+    <path
+       d="M16 30 v-15 c0-17 12-29 29-29s29 12 29 29v15"
+       fill="none"
+       stroke="#2464c8"
+       stroke-width="9"
+       stroke-linecap="round"
+       id="path11" />
+    <rect
+       x="6"
+       y="28"
+       width="78"
+       height="62"
+       rx="11"
+       fill="url(#lockBlue)"
+       id="rect11" />
+    <circle
+       cx="45"
+       cy="57"
+       r="8"
+       fill="#fff"
+       id="circle11" />
+    <rect
+       x="41"
+       y="58"
+       width="8"
+       height="17"
+       rx="3"
+       fill="#fff"
+       id="rect12" />
   </g>
-  <text x="80" y="187" text-anchor="middle" class="code">Enc(pk, m₁)</text>
-
+  <text
+     x="80"
+     y="187"
+     text-anchor="middle"
+     class="code"
+     id="text12"
+     style="font-style:normal;font-variant:normal;font-weight:700;font-stretch:normal;font-size:16px;line-height:normal;font-family:SFMono-Regular, Consolas, monospace">C=Enc<tspan
+   style="font-size:65%;baseline-shift:sub"
+   id="tspan45">pk</tspan>(m₁)</text>
   <!-- Control key -->
-  <text x="235" y="42" text-anchor="middle" class="label">Control Message</text>
-  <g transform="translate(204 83) rotate(-38 35 35)">
-    <circle cx="28" cy="28" r="19" fill="#45bb65"/>
-    <circle cx="28" cy="28" r="7" fill="#def7e6"/>
-    <rect x="43" y="23" width="58" height="11" rx="5" fill="#2fa44f"/>
-    <rect x="77" y="34" width="10" height="18" rx="2" fill="#2fa44f"/>
-    <rect x="94" y="34" width="10" height="14" rx="2" fill="#2fa44f"/>
+  <text
+     x="232.32774"
+     y="43.28233"
+     text-anchor="middle"
+     class="label"
+     id="text13"
+     style="font-style:normal;font-variant:normal;font-weight:700;font-stretch:normal;font-size:17px;line-height:normal;font-family:'-apple-system', BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif">Control Message</text>
+  <text
+     x="203.80519"
+     y="147.52612"
+     text-anchor="middle"
+     class="label"
+     id="text13-6"
+     style="font-style:normal;font-variant:normal;font-weight:700;font-stretch:normal;font-size:17px;line-height:normal;font-family:'-apple-system', BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;fill:#111827">Conditional</text>
+  <text
+     x="299.00912"
+     y="146.92332"
+     text-anchor="middle"
+     class="label"
+     id="text13-6-7"
+     style="font-style:normal;font-variant:normal;font-weight:700;font-stretch:normal;font-size:17px;line-height:normal;font-family:'-apple-system', BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;fill:#111827">Ciphertext</text>
+  <text
+     x="253.22975"
+     y="171.34447"
+     text-anchor="middle"
+     class="label"
+     id="text13-6-7-5"
+     style="font-style:normal;font-variant:normal;font-weight:700;font-stretch:normal;font-size:17px;line-height:normal;font-family:'-apple-system', BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;fill:#111827">C'=CondEnc<tspan
+   style="font-size:65%;baseline-shift:sub"
+   id="tspan44">pk</tspan>(C,m₂,m₃ )</text>
+  <text
+     x="337.47159"
+     y="94.243172"
+     text-anchor="middle"
+     class="label"
+     id="text13-6-7-5-3"
+     style="font-style:normal;font-variant:normal;font-weight:700;font-stretch:normal;font-size:17px;line-height:normal;font-family:'-apple-system', BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;fill:#111827"><tspan
+       sodipodi:role="line"
+       id="tspan41"
+       x="337.47159"
+       y="94.243172">C'</tspan><tspan
+       sodipodi:role="line"
+       id="tspan42"
+       x="337.47159"
+       y="115.49317" /></text>
+  <g
+     transform="matrix(0.63323254,-0.48672025,0.49473548,0.62297351,195.73185,109.15955)"
+     id="g16">
+    <circle
+       cx="28"
+       cy="28"
+       r="19"
+       fill="#45bb65"
+       id="circle13" />
+    <circle
+       cx="28"
+       cy="28"
+       r="7"
+       fill="#def7e6"
+       id="circle14" />
+    <rect
+       x="43"
+       y="23"
+       width="58"
+       height="11"
+       rx="5"
+       fill="#2fa44f"
+       id="rect14" />
+    <rect
+       x="77"
+       y="34"
+       width="10"
+       height="18"
+       rx="2"
+       fill="#2fa44f"
+       id="rect15" />
+    <rect
+       x="94"
+       y="34"
+       width="10"
+       height="14"
+       rx="2"
+       fill="#2fa44f"
+       id="rect16" />
   </g>
-  <text x="235" y="187" text-anchor="middle" class="code">m₂</text>
-
+  <text
+     x="224.93884"
+     y="60.134163"
+     text-anchor="middle"
+     class="code"
+     id="text16"
+     style="font-style:normal;font-variant:normal;font-weight:700;font-stretch:normal;font-size:16px;line-height:normal;font-family:SFMono-Regular, Consolas, monospace">m₂</text>
   <!-- Arrows into gate -->
-  <path d="M134 115 C190 115 246 115 302 115" class="dashBlue"/>
-  <path d="M267 115 C302 115 326 115 356 115" class="dashGreen"/>
-
+  <path
+     d="m 133.09568,113.20799 c 24.34866,0 48.69732,0 73.04598,0"
+     class="dashBlue"
+     id="path16" />
+  <path
+     d="M267 115 C302 115 326 115 356 115"
+     class="dashGreen"
+     id="path17" />
   <!-- Predicate gate -->
-  <rect x="365" y="58" width="220" height="228" rx="22" class="gateBox"/>
-  <text x="475" y="92" text-anchor="middle" class="label">Predicate</text>
-  <text x="475" y="130" text-anchor="middle" class="code">P(m₁, m₂)</text>
-  <text x="475" y="170" text-anchor="middle" class="gateText">Equality</text>
-  <text x="475" y="200" text-anchor="middle" class="gateText">Edit Distance ≤ 1</text>
-  <text x="475" y="230" text-anchor="middle" class="gateText">Hamming Distance ≤ ℓ</text>
-  <text x="475" y="260" text-anchor="middle" class="gateText">CAPSLOCK or OR</text>
-
+  <rect
+     x="365"
+     y="58"
+     width="220"
+     height="228"
+     rx="22"
+     class="gateBox"
+     id="rect17" />
+  <text
+     x="475"
+     y="92"
+     text-anchor="middle"
+     class="label"
+     id="text17">Predicate</text>
+  <text
+     x="475"
+     y="130"
+     text-anchor="middle"
+     class="code"
+     id="text18">P(m₁, m₂)</text>
+  <text
+     x="475"
+     y="170"
+     text-anchor="middle"
+     class="gateText"
+     id="text19">Equality</text>
+  <text
+     x="475"
+     y="200"
+     text-anchor="middle"
+     class="gateText"
+     id="text20">Edit Distance ≤ 1</text>
+  <text
+     x="475"
+     y="230"
+     text-anchor="middle"
+     class="gateText"
+     id="text21">Hamming Distance ≤ ℓ</text>
+  <text
+     x="475"
+     y="260"
+     text-anchor="middle"
+     class="gateText"
+     id="text22">CAPSLOCK or OR</text>
   <!-- Payload gift bottom-to-top -->
-  <g transform="translate(445 303)">
-    <text x="30" y="0" text-anchor="middle" class="label">Payload</text>
-    <rect x="8" y="22" width="44" height="36" rx="5" fill="url(#giftPurple)"/>
-    <rect x="3" y="12" width="54" height="16" rx="4" fill="#b397f0"/>
-    <rect x="26" y="12" width="8" height="46" rx="2" fill="#fff" opacity="0.85"/>
-    <path d="M30 12 C17 -6 4 1 15 12" fill="none" stroke="#6d43c5" stroke-width="5" stroke-linecap="round"/>
-    <path d="M30 12 C43 -6 56 1 45 12" fill="none" stroke="#6d43c5" stroke-width="5" stroke-linecap="round"/>
-    <text x="30" y="84" text-anchor="middle" class="code">m₃</text>
+  <g
+     transform="translate(402.04199,292.5523)"
+     id="g26"
+     inkscape:transform-center-x="3.1113943"
+     inkscape:transform-center-y="-47.716401">
+    <text
+       x="-18.496878"
+       y="83.003319"
+       text-anchor="middle"
+       class="label"
+       id="text23"
+       style="font-style:normal;font-variant:normal;font-weight:700;font-stretch:normal;font-size:17px;line-height:normal;font-family:'-apple-system', BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif">Payload</text>
+    <rect
+       x="8"
+       y="22"
+       width="44"
+       height="36"
+       rx="5"
+       fill="url(#giftPurple)"
+       id="rect23"
+       style="fill:url(#giftPurple)" />
+    <rect
+       x="3"
+       y="12"
+       width="54"
+       height="16"
+       rx="4"
+       fill="#b397f0"
+       id="rect24" />
+    <rect
+       x="26"
+       y="12"
+       width="8"
+       height="46"
+       rx="2"
+       fill="#ffffff"
+       opacity="0.85"
+       id="rect25" />
+    <path
+       d="M 30,12 C 17,-6 4,1 15,12"
+       fill="none"
+       stroke="#6d43c5"
+       stroke-width="5"
+       stroke-linecap="round"
+       id="path25" />
+    <path
+       d="M 30,12 C 43,-6 56,1 45,12"
+       fill="none"
+       stroke="#6d43c5"
+       stroke-width="5"
+       stroke-linecap="round"
+       id="path26" />
+    <text
+       x="30"
+       y="84"
+       text-anchor="middle"
+       class="code"
+       id="text26"
+       style="font-style:normal;font-variant:normal;font-weight:700;font-stretch:normal;font-size:16px;line-height:normal;font-family:SFMono-Regular, Consolas, monospace">m₃</text>
   </g>
-  <line x1="475" y1="312" x2="475" y2="294" stroke="#3861a8" stroke-width="2.6" stroke-linecap="round" stroke-dasharray="6 7"/>
-  <path d="M475 287 L465 303 L485 303 Z" fill="#3861a8"/>
-
+  <line
+     x1="475"
+     y1="364.59146"
+     x2="475"
+     y2="297.54242"
+     stroke="#3861a8"
+     stroke-width="5.01803"
+     stroke-linecap="round"
+     stroke-dasharray="6, 7"
+     id="line26" />
+  <path
+     d="m 475,277.28189 -10,16 h 20 z"
+     fill="#3861a8"
+     id="path27" />
   <!-- Success branch -->
-  <path d="M592 115 C625 115 635 111 657 106" class="solidGreen"/>
-  <circle cx="692" cy="99" r="28" fill="url(#green)" filter="url(#softShadow)"/>
-  <path d="M678 98 L688 110 L708 86" fill="none" stroke="#fff" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
-  <text x="740" y="82" class="greenText">If P(m₁,m₂) = 1</text>
-  <path d="M735 100 L875 100" class="solidDark"/>
-  <g transform="translate(892 62)">
-    <path d="M13 26 v-15 c0-15 11-26 26-26s26 11 26 26v15" fill="none" stroke="#7152bf" stroke-width="8" stroke-linecap="round"/>
-    <rect x="4" y="25" width="66" height="58" rx="10" fill="#7e61cb"/>
-    <circle cx="37" cy="53" r="7" fill="#fff"/>
-    <rect x="34" y="54" width="7" height="15" rx="3" fill="#fff"/>
+  <path
+     d="M592 115 C625 115 635 111 657 106"
+     class="solidGreen"
+     id="path28" />
+  <circle
+     cx="692"
+     cy="99"
+     r="28"
+     fill="url(#green)"
+     filter="url(#softShadow)"
+     id="circle28" />
+  <path
+     d="M678 98 L688 110 L708 86"
+     fill="none"
+     stroke="#fff"
+     stroke-width="6"
+     stroke-linecap="round"
+     stroke-linejoin="round"
+     id="path29" />
+  <text
+     x="740"
+     y="82"
+     class="greenText"
+     id="text29">If P(m₁,m₂) = 1</text>
+  <path
+     d="M735 100 L875 100"
+     class="solidDark"
+     id="path30" />
+  <g
+     transform="translate(892 62)"
+     id="g32">
+    <path
+       d="M13 26 v-15 c0-15 11-26 26-26s26 11 26 26v15"
+       fill="none"
+       stroke="#7152bf"
+       stroke-width="8"
+       stroke-linecap="round"
+       id="path31" />
+    <rect
+       x="4"
+       y="25"
+       width="66"
+       height="58"
+       rx="10"
+       fill="#7e61cb"
+       id="rect31" />
+    <circle
+       cx="37"
+       cy="53"
+       r="7"
+       fill="#fff"
+       id="circle31" />
+    <rect
+       x="34"
+       y="54"
+       width="7"
+       height="15"
+       rx="3"
+       fill="#fff"
+       id="rect32" />
   </g>
-  <text x="925" y="192" text-anchor="middle" class="label">Decrypts to</text>
-  <text x="925" y="218" text-anchor="middle" class="label">payload m₃</text>
-
+  <text
+     x="817.26025"
+     y="161.63739"
+     text-anchor="middle"
+     class="label"
+     id="text32"
+     style="font-style:normal;font-variant:normal;font-weight:700;font-stretch:normal;font-size:17px;line-height:normal;font-family:'-apple-system', BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif">C' Decrypts to</text>
+  <text
+     x="922.93091"
+     y="161.6832"
+     text-anchor="middle"
+     class="label"
+     id="text33"
+     style="font-style:normal;font-variant:normal;font-weight:700;font-stretch:normal;font-size:17px;line-height:normal;font-family:'-apple-system', BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif">payload m₃</text>
   <!-- Failure branch -->
-  <path d="M592 205 C624 215 637 226 657 234" class="solidDark"/>
-  <circle cx="692" cy="234" r="28" fill="#ef4444" filter="url(#softShadow)"/>
-  <path d="M678 220 L706 248 M706 220 L678 248" fill="none" stroke="#fff" stroke-width="6" stroke-linecap="round"/>
-  <text x="740" y="223" class="redText">If P(m₁,m₂) = 0</text>
-  <path d="M735 245 L875 245" class="solidDark"/>
-  <g transform="translate(892 206)">
-    <path d="M13 26 v-15 c0-15 11-26 26-26s26 11 26 26v15" fill="none" stroke="#4b5563" stroke-width="8" stroke-linecap="round"/>
-    <rect x="4" y="25" width="66" height="58" rx="10" fill="#50565e"/>
-    <circle cx="37" cy="53" r="7" fill="#fff"/>
-    <rect x="34" y="54" width="7" height="15" rx="3" fill="#fff"/>
+  <path
+     d="M592 205 C624 215 637 226 657 234"
+     class="solidDark"
+     id="path33" />
+  <circle
+     cx="692"
+     cy="234"
+     r="28"
+     fill="#ef4444"
+     filter="url(#softShadow)"
+     id="circle33" />
+  <path
+     d="M678 220 L706 248 M706 220 L678 248"
+     fill="none"
+     stroke="#fff"
+     stroke-width="6"
+     stroke-linecap="round"
+     id="path34" />
+  <text
+     x="740"
+     y="223"
+     class="redText"
+     id="text34">If P(m₁,m₂) = 0</text>
+  <text
+     x="586.46368"
+     y="369.22284"
+     class="redText"
+     id="text34-6"
+     style="font-style:normal;font-variant:normal;font-weight:700;font-stretch:normal;font-size:16px;line-height:normal;font-family:SFMono-Regular, Consolas, monospace;fill:#dc2626">Note: <tspan
+   style="fill:#0000ff"
+   id="tspan43">Security holds even Adv. is given sk</tspan></text>
+  <path
+     d="M735 245 L875 245"
+     class="solidDark"
+     id="path35" />
+  <g
+     transform="translate(892 206)"
+     id="g37">
+    <path
+       d="M13 26 v-15 c0-15 11-26 26-26s26 11 26 26v15"
+       fill="none"
+       stroke="#4b5563"
+       stroke-width="8"
+       stroke-linecap="round"
+       id="path36" />
+    <rect
+       x="4"
+       y="25"
+       width="66"
+       height="58"
+       rx="10"
+       fill="#50565e"
+       id="rect36" />
+    <circle
+       cx="37"
+       cy="53"
+       r="7"
+       fill="#fff"
+       id="circle36" />
+    <rect
+       x="34"
+       y="54"
+       width="7"
+       height="15"
+       rx="3"
+       fill="#fff"
+       id="rect37" />
   </g>
-  <text x="925" y="333" text-anchor="middle" class="label">Decrypts to</text>
-  <text x="925" y="358" text-anchor="middle" class="small">random message</text>
-  <text x="925" y="379" text-anchor="middle" class="mini">unrelated to m₁,m₂,m₃</text>
+  <text
+     x="793.32892"
+     y="316.68924"
+     text-anchor="middle"
+     class="label"
+     id="text37"
+     style="font-style:normal;font-variant:normal;font-weight:700;font-stretch:normal;font-size:17px;line-height:normal;font-family:'-apple-system', BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif">C' Decrypts to</text>
+  <text
+     x="925.01013"
+     y="317.74524"
+     text-anchor="middle"
+     class="small"
+     id="text38"
+     style="font-style:normal;font-variant:normal;font-weight:500;font-stretch:normal;font-size:14px;line-height:normal;font-family:'-apple-system', BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif"><tspan
+       style="font-size:17px"
+       id="tspan39">random message</tspan></text>
+  <text
+     x="891.20117"
+     y="339.36551"
+     text-anchor="middle"
+     class="mini"
+     id="text39"
+     style="font-style:normal;font-variant:normal;font-weight:500;font-stretch:normal;font-size:12px;line-height:normal;font-family:'-apple-system', BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif"><tspan
+       style="font-size:17px"
+       id="tspan40">unrelated to m₁,m₂,m₃</tspan></text>
+  <metadata
+     id="metadata45">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:title>Conditional Encryption core primitive</dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
 </svg>
