@@ -4,174 +4,119 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Conditional Encryption — ACM CCS 2024 Artifact</title>
-  <meta name="description" content="Project page for the ACM CCS 2024 artifact for Conditional Encryption with Applications to Secure Personalized Password Typo Correction." />
+  <meta name="description" content="Project page for the ACM CCS 2024 artifact: Conditional Encryption with Applications to Secure Personalized Password Typo Correction." />
   <meta property="og:title" content="Conditional Encryption — ACM CCS 2024 Artifact" />
-  <meta property="og:description" content="C++ implementation, predicates, evaluation scripts, and Conditional TypTop application." />
+  <meta property="og:description" content="C++ implementation, predicate families, evaluation scripts, and the Conditional TypTop application." />
   <meta property="og:type" content="website" />
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <header class="site-header">
-    <nav class="topbar" aria-label="Primary navigation">
-      <a class="brand" href="#top">Conditional Encryption</a>
-      <div class="nav-links">
-        <a href="#overview">Overview</a>
-        <a href="#artifact">Artifact</a>
-        <a href="#application">TypTop</a>
-        <a href="#citation">Citation</a>
-      </div>
-    </nav>
-
-    <section id="top" class="hero">
+  <main id="top" class="page-shell">
+    <section class="hero-card" aria-labelledby="page-title">
       <div class="hero-copy">
-        <p class="eyebrow">ACM CCS 2024 Artifact</p>
-        <h1>Conditional Encryption</h1>
-        <p class="subtitle">with Applications to Secure Personalized Password Typo Correction</p>
-        <p class="hero-text">
-          Conditional Encryption extends public-key encryption with a conditional encryption algorithm.
-          A payload decrypts only when an encrypted hidden message satisfies a predicate with respect to a control message.
-          If the predicate does not hold, the payload remains hidden even from an adversary who has the secret decryption key.
+        <h1 id="page-title">Conditional Encryption</h1>
+        <p class="venue">ACM CCS 2024</p>
+        <p class="lead">
+          A public-key cryptographic primitive that enables encryption conditionally on whether an encrypted hidden message satisfies a predicate with respect to a control message.
         </p>
 
-        <div class="links" aria-label="Project links">
-          <a class="primary" href="https://arxiv.org/abs/2409.06128">Paper / arXiv</a>
-          <a href="https://doi.org/10.1145/3658644.3690374">ACM CCS Version</a>
-          <a href="https://github.com/mhassanameri/CondEncCCS24Artifact">GitHub Artifact</a>
-          <a href="slides.pdf">Slides</a>
-          <a href="https://www.cs.purdue.edu/homes/mameriek/">Author Homepage</a>
+        <div class="button-grid" aria-label="Project links">
+          <a href="https://arxiv.org/abs/2409.06128"><span aria-hidden="true">▤</span> Paper (arXiv)</a>
+          <a href="https://doi.org/10.1145/3658644.3690374"><span aria-hidden="true">↗</span> ACM CCS Version</a>
+          <a href="slides.pdf"><span aria-hidden="true">▥</span> Slides</a>
+          <a class="dark" href="https://github.com/mhassanameri/CondEncCCS24Artifact"><span aria-hidden="true">▣</span> GitHub Artifact</a>
+          <a class="green" href="https://github.com/mhassanameri/CondEncCCS24Artifact/blob/main/README.md"><span aria-hidden="true">♙</span> Reproducibility</a>
+          <a class="gold" href="https://www.cs.purdue.edu/homes/mameriek/"><span aria-hidden="true">♙</span> Author Homepage</a>
         </div>
+
+        <aside class="why-box" aria-label="Why this matters">
+          <div class="shield" aria-hidden="true">◇</div>
+          <div>
+            <strong>Why this matters</strong>
+            <p>
+              Enables private checks on sensitive data without revealing it, with formal security guarantees even against adversaries who hold the decryption key when the predicate is not satisfied.
+            </p>
+          </div>
+        </aside>
       </div>
 
       <figure class="hero-figure">
-        <img src="conditional-encryption-diagram.svg" alt="Diagram explaining conditional encryption and its TypTop password-typo application." />
+        <img src="conditional-encryption-diagram.svg" alt="Conditional Encryption diagram with hidden message, control message, and a payload gift entering the predicate gate from bottom to top." />
       </figure>
     </section>
-  </header>
 
-  <main>
-    <section class="summary-grid" aria-label="Project highlights">
-      <article class="metric-card">
-        <span class="metric-label">Paper</span>
-        <strong>ACM CCS 2024</strong>
-        <p>Full artifact page for implementation, evaluation, slides, and reproducibility links.</p>
-      </article>
-      <article class="metric-card">
-        <span class="metric-label">Implementation</span>
-        <strong>C++ Library</strong>
-        <p>Conditional Encryption constructions and empirical evaluation scripts.</p>
-      </article>
-      <article class="metric-card">
-        <span class="metric-label">Application</span>
-        <strong>Conditional TypTop</strong>
-        <p>Typo-tolerant password checking with stronger privacy guarantees.</p>
-      </article>
+    <section id="application" class="application-card" aria-labelledby="application-title">
+      <div class="section-heading">
+        <p class="eyebrow">Application</p>
+        <h2 id="application-title">TypTop Password Typo Correction</h2>
+        <p>
+          We apply Conditional Encryption to TypTop, allowing a server to check permitted password typos while keeping the real password private from the server.
+        </p>
+      </div>
+      <img class="application-diagram" src="typtop-application-diagram.svg" alt="Application diagram for Conditional TypTop showing encrypted client checks, private server-side predicates, and privacy preserved with Conditional Encryption." />
     </section>
 
-    <section id="overview" class="section-card">
-      <div class="section-heading">
-        <p class="eyebrow">Overview</p>
-        <h2>What the artifact contains</h2>
-      </div>
+    <section id="artifact" class="artifact-strip" aria-label="Artifact contents">
+      <span aria-hidden="true">☆</span>
       <p>
-        This page accompanies the ACM CCS 2024 paper
-        <em>Conditional Encryption with Applications to Secure Personalized Password Typo Correction</em>.
-        The artifact includes a C++ implementation of Conditional Encryption, predicate families such as equality,
-        edit distance, Hamming distance, CAPSLOCK, and OR composition, performance-evaluation scripts for reproducing
-        the paper’s figures and tables, and an application to TypTop for privacy-preserving typo-tolerant password checking.
+        <strong>This artifact includes:</strong>
+        C++ implementation · Predicate families · Performance evaluations · TypTop integration · Reproducibility scripts
       </p>
     </section>
 
-    <section class="two-column">
-      <article class="section-card">
-        <div class="section-heading">
-          <p class="eyebrow">Core idea</p>
-          <h2>Encrypt under a condition</h2>
-        </div>
+    <section id="overview" class="content-grid">
+      <article class="content-card">
+        <p class="eyebrow">Core idea</p>
+        <h2>Encrypt a payload under a predicate</h2>
         <p>
-          Let <code>c1 = Enc(pk, m1)</code> be a ciphertext for a hidden message <code>m1</code>. Conditional Encryption computes
-          <code>c = CEnc(pk, c1, m2, m3)</code>, where <code>m2</code> is a control message and <code>m3</code> is a payload.
+          Let <code>c1 = Enc(pk, m1)</code> be a ciphertext for a hidden message. Conditional Encryption computes <code>c = CEnc(pk, c1, m2, m3)</code>, where <code>m2</code> is a control message and <code>m3</code> is a payload.
         </p>
-        <ul class="check-list">
+        <ul>
           <li>If <code>P(m1, m2) = 1</code>, the conditional ciphertext decrypts to <code>m3</code>.</li>
-          <li>If <code>P(m1, m2) = 0</code>, the ciphertext hides <code>m2</code> and <code>m3</code>.</li>
-          <li>The security goal remains meaningful even when the adversary has the decryption key.</li>
+          <li>If <code>P(m1, m2) = 0</code>, the ciphertext hides the payload and reveals only an unrelated random message.</li>
         </ul>
       </article>
 
-      <article class="section-card callout">
-        <div class="section-heading">
-          <p class="eyebrow">Why this matters</p>
-          <h2>Private checks without revealing the checked value</h2>
+      <article class="content-card">
+        <p class="eyebrow">Implemented predicates</p>
+        <h2>Predicate families</h2>
+        <div class="pill-row" aria-label="Predicate families">
+          <span>Equality</span>
+          <span>Edit distance ≤ 1</span>
+          <span>Hamming distance ≤ ℓ</span>
+          <span>CAPSLOCK</span>
+          <span>OR composition</span>
         </div>
-        <p>
-          Many security systems need to test whether a hidden value satisfies a condition without revealing that value.
-          Conditional Encryption supports this pattern while preserving formal security guarantees and remaining close to implementation.
-        </p>
       </article>
     </section>
 
-    <section id="artifact" class="section-card">
-      <div class="section-heading">
-        <p class="eyebrow">Artifact</p>
-        <h2>Repository structure</h2>
-      </div>
-      <div class="repo-grid">
-        <article>
-          <h3><code>CondEncCPP</code></h3>
-          <p>Conditional Encryption implementation, supported predicates, tests, and performance evaluation.</p>
-        </article>
-        <article>
-          <h3><code>CondTypTopCPP</code></h3>
-          <p>Conditional TypTop implementation using Conditional Encryption for typo-tolerant password checking.</p>
-        </article>
-      </div>
-      <p class="note">
-        For dependencies, build instructions, tests, and reproduction scripts, see the
-        <a href="https://github.com/mhassanameri/CondEncCCS24Artifact/blob/main/README.md">README</a>.
-      </p>
-    </section>
+    <section class="content-grid">
+      <article class="content-card">
+        <p class="eyebrow">Repository</p>
+        <h2>Artifact structure</h2>
+        <div class="repo-list">
+          <div>
+            <strong><code>CondEncCPP</code></strong>
+            <p>Conditional Encryption implementation, tests, predicate families, and performance evaluation.</p>
+          </div>
+          <div>
+            <strong><code>CondTypTopCPP</code></strong>
+            <p>Conditional TypTop implementation for privacy-preserving typo-tolerant password checking.</p>
+          </div>
+        </div>
+      </article>
 
-    <section id="application" class="section-card">
-      <div class="section-heading">
-        <p class="eyebrow">Application</p>
-        <h2>Conditional TypTop</h2>
-      </div>
-      <p>
-        TypTop accepts plausible password typos while helping users avoid repeated failed logins. Conditional Encryption strengthens this setting:
-        the server can check whether a submitted password is a permitted typo without collecting ciphertexts for unrelated password attempts.
-      </p>
-      <div class="pill-row" aria-label="Implemented predicate families">
-        <span>Equality</span>
-        <span>Edit distance ≤ 1</span>
-        <span>Hamming distance ≤ ℓ</span>
-        <span>CAPSLOCK</span>
-        <span>OR composition</span>
-      </div>
-    </section>
-
-    <section class="section-card">
-      <div class="section-heading">
-        <p class="eyebrow">Contribution</p>
-        <h2>Research-to-implementation artifact</h2>
-      </div>
-      <p>
-        This artifact connects cryptographic theory with implementation and evaluation. It demonstrates how a provably secure primitive can be implemented,
-        benchmarked, and applied to a real security system.
-      </p>
-    </section>
-
-    <section id="citation" class="section-card">
-      <div class="section-heading">
+      <article id="citation" class="content-card citation-card">
         <p class="eyebrow">Citation</p>
         <h2>Cite the paper</h2>
-      </div>
-      <pre><code>@inproceedings{ameri2024conditional,
+        <pre><code>@inproceedings{ameri2024conditional,
   title     = {Conditional Encryption with Applications to Secure Personalized Password Typo Correction},
   author    = {Ameri, Mohammad Hassan and Blocki, Jeremiah},
   booktitle = {Proceedings of the 2024 ACM SIGSAC Conference on Computer and Communications Security},
   year      = {2024},
   doi       = {10.1145/3658644.3690374}
 }</code></pre>
+      </article>
     </section>
   </main>
 

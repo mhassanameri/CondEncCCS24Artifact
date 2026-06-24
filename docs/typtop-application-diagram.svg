@@ -1,0 +1,161 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1420 390" role="img" aria-labelledby="title desc">
+  <title id="title">Conditional TypTop application diagram</title>
+  <desc id="desc">A four-step flow shows a user entering a password, the client encrypting with Conditional Encryption, the server checking private typo predicates, and access being granted only if the predicate holds. A comparison shows that without Conditional Encryption privacy can be at risk, while with Conditional Encryption the server learns only whether the password matches or is an allowed typo.</desc>
+  <defs>
+    <linearGradient id="greenFill" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ecfdf3"/>
+      <stop offset="1" stop-color="#f7fff8"/>
+    </linearGradient>
+    <linearGradient id="grayFill" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f8fafc"/>
+      <stop offset="1" stop-color="#f1f5f9"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#0f172a" flood-opacity="0.09"/>
+    </filter>
+    <marker id="arrowDark" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto" markerUnits="strokeWidth">
+      <path d="M1,1 L9,5 L1,9 Z" fill="#111827"/>
+    </marker>
+    <marker id="arrowGreen" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto" markerUnits="strokeWidth">
+      <path d="M1,1 L9,5 L1,9 Z" fill="#15803d"/>
+    </marker>
+    <marker id="arrowRed" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto" markerUnits="strokeWidth">
+      <path d="M1,1 L9,5 L1,9 Z" fill="#dc2626"/>
+    </marker>
+    <style>
+      .h{font:800 28px -apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;fill:#14532d}
+      .sub{font:700 18px -apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;fill:#166534}
+      .text{font:500 15px -apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;fill:#0f172a}
+      .small{font:500 13px -apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;fill:#334155}
+      .label{font:700 15px -apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;fill:#111827}
+      .code{font:700 14px "SFMono-Regular",Consolas,monospace;fill:#111827}
+      .green{fill:#166534}.red{fill:#dc2626}.muted{fill:#64748b}
+      .box{fill:#fff;stroke:#d7e2ef;stroke-width:1.8;filter:url(#shadow)}
+      .pill{fill:#f1f5f9;stroke:#d7e2ef;stroke-width:1.5}
+      .greenPill{fill:#eaf9ee;stroke:#b7efcb;stroke-width:1.5}
+      .line{stroke:#111827;stroke-width:2.5;fill:none;marker-end:url(#arrowDark)}
+      .gline{stroke:#15803d;stroke-width:3;fill:none;stroke-dasharray:9 10;marker-end:url(#arrowGreen)}
+      .rline{stroke:#dc2626;stroke-width:3;fill:none;stroke-dasharray:9 10;marker-end:url(#arrowRed)}
+      .divider{stroke:#cbd5e1;stroke-width:2;stroke-dasharray:8 8}
+    </style>
+  </defs>
+
+  <rect x="1" y="1" width="1418" height="388" rx="26" fill="#fbfffb" stroke="#cdeed6" stroke-width="2"/>
+
+  <g transform="translate(34 36)">
+    <text class="h" x="0" y="0">Application: TypTop</text>
+    <text class="sub" x="0" y="36">Privacy-Preserving Typo-Tolerant Password Checking</text>
+    <text class="text" x="0" y="78">Conditional Encryption lets the server check whether a login attempt is the real</text>
+    <text class="text" x="0" y="102">password or an allowed typo, while keeping the real password private.</text>
+  </g>
+
+  <!-- Simple process flow -->
+  <g transform="translate(58 198)">
+    <!-- user -->
+    <circle cx="34" cy="18" r="16" fill="#fff" stroke="#111827" stroke-width="2"/>
+    <path d="M10 75 C12 45 56 45 58 75" fill="none" stroke="#111827" stroke-width="2.5"/>
+    <text x="33" y="118" text-anchor="middle" class="small">1. User enters</text>
+    <text x="33" y="138" text-anchor="middle" class="small">password</text>
+
+    <path d="M82 45 L142 45" class="line"/>
+
+    <!-- laptop -->
+    <rect x="170" y="18" width="72" height="46" rx="5" fill="#f8fafc" stroke="#111827" stroke-width="2"/>
+    <rect x="190" y="30" width="32" height="22" rx="4" fill="#fef08a" stroke="#111827" stroke-width="1.8"/>
+    <path d="M200 30 v-7 c0-8 6-13 13-13s13 5 13 13v7" fill="none" stroke="#111827" stroke-width="2"/>
+    <circle cx="206" cy="42" r="3" fill="#111827"/>
+    <rect x="203" y="43" width="6" height="7" rx="2" fill="#111827"/>
+    <path d="M158 70 L254 70 L266 82 L146 82 Z" fill="#e2e8f0" stroke="#111827" stroke-width="2"/>
+    <text x="206" y="118" text-anchor="middle" class="small">2. Client encrypts</text>
+    <text x="206" y="138" text-anchor="middle" class="small">using CondEnc</text>
+
+    <path d="M282 45 L352 45" class="line"/>
+
+    <!-- server -->
+    <g transform="translate(383 8)">
+      <rect x="0" y="0" width="72" height="30" rx="8" fill="#cbd5e1" stroke="#111827" stroke-width="2"/>
+      <circle cx="15" cy="15" r="4" fill="#111827"/><circle cx="31" cy="15" r="4" fill="#94a3b8"/>
+      <rect x="0" y="36" width="72" height="30" rx="8" fill="#cbd5e1" stroke="#111827" stroke-width="2"/>
+      <circle cx="15" cy="51" r="4" fill="#111827"/><circle cx="31" cy="51" r="4" fill="#94a3b8"/>
+      <rect x="0" y="72" width="72" height="30" rx="8" fill="#cbd5e1" stroke="#111827" stroke-width="2"/>
+      <circle cx="15" cy="87" r="4" fill="#111827"/><circle cx="31" cy="87" r="4" fill="#94a3b8"/>
+    </g>
+    <text x="418" y="118" text-anchor="middle" class="small">3. Server checks</text>
+    <text x="418" y="138" text-anchor="middle" class="small">private predicates</text>
+
+    <path d="M480 45 L555 45" class="line"/>
+
+    <!-- shield -->
+    <path d="M606 0 L666 20 V52 C666 83 640 104 606 118 C572 104 546 83 546 52 V20 Z" fill="#ecfdf3" stroke="#166534" stroke-width="3"/>
+    <path d="M586 56 L602 72 L630 37" fill="none" stroke="#166534" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="606" y="138" text-anchor="middle" class="small">4. Access granted</text>
+    <text x="606" y="158" text-anchor="middle" class="small">only if predicate holds</text>
+  </g>
+
+  <!-- Divider -->
+  <line x1="745" y1="60" x2="745" y2="335" class="divider"/>
+
+  <!-- Without conditional encryption -->
+  <g transform="translate(785 52)">
+    <rect x="0" y="0" width="250" height="40" rx="8" class="pill"/>
+    <text x="125" y="26" text-anchor="middle" class="label">Without Conditional Encryption</text>
+
+    <g transform="translate(25 70)">
+      <path d="M55 10 C37 22 28 49 29 82" fill="#4b5563" stroke="#111827" stroke-width="2"/>
+      <path d="M15 130 C14 92 33 73 71 73 C109 73 128 92 127 130 Z" fill="#6b7280" stroke="#111827" stroke-width="2"/>
+      <circle cx="71" cy="51" r="31" fill="#e5e7eb" stroke="#111827" stroke-width="2"/>
+      <path d="M54 43 h10 M78 43 h10 M57 66 C65 73 78 73 86 66" fill="none" stroke="#111827" stroke-width="2" stroke-linecap="round"/>
+    </g>
+    <g transform="translate(140 128)">
+      <ellipse cx="34" cy="18" rx="34" ry="18" fill="#f8fafc" stroke="#111827" stroke-width="2"/>
+      <circle cx="34" cy="18" r="9" fill="#111827"/>
+      <circle cx="34" cy="18" r="4" fill="#fff"/>
+    </g>
+    <path d="M92 142 C135 122 160 120 196 137" class="rline"/>
+    <rect x="90" y="210" width="180" height="70" rx="10" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+    <text x="180" y="236" text-anchor="middle" class="text">Server learns the</text>
+    <text x="180" y="258" text-anchor="middle" class="text">password or hash</text>
+    <text x="180" y="316" text-anchor="middle" class="label red">Privacy at risk!</text>
+  </g>
+
+  <!-- With conditional encryption -->
+  <g transform="translate(1074 52)">
+    <rect x="0" y="0" width="250" height="40" rx="8" class="greenPill"/>
+    <text x="125" y="26" text-anchor="middle" class="label green">With Conditional Encryption</text>
+
+    <!-- server and lock -->
+    <g transform="translate(6 70)">
+      <rect x="0" y="0" width="70" height="30" rx="8" fill="#cbd5e1" stroke="#111827" stroke-width="2"/>
+      <circle cx="15" cy="15" r="4" fill="#111827"/><circle cx="31" cy="15" r="4" fill="#94a3b8"/>
+      <rect x="0" y="36" width="70" height="30" rx="8" fill="#cbd5e1" stroke="#111827" stroke-width="2"/>
+      <circle cx="15" cy="51" r="4" fill="#111827"/><circle cx="31" cy="51" r="4" fill="#94a3b8"/>
+      <rect x="0" y="72" width="70" height="30" rx="8" fill="#cbd5e1" stroke="#111827" stroke-width="2"/>
+      <circle cx="15" cy="87" r="4" fill="#111827"/><circle cx="31" cy="87" r="4" fill="#94a3b8"/>
+      <path d="M83 78 v-18 c0-13 9-22 22-22s22 9 22 22v18" fill="none" stroke="#166534" stroke-width="6" stroke-linecap="round"/>
+      <rect x="75" y="76" width="62" height="58" rx="9" fill="#62c36f" stroke="#166534" stroke-width="2"/>
+      <circle cx="106" cy="101" r="6" fill="#111827"/>
+      <rect x="103" y="102" width="6" height="14" rx="3" fill="#111827"/>
+    </g>
+    <!-- login window -->
+    <g transform="translate(155 65)">
+      <rect x="0" y="0" width="132" height="102" rx="8" fill="#f8fafc" stroke="#111827" stroke-width="2"/>
+      <rect x="0" y="0" width="132" height="20" rx="8" fill="#cbd5e1" stroke="#111827" stroke-width="2"/>
+      <circle cx="14" cy="10" r="4" fill="#ef4444"/><circle cx="28" cy="10" r="4" fill="#f59e0b"/><circle cx="42" cy="10" r="4" fill="#22c55e"/>
+      <path d="M57 55 v-12 c0-12 9-20 21-20s21 8 21 20v12" fill="none" stroke="#111827" stroke-width="4" stroke-linecap="round"/>
+      <rect x="49" y="52" width="57" height="42" rx="7" fill="#facc15" stroke="#111827" stroke-width="2"/>
+      <circle cx="77" cy="70" r="5" fill="#111827"/><rect x="75" y="71" width="5" height="12" rx="2" fill="#111827"/>
+      <rect x="18" y="77" width="96" height="18" rx="5" fill="#fff" stroke="#cbd5e1"/>
+      <text x="65" y="91" text-anchor="middle" class="code">P@ssw0rd!</text>
+      <path d="M105 88 l8 6 l14 -16" fill="none" stroke="#166534" stroke-width="3" stroke-linecap="round"/>
+    </g>
+    <path d="M95 134 C140 103 151 93 150 92" class="gline"/>
+
+    <rect x="0" y="210" width="230" height="84" rx="10" fill="#f0fdf4" stroke="#80d99d" stroke-width="1.7"/>
+    <text x="16" y="236" class="text">Server learns only whether</text>
+    <text x="16" y="258" class="text">the password matches or is</text>
+    <text x="16" y="280" class="text">within allowed typos.</text>
+    <text x="100" y="332" text-anchor="middle" class="label green">Privacy preserved!</text>
+    <path d="M204 310 L228 320 L228 344 C228 365 215 378 204 382 C193 378 180 365 180 344 V320 Z" transform="translate(-4 -26)" fill="#198c3d"/>
+    <path d="M190 323 l10 10 l19 -25" transform="translate(-4 -26)" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round"/>
+  </g>
+</svg>
