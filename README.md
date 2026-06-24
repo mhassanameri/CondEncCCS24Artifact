@@ -15,7 +15,7 @@ This repository demonstrates research-to-implementation work in applied cryptogr
 
 - Link to the full version of the paper: [[arXiv]](https://arxiv.org/pdf/2409.06128)
 - ACM CCS version: [[DOI]](https://dl.acm.org/doi/10.1145/3658644.3690374)
-- Project page: `[add project page on your homepage]`
+- Project page: [[Link]](https://mhassanameri.github.io/CondEncCCS24Artifact/)
 - Artifact repository: `https://github.com/mhassanameri/CondEncCCS24Artifact`
 
 ## Why this matters
